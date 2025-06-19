@@ -13,7 +13,7 @@ const login = async (req, res) => {
             throw new Error("Incorrect Email Or Password");
         }
         const token = getToken(user);
-        const refreshToken = getToken(user, 60 * 5);
+        const refreshToken = getToken(user, 60 * 5, true);
         return successResponse(res, {
             token,
             refreshToken
@@ -37,9 +37,8 @@ const refreshToken = async (req, res) => {
         const refreshToken = req.headers['authorization'].split("Bearer")[1]?.trim();
         if(!refreshToken)  throw new Error("Refresh Token Not Found");
         const data = verifyToken(refreshToken);
-        if (!data)  throw new Error("Invalid Or Expired Refresh Token");
-        console.log("DDD: ",data)
-        const newToken = getToken(data);
+        if (!data || !data.isRefreshToken)  throw new Error("Invalid Or Expired Refresh Token");
+        const newToken = getToken(data.user);
         return successResponse(res, {
             newToken
         });

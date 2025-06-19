@@ -1,9 +1,12 @@
 const jwt = require("jsonwebtoken");
-const { errorResponse } = require("../utils/responseHelper")
+const { errorResponse } = require("../utils/responseHelper");
 const SECRET_KEY = process.env.SECRET_KEY;
 
-const getToken = (userObj, expiry = 120) => {
-    const token = jwt.sign(userObj, SECRET_KEY, {
+const getToken = (userObj, expiry = 120, isRefreshToken = false) => {
+    const token = jwt.sign({
+        user: userObj,
+        isRefreshToken: isRefreshToken,
+    }, SECRET_KEY, {
         expiresIn: expiry,
     });
     return token;
