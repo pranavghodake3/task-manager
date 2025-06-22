@@ -3,11 +3,10 @@ const app = express();
 const PORT = process.env. PORT || 5000;
 const { errorResponse } = require("./utils/responseHelper");
 require('dotenv').config();
-const DBConnect = require("./config/db")
+const DBConnect = require("./config/db");
+const apiRoutes = require("./routes/index");
 
 app.use(express.json());
-
-const apiRoutes = require("./routes/index");
 
 app.use("/api", apiRoutes);
 
