@@ -1,6 +1,7 @@
-const successResponse = (res, data, message = 'Success') => {
-  return res.status(200).json({
+const successResponse = (res, data, message = 'Success', statusCode = 200) => {
+  return res.status(statusCode).json({
     status: true,
+    statusCode,
     message,
     data,
   });

@@ -26,7 +26,7 @@ taskController.createTask = async (req, res) => {
   try {
     const task = req.body;
     tasks.push(task);
-    return successResponse(res, task);
+    return successResponse(res, task, undefined, 201);
   } catch (error) {
     return errorResponse(res, error, error.message, error.statusCode);
   }

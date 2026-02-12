@@ -1,0 +1,516 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Task Manager API",
+    "description": "A comprehensive REST API for task management similar to Jira, Trello, and Asana",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Pranav Ghodake",
+      "url": "https://github.com/pranavghodake3",
+      "email": "pranav.ghodake@example.com"
+    },
+    "license": {
+      "name": "ISC",
+      "url": "https://opensource.org/licenses/ISC"
+    }
+  },
+  "host": "localhost:5000",
+  "basePath": "/api",
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/tasks": {
+      "get": {
+        "summary": "Get all tasks",
+        "description": "Retrieve a list of all tasks in the system",
+        "operationId": "getTasks",
+        "tags": [
+          "Tasks"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved all tasks",
+            "schema": {
+              "$ref": "#/definitions/SuccessResponse"
+            },
+            "examples": {
+              "application/json": {
+                "success": true,
+                "data": [
+                  {
+                    "id": 1,
+                    "title": "Complete project documentation",
+                    "description": "Write comprehensive documentation for the task manager API",
+                    "status": "in-progress",
+                    "priority": "high",
+                    "assignee": "Pranav Ghodake",
+                    "dueDate": "2026-02-28",
+                    "createdAt": "2026-02-12T10:00:00Z",
+                    "updatedAt": "2026-02-12T15:30:00Z"
+                  },
+                  {
+                    "id": 2,
+                    "title": "Setup Docker environment",
+                    "description": "Configure Docker and Docker Compose for the project",
+                    "status": "completed",
+                    "priority": "medium",
+                    "assignee": "Pranav Ghodake",
+                    "dueDate": "2026-02-10",
+                    "createdAt": "2026-02-08T09:00:00Z",
+                    "updatedAt": "2026-02-10T16:45:00Z"
+                  }
+                ]
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new task",
+        "description": "Create a new task in the system",
+        "operationId": "createTask",
+        "tags": [
+          "Tasks"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Task object to create",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TaskInput"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Task created successfully",
+            "schema": {
+              "$ref": "#/definitions/SuccessResponse"
+            },
+            "examples": {
+              "application/json": {
+                "success": true,
+                "data": {
+                  "id": 3,
+                  "title": "Implement user authentication",
+                  "description": "Add JWT-based authentication to the API",
+                  "status": "pending",
+                  "priority": "high",
+                  "assignee": "Pranav Ghodake",
+                  "dueDate": "2026-03-15",
+                  "createdAt": "2026-02-12T10:30:00Z",
+                  "updatedAt": "2026-02-12T10:30:00Z"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid input",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a task",
+        "description": "Update an existing task in the system",
+        "operationId": "updateTask",
+        "tags": [
+          "Tasks"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Task object with updates",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TaskUpdate"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Task updated successfully",
+            "schema": {
+              "$ref": "#/definitions/SuccessResponse"
+            },
+            "examples": {
+              "application/json": {
+                "success": true,
+                "data": {
+                  "id": 1,
+                  "title": "Complete project documentation",
+                  "description": "Write comprehensive documentation for the task manager API",
+                  "status": "completed",
+                  "priority": "high",
+                  "assignee": "Pranav Ghodake",
+                  "dueDate": "2026-02-28",
+                  "createdAt": "2026-02-12T10:00:00Z",
+                  "updatedAt": "2026-02-12T16:00:00Z"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid input",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "404": {
+            "description": "Task not found",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/tasks/{id}": {
+      "get": {
+        "summary": "Get a task by ID",
+        "description": "Retrieve a specific task by its ID",
+        "operationId": "getTaskById",
+        "tags": [
+          "Tasks"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The task ID",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Task retrieved successfully",
+            "schema": {
+              "$ref": "#/definitions/SuccessResponse"
+            },
+            "examples": {
+              "application/json": {
+                "success": true,
+                "data": {
+                  "id": 1,
+                  "title": "Complete project documentation",
+                  "description": "Write comprehensive documentation for the task manager API",
+                  "status": "in-progress",
+                  "priority": "high",
+                  "assignee": "Pranav Ghodake",
+                  "dueDate": "2026-02-28",
+                  "createdAt": "2026-02-12T10:00:00Z",
+                  "updatedAt": "2026-02-12T15:30:00Z"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Task not found",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a task",
+        "description": "Delete a specific task by its ID",
+        "operationId": "deleteTask",
+        "tags": [
+          "Tasks"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The task ID",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Task deleted successfully",
+            "schema": {
+              "$ref": "#/definitions/SuccessResponse"
+            },
+            "examples": {
+              "application/json": {
+                "success": true,
+                "data": {
+                  "message": "Task deleted successfully",
+                  "id": 1
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Task not found",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Task": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Unique task identifier"
+        },
+        "title": {
+          "type": "string",
+          "description": "Task title"
+        },
+        "description": {
+          "type": "string",
+          "description": "Detailed description of the task"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "pending",
+            "in-progress",
+            "completed",
+            "on-hold"
+          ],
+          "description": "Current status of the task"
+        },
+        "priority": {
+          "type": "string",
+          "enum": [
+            "low",
+            "medium",
+            "high",
+            "critical"
+          ],
+          "description": "Priority level of the task"
+        },
+        "assignee": {
+          "type": "string",
+          "description": "Name or ID of the person assigned to this task"
+        },
+        "dueDate": {
+          "type": "string",
+          "format": "date",
+          "description": "Due date for the task (YYYY-MM-DD)"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when the task was created"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when the task was last updated"
+        }
+      },
+      "required": [
+        "title",
+        "status"
+      ]
+    },
+    "TaskInput": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Task title",
+          "example": "Implement user authentication"
+        },
+        "description": {
+          "type": "string",
+          "description": "Detailed description of the task",
+          "example": "Add JWT-based authentication to the API"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "pending",
+            "in-progress",
+            "completed",
+            "on-hold"
+          ],
+          "description": "Initial status of the task",
+          "example": "pending"
+        },
+        "priority": {
+          "type": "string",
+          "enum": [
+            "low",
+            "medium",
+            "high",
+            "critical"
+          ],
+          "description": "Priority level of the task",
+          "example": "high"
+        },
+        "assignee": {
+          "type": "string",
+          "description": "Name or ID of the person assigned to this task",
+          "example": "Pranav Ghodake"
+        },
+        "dueDate": {
+          "type": "string",
+          "format": "date",
+          "description": "Due date for the task (YYYY-MM-DD)",
+          "example": "2026-03-15"
+        }
+      },
+      "required": [
+        "title",
+        "status"
+      ]
+    },
+    "TaskUpdate": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Task ID to update",
+          "example": 1
+        },
+        "title": {
+          "type": "string",
+          "description": "Updated task title"
+        },
+        "description": {
+          "type": "string",
+          "description": "Updated task description"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "pending",
+            "in-progress",
+            "completed",
+            "on-hold"
+          ],
+          "description": "Updated task status"
+        },
+        "priority": {
+          "type": "string",
+          "enum": [
+            "low",
+            "medium",
+            "high",
+            "critical"
+          ],
+          "description": "Updated priority level"
+        },
+        "assignee": {
+          "type": "string",
+          "description": "Updated assignee"
+        },
+        "dueDate": {
+          "type": "string",
+          "format": "date",
+          "description": "Updated due date"
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "SuccessResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "description": "Request success status",
+          "example": true
+        },
+        "data": {
+          "type": "object",
+          "description": "Response data payload"
+        }
+      }
+    },
+    "ErrorResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "description": "Request success status",
+          "example": false
+        },
+        "error": {
+          "type": "string",
+          "description": "Error message",
+          "example": "Task not found"
+        },
+        "statusCode": {
+          "type": "integer",
+          "format": "int32",
+          "description": "HTTP status code",
+          "example": 404
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Tasks",
+      "description": "Task management endpoints",
+      "externalDocs": {
+        "description": "Find out more",
+        "url": "https://github.com/pranavghodake3/task-manager"
+      }
+    }
+  ],
+  "externalDocs": {
+    "description": "Find out more about Task Manager",
+    "url": "https://github.com/pranavghodake3/task-manager"
+  }
+}
