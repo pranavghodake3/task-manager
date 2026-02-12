@@ -24,13 +24,13 @@
   "dependencies": {
     "dotenv": "^17.2.4",
     "express": "^5.2.1",
-    "nodemon": "^3.1.11",
     "winston": "^3.19.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
     "eslint": "^9.39.2",
     "globals": "^17.3.0",
+    "nodemon": "^3.1.11",
     "prettier": "3.8.1"
   }
 }
