@@ -1,4 +1,4 @@
-const successResponse = (res, data, message = "Success") => {
+const successResponse = (res, data, message = 'Success') => {
   return res.status(200).json({
     status: true,
     message,
@@ -9,10 +9,10 @@ const successResponse = (res, data, message = "Success") => {
 const errorResponse = (
   res,
   error = null,
-  message = "An error occurred, please contact developer.",
+  message = 'An error occurred, please contact developer.',
   code = 500,
 ) => {
-  console.log("Error: ", error);
+  console.log('Error: ', error);
   return res.status(code).json({
     status: false,
     message,
@@ -23,7 +23,7 @@ const errorResponse = (
 const validationError = (res, errors, code = 422) => {
   return res.status(code).json({
     status: false,
-    message: "Validation errors",
+    message: 'Validation errors',
     errors,
   });
 };
