@@ -1,11 +1,12 @@
 const { successResponse, errorResponse } = require('../utils/responseHelper');
-// const logger = require('../config/logger');
+const logger = require('../config/logger');
 const tasks = [];
 
 const taskController = {};
 
 taskController.getTasks = async (req, res) => {
   try {
+    logger.info('Get Tasks Called');
     return successResponse(res, tasks);
   } catch (error) {
     return errorResponse(res, error, error.message, error.statusCode);
