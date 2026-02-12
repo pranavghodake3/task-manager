@@ -30,7 +30,12 @@
     "@eslint/js": "^9.39.2",
     "eslint": "^9.39.2",
     "globals": "^17.3.0",
+    "lint-staged": "^16.2.7",
     "nodemon": "^3.1.11",
     "prettier": "3.8.1"
+  },
+  "lint-staged": {
+    "!(*.ts)": "prettier --write",
+    "*.ts": ["eslint --fix", "prettier --write"]
   }
 }
