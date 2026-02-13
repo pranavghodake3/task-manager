@@ -1,7 +1,7 @@
 const testMiddlewareFun = (req, res, next) => {
-    next();
+  next();
 };
 
 module.exports = {
-    testMiddlewareFun
+  testMiddlewareFun,
 };

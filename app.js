@@ -1,10 +1,18 @@
 const express = require('express');
 const app = express();
-const PORT = 5000;
-const routes = require('./routes/index.js')
+require('dotenv').config();
+const PORT = process.env.PORT;
+const routes = require('./routes/index.js');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json');
 
-app.use('/api', routes)
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+app.use('/api', routes);
 
 app.listen(PORT, () => {
-    console.log(`Server running on PORT ${PORT}`);
+  console.log(`Server running on PORT ${PORT}`);
 });
