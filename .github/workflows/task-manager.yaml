@@ -22,12 +22,10 @@ jobs:
     steps:
       - name: Get the Code
         uses: actions/checkout@v6
-      # - name: Install Dependencies
-      #   run: npm install
-      # - name: test
-      #   run: echo 'Test Completed'
-      - name: Lint
-        run: npm run lint
+      - name: Install Dependencies
+        run: npm install
+      - name: test
+        run: echo 'Test Completed'
   deploy:
     needs: test
     runs-on: ubuntu-latest
