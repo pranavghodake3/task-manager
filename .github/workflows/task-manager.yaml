@@ -1,0 +1,32 @@
+name: Task Manager
+on:
+  pull_request:
+    types:
+      - opened
+    branches:
+      - develop
+      - master
+jobs:
+  buid:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get the Code
+        uses: actions/checkout@v6
+      - name: Lint
+        run: npm run lint
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get the Code
+        uses: actions/checkout@v6
+      - name: test
+        run: echo 'Test Completed'
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get the Code
+        uses: actions/checkout@v6
+      - name: deploy
+        run: echo 'Deployment Completed'
