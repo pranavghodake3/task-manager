@@ -1,13 +1,12 @@
+const testFirstFunction = async () => {
+  // throw Error("HHHHHHHHHH")
+  const data = {
+    test: true,
+  };
 
-const testFirstFunction = async() => {
-    // throw Error("HHHHHHHHHH")
-    const data = {
-        test: true,
-    }
-
-    return data;
+  return data;
 };
 
 module.exports = {
-    testFirstFunction
+  testFirstFunction,
 };
