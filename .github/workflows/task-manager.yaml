@@ -1,5 +1,8 @@
 name: Task Manager
 on:
+  push:
+    branches:
+      - 'phase*'
   pull_request:
     types:
       - opened
