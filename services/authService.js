@@ -1,3 +1,5 @@
+const UserModel = require('../models/userModel');
+
 const authServiceObj = {};
 
 authServiceObj.login = async (reqBody) => {
@@ -5,7 +7,9 @@ authServiceObj.login = async (reqBody) => {
 };
 
 authServiceObj.register = async (reqBody) => {
-  return reqBody;
+  let user = new UserModel(reqBody);
+  user = user.save();
+  return user;
 };
 
 module.exports = authServiceObj;

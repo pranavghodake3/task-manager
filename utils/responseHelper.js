@@ -10,18 +10,28 @@ const successResponse = (res, data, message = 'Success', statusCode = 200) => {
 const errorResponse = (
   res,
   error = null,
-  message = 'An error occurred, please contact developer.',
+  message = 'An error occurred. Please contact support.',
   code = 500,
 ) => {
-  console.log('Error: ', error);
+  // Log full error for debugging
+  if (error) {
+    console.error('❌ Error:', {
+      message: error.message || error,
+      stack: error.stack,
+    });
+  }
+
   return res.status(code).json({
-    status: false,
+    success: false,
     message,
-    ...(error && { error: error.toString() }),
+    ...(process.env.NODE_ENV !== 'production' &&
+      error && {
+        error: error.message || error,
+      }),
   });
 };
 
-const validationError = (res, errors, code = 422) => {
+const validationError = (res, errors, code = 400) => {
   return res.status(code).json({
     status: false,
     message: 'Validation errors',
