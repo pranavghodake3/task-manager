@@ -1,5 +1,7 @@
 const Joi = require('joi');
-const { validationError } = require('../utils/responseHelper');
+const { errorResponse } = require('../utils/responseHelper');
+const UserModel = require('../models/userModel');
+const CustomError = require('../utils/CustomError');
 
 const authMiddleware = {};
 
@@ -14,10 +16,17 @@ authMiddleware.register = async (req, res, next) => {
     });
 
     await schema.validateAsync(req.body);
+    const count = await UserModel.countDocuments({
+      email: req.body.email,
+    });
+    if (count > 0) {
+      throw new CustomError('User already exists', 400);
+    }
+    console.log('User Count: ', count);
 
     next();
   } catch (error) {
-    return validationError(res, error, 400);
+    return errorResponse(res, error, 400);
   }
 };
 

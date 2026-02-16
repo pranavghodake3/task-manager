@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/pranavghodake3/task-manager#readme",
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "casbin": "^5.48.0",
     "dotenv": "^17.2.4",
     "express": "^5.2.1",
