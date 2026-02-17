@@ -1,9 +1,10 @@
 const jwt = require('jsonwebtoken');
+const { TOKEN_EXPIRY } = require('../constants/index');
 
 const jwtUtilObj = {};
 
-jwtUtilObj.getToken = (data, expiresIn = '1h') => {
-  const token = jwt.sign({ data }, process.env.JWT_SECRET, { expiresIn });
+jwtUtilObj.getToken = (data, expiresIn = TOKEN_EXPIRY) => {
+  const token = jwt.sign(data, process.env.JWT_SECRET, { expiresIn });
 
   return token;
 };

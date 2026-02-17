@@ -21,4 +21,13 @@ authControllerObj.register = async (req, res) => {
   }
 };
 
+authControllerObj.getRefreshToken = async (req, res) => {
+  try {
+    const data = await authService.getRefreshToken(req);
+    return successResponse(res, data);
+  } catch (error) {
+    return errorResponse(res, error);
+  }
+};
+
 module.exports = authControllerObj;

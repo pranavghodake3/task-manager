@@ -12,7 +12,7 @@ const successResponse = (res, data, statusCode = 200) => {
 
 const errorResponse = (res, error = null, code = 500) => {
   const finalStatusCode = error?.statusCode || error?.code || code || 500;
-  // Log full error for debugging
+
   if (error) {
     logger.error({
       message: error.message || error,
@@ -21,7 +21,7 @@ const errorResponse = (res, error = null, code = 500) => {
     console.error('Error:', error);
   }
   let errorPayload = {
-    ...(error.data ? { data: error.data } : null),
+    ...(error?.data ? { data: error.data } : null),
     message: error?.message || HTTP_CODE_MESSAGES[finalStatusCode] || 'Error',
   };
 

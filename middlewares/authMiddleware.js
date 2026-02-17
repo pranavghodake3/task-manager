@@ -58,10 +58,35 @@ authMiddleware.isAuthentic = (req, res, next) => {
     if (!req.headers.authorization || !bearerToken) {
       throw new CustomError('Missing Bearer Token', 401);
     }
-    if (!jwtUtil.verifyToken(bearerToken)) {
-      throw new CustomError('Invalid Bearer Token', 401);
+    const data = jwtUtil.verifyToken(bearerToken);
+    req.auth = {
+      user: data.user,
+    };
+    if (data && !data.refreshToken) {
+      next();
+    } else {
+      throw new CustomError('Invalid Bearer Token or it has expired', 401);
     }
-    next();
+  } catch (error) {
+    return errorResponse(res, error, 401);
+  }
+};
+
+authMiddleware.isRefreshTokenAuthentic = (req, res, next) => {
+  try {
+    let bearerToken = req.headers.authorization?.split('Bearer ')[1];
+    if (!req.headers.authorization || !bearerToken) {
+      throw new CustomError('Missing Bearer Token', 401);
+    }
+    const data = jwtUtil.verifyToken(bearerToken);
+    req.auth = {
+      user: data.user,
+    };
+    if (data && data.refreshToken) {
+      next();
+    } else {
+      throw new CustomError('Invalid Bearer Refresh Token or it has expired', 401);
+    }
   } catch (error) {
     return errorResponse(res, error, 401);
   }
