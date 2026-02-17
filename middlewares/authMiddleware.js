@@ -2,6 +2,7 @@ const Joi = require('joi');
 const { errorResponse } = require('../utils/responseHelper');
 const UserModel = require('../models/userModel');
 const CustomError = require('../utils/CustomError');
+const jwtUtil = require('../utils/jwtUtil');
 
 const authMiddleware = {};
 
@@ -48,6 +49,21 @@ authMiddleware.register = async (req, res, next) => {
     next();
   } catch (error) {
     return errorResponse(res, error, 400);
+  }
+};
+
+authMiddleware.isAuthentic = (req, res, next) => {
+  try {
+    let bearerToken = req.headers.authorization?.split('Bearer ')[1];
+    if (!req.headers.authorization || !bearerToken) {
+      throw new CustomError('Missing Bearer Token', 401);
+    }
+    if (!jwtUtil.verifyToken(bearerToken)) {
+      throw new CustomError('Invalid Bearer Token', 401);
+    }
+    next();
+  } catch (error) {
+    return errorResponse(res, error, 401);
   }
 };
 
