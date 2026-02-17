@@ -1,22 +1,24 @@
 const { HTTP_CODE_MESSAGES } = require('../constants/statusCodeMessages');
+const logger = require('../config/logger');
 
-const successResponse = (res, data, message = 'Success', statusCode = 200) => {
+const successResponse = (res, data, statusCode = 200) => {
   return res.status(statusCode).json({
     status: true,
     statusCode,
-    message,
+    message: HTTP_CODE_MESSAGES[statusCode] || 'Success',
     data,
   });
 };
 
 const errorResponse = (res, error = null, code = 500) => {
-  const finalStatusCode = error?.code || code || 500;
+  const finalStatusCode = error?.statusCode || error?.code || code || 500;
   // Log full error for debugging
   if (error) {
-    console.error('❌ Error:', {
+    logger.error({
       message: error.message || error,
       stack: error.stack,
     });
+    console.error('Error:', error);
   }
   let errorPayload = {
     ...(error.data ? { data: error.data } : null),

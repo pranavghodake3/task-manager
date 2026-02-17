@@ -5,13 +5,34 @@ const CustomError = require('../utils/CustomError');
 
 const authMiddleware = {};
 
+authMiddleware.login = async (req, res, next) => {
+  try {
+    const schema = Joi.object({
+      email: Joi.string().min(3).max(255).email().required(),
+      password: Joi.string().required(),
+    });
+
+    await schema.validateAsync(req.body);
+    const count = await UserModel.countDocuments({
+      email: req.body.email,
+    });
+    if (count !== 1) {
+      throw new CustomError('User does not exist for this email', 401);
+    }
+
+    next();
+  } catch (error) {
+    return errorResponse(res, error, 400);
+  }
+};
+
 authMiddleware.register = async (req, res, next) => {
   try {
     const schema = Joi.object({
       firstName: Joi.string().pattern(new RegExp('^[a-zA-Z]')).max(255).required(),
       lastName: Joi.string().pattern(new RegExp('^[a-zA-Z]')).max(255).required(),
       email: Joi.string().min(3).max(255).email().required(),
-      password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')).required(),
+      password: Joi.string().min(6).max(255).required(),
       repeat_password: Joi.ref('password'),
     });
 

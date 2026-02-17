@@ -1,5 +1,6 @@
 const UserModel = require('../models/userModel');
 const passwordHelper = require('../utils/passwordHelper');
+const CustomError = require('../utils/CustomError');
 
 const authServiceObj = {};
 
@@ -10,8 +11,8 @@ authServiceObj.login = async (reqBody) => {
   let isAuthenticated = false;
   isAuthenticated = await passwordHelper.comparePassword(reqBody.password, user[0].password);
 
-  if (!user || user.length !== 1 || !isAuthenticated) {
-    throw new Error('Unauthorized');
+  if (!isAuthenticated) {
+    throw new CustomError('Invalid Password for this email', 401);
   }
 };
 
