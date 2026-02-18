@@ -1,6 +1,7 @@
 const Joi = require('joi');
 const { errorResponse } = require('../utils/responseHelper');
 const UserModel = require('../models/userModel');
+const RefreshTokenModel = require('../models/refreshToken');
 const CustomError = require('../utils/CustomError');
 const jwtUtil = require('../utils/jwtUtil');
 
@@ -13,7 +14,7 @@ authMiddleware.login = async (req, res, next) => {
       password: Joi.string().required(),
     });
 
-    await schema.validateAsync(req.body);
+    await schema.validateAsync(req.body || {});
     const count = await UserModel.countDocuments({
       email: req.body.email,
     });
@@ -62,7 +63,7 @@ authMiddleware.isAuthentic = (req, res, next) => {
     req.auth = {
       user: data.user,
     };
-    if (data && !data.refreshToken) {
+    if (data) {
       next();
     } else {
       throw new CustomError('Invalid Bearer Token or it has expired', 401);
@@ -72,18 +73,32 @@ authMiddleware.isAuthentic = (req, res, next) => {
   }
 };
 
-authMiddleware.isRefreshTokenAuthentic = (req, res, next) => {
+authMiddleware.isRefreshTokenAuthentic = async (req, res, next) => {
   try {
     let bearerToken = req.headers.authorization?.split('Bearer ')[1];
     if (!req.headers.authorization || !bearerToken) {
       throw new CustomError('Missing Bearer Token', 401);
     }
-    const data = jwtUtil.verifyToken(bearerToken);
-    req.auth = {
-      user: data.user,
-    };
-    if (data && data.refreshToken) {
-      next();
+    const validToken = jwtUtil.verifyRefreshToken(bearerToken);
+    const refreshToken = await RefreshTokenModel.find({
+      refreshToken: bearerToken,
+    })
+      .limit(1)
+      .lean()
+      .exec();
+    if (validToken && refreshToken.length === 1) {
+      req.auth = {
+        user: {
+          userId: refreshToken[0].userId,
+        },
+      };
+      const currentDate = new Date();
+      const refreshTokenExpiry = new Date(refreshToken[0].expiresAt);
+      if (currentDate < refreshTokenExpiry) {
+        next();
+      } else {
+        throw new CustomError('Bearer Refresh Token is expired', 401);
+      }
     } else {
       throw new CustomError('Invalid Bearer Refresh Token or it has expired', 401);
     }

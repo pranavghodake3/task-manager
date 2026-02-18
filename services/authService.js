@@ -1,8 +1,8 @@
 const UserModel = require('../models/userModel');
+const RefreshTokenModel = require('../models/refreshToken');
 const passwordHelper = require('../utils/passwordHelper');
 const CustomError = require('../utils/CustomError');
 const jwtUtil = require('../utils/jwtUtil');
-const { TOKEN_EXPIRY, REFRESH_TOKEN_EXPIRY } = require('../constants/index');
 
 const authServiceObj = {};
 
@@ -13,17 +13,27 @@ authServiceObj.login = async (reqBody) => {
     .limit(1)
     .lean()
     .exec();
-  let isAuthenticated = false;
-  isAuthenticated = await passwordHelper.comparePassword(reqBody.password, user[0].password);
+  const isAuthenticated = await passwordHelper.comparePassword(reqBody.password, user[0].password);
 
   if (!isAuthenticated) {
     throw new CustomError('Invalid Password for this email', 401);
   }
+  await RefreshTokenModel.deleteMany({
+    userId: user[0]._id,
+  });
+  const { refreshToken, refreshTokenExpiresIn } = jwtUtil.getRefreshToken({ userId: user[0]._id });
+  const { accessToken, accessTokenExpiresIn } = jwtUtil.getToken({ userId: user[0]._id });
+  const refreshTokenObj = new RefreshTokenModel({
+    refreshToken,
+    userId: user[0]._id,
+    expiresAt: refreshTokenExpiresIn,
+  });
+  refreshTokenObj.save();
   return {
-    token: jwtUtil.getToken({ user: user[0] }, TOKEN_EXPIRY),
-    refreshToken: jwtUtil.getToken({ refreshToken: true, user: user[0] }, REFRESH_TOKEN_EXPIRY),
-    tokenExpiresIn: TOKEN_EXPIRY,
-    RefreshokenExpiresIn: REFRESH_TOKEN_EXPIRY,
+    accessToken,
+    refreshToken,
+    accessTokenExpiresIn,
+    refreshTokenExpiresIn,
   };
 };
 
@@ -35,9 +45,24 @@ authServiceObj.register = async (reqBody) => {
 };
 
 authServiceObj.getRefreshToken = async (req) => {
+  await RefreshTokenModel.deleteMany({
+    userId: req.auth.user.userId,
+  });
+  const { refreshToken, refreshTokenExpiresIn } = jwtUtil.getRefreshToken({
+    userId: req.auth.user.userId,
+  });
+  const { accessToken, accessTokenExpiresIn } = jwtUtil.getToken({ userId: req.auth.user.userId });
+  const refreshTokenObj = new RefreshTokenModel({
+    refreshToken,
+    userId: req.auth.user.userId,
+    expiresAt: refreshTokenExpiresIn,
+  });
+  refreshTokenObj.save();
   return {
-    token: jwtUtil.getToken({ user: req.auth.user }, TOKEN_EXPIRY),
-    expiresIn: TOKEN_EXPIRY,
+    accessToken,
+    refreshToken,
+    accessTokenExpiresIn,
+    refreshTokenExpiresIn,
   };
 };
 

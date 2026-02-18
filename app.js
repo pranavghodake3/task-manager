@@ -18,7 +18,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use('/api', routes);
 
 app.use((req, res) => {
-  return errorResponse(res, { message: 'URL Path Not Found' }, 404);
+  return errorResponse(res, { message: `URL Path Not Found for this ${req.method} method` }, 404);
 });
 
 mongoose
