@@ -11,6 +11,14 @@ router.get(
   authController.getRefreshToken,
 );
 
-router.post('/register', authMiddleware.register, authController.register);
+router.post('/register/super-admin', authMiddleware.register, authController.registerSuperAdmin);
+
+router.post('/register/company', authMiddleware.registerCompany, authController.registerCompany);
+
+router.post(
+  '/register/company/:companyId/user',
+  authMiddleware.registerCompanyUser,
+  authController.registerCompanyUser,
+);
 
 module.exports = router;

@@ -1,7 +1,8 @@
 const Joi = require('joi');
 const { errorResponse } = require('../utils/responseHelper');
-const UserModel = require('../models/userModel');
-const RefreshTokenModel = require('../models/refreshToken');
+const UserModel = require('../models/UserModel');
+const RefreshTokenModel = require('../models/RefreshTokenModel');
+const CompanyModel = require('../models/CompanyModel');
 const CustomError = require('../utils/CustomError');
 const jwtUtil = require('../utils/jwtUtil');
 
@@ -39,6 +40,65 @@ authMiddleware.register = async (req, res, next) => {
     });
 
     await schema.validateAsync(req.body);
+    const count = await UserModel.countDocuments({
+      email: req.body.email,
+    });
+    if (count > 0) {
+      throw new CustomError('User already exists', 400);
+    }
+    console.log('User Count: ', count);
+
+    next();
+  } catch (error) {
+    return errorResponse(res, error, 400);
+  }
+};
+
+authMiddleware.registerCompany = async (req, res, next) => {
+  try {
+    const schema = Joi.object({
+      name: Joi.string().min(3).max(15).required(),
+      firstName: Joi.string().pattern(new RegExp('^[a-zA-Z]')).max(255).required(),
+      lastName: Joi.string().pattern(new RegExp('^[a-zA-Z]')).max(255).required(),
+      email: Joi.string().min(3).max(255).email().required(),
+      password: Joi.string().min(6).max(255).required(),
+      repeat_password: Joi.ref('password'),
+    });
+
+    await schema.validateAsync(req.body);
+
+    const companyCount = await CompanyModel.countDocuments({
+      name: req.body.name,
+    });
+    if (companyCount > 0) {
+      throw new CustomError('Company already exists', 400);
+    }
+
+    const count = await UserModel.countDocuments({
+      email: req.body.email,
+    });
+    if (count > 0) {
+      throw new CustomError('User already exists', 400);
+    }
+    console.log('User Count: ', count);
+
+    next();
+  } catch (error) {
+    return errorResponse(res, error, 400);
+  }
+};
+
+authMiddleware.registerCompanyUser = async (req, res, next) => {
+  try {
+    const schema = Joi.object({
+      firstName: Joi.string().pattern(new RegExp('^[a-zA-Z]')).max(255).required(),
+      lastName: Joi.string().pattern(new RegExp('^[a-zA-Z]')).max(255).required(),
+      email: Joi.string().min(3).max(255).email().required(),
+      password: Joi.string().min(6).max(255).required(),
+      repeat_password: Joi.ref('password'),
+    });
+    await schema.validateAsync(req.body);
+
     const count = await UserModel.countDocuments({
       email: req.body.email,
     });

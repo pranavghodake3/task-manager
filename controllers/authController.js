@@ -12,9 +12,27 @@ authControllerObj.login = async (req, res) => {
   }
 };
 
-authControllerObj.register = async (req, res) => {
+authControllerObj.registerSuperAdmin = async (req, res) => {
   try {
-    const data = await authService.register(req.body);
+    const data = await authService.registerSuperAdmin(req.body);
+    return successResponse(res, data, 201);
+  } catch (error) {
+    return errorResponse(res, error);
+  }
+};
+
+authControllerObj.registerCompany = async (req, res) => {
+  try {
+    const data = await authService.registerCompany(req.body);
+    return successResponse(res, data, 201);
+  } catch (error) {
+    return errorResponse(res, error);
+  }
+};
+
+authControllerObj.registerCompanyUser = async (req, res) => {
+  try {
+    const data = await authService.registerCompanyUser(req.body);
     return successResponse(res, data, 201);
   } catch (error) {
     return errorResponse(res, error);
