@@ -26,7 +26,7 @@ taskController.createTask = async (req, res) => {
   try {
     const task = req.body;
     tasks.push(task);
-    return successResponse(res, task, undefined, 201);
+    return successResponse(res, task, 201);
   } catch (error) {
     return errorResponse(res, error, error.message, error.statusCode);
   }
@@ -44,7 +44,7 @@ taskController.updateTask = async (req, res) => {
 taskController.deleteTask = async (req, res) => {
   try {
     const id = req.params.id;
-    return successResponse(res, tasks[id]);
+    return successResponse(res, tasks[id], 204);
   } catch (error) {
     return errorResponse(res, error, error.message, error.statusCode);
   }
