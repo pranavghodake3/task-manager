@@ -3,6 +3,7 @@ const { errorResponse } = require('../utils/responseHelper');
 const UserModel = require('../models/UserModel');
 const RefreshTokenModel = require('../models/RefreshTokenModel');
 const CompanyModel = require('../models/CompanyModel');
+const ProjectModel = require('../models/ProjectModel');
 const CustomError = require('../utils/CustomError');
 const jwtUtil = require('../utils/jwtUtil');
 
@@ -39,7 +40,7 @@ authMiddleware.register = async (req, res, next) => {
       repeat_password: Joi.ref('password'),
     });
 
-    await schema.validateAsync(req.body);
+    await schema.validateAsync(req.body || {});
     const count = await UserModel.countDocuments({
       email: req.body.email,
     });
@@ -64,8 +65,7 @@ authMiddleware.registerCompany = async (req, res, next) => {
       password: Joi.string().min(6).max(255).required(),
       repeat_password: Joi.ref('password'),
     });
-
-    await schema.validateAsync(req.body);
+    await schema.validateAsync(req.body || {});
 
     const companyCount = await CompanyModel.countDocuments({
       name: req.body.name,
@@ -88,7 +88,7 @@ authMiddleware.registerCompany = async (req, res, next) => {
   }
 };
 
-authMiddleware.registerCompanyUser = async (req, res, next) => {
+authMiddleware.registerCompanyProjectManager = async (req, res, next) => {
   try {
     const schema = Joi.object({
       firstName: Joi.string().pattern(new RegExp('^[a-zA-Z]')).max(255).required(),
@@ -97,7 +97,7 @@ authMiddleware.registerCompanyUser = async (req, res, next) => {
       password: Joi.string().min(6).max(255).required(),
       repeat_password: Joi.ref('password'),
     });
-    await schema.validateAsync(req.body);
+    await schema.validateAsync(req.body || {});
 
     const count = await UserModel.countDocuments({
       email: req.body.email,
@@ -105,7 +105,40 @@ authMiddleware.registerCompanyUser = async (req, res, next) => {
     if (count > 0) {
       throw new CustomError('User already exists', 400);
     }
-    console.log('User Count: ', count);
+    const { companyId, projectId } = req.params;
+    const project = await ProjectModel.findById(projectId).lean().exec();
+    if (!project || project?.company?.toString() !== companyId) {
+      throw new CustomError('Project or Company does not exists', 400);
+    }
+
+    next();
+  } catch (error) {
+    return errorResponse(res, error, 400);
+  }
+};
+
+authMiddleware.registerCompanyProjectUser = async (req, res, next) => {
+  try {
+    const schema = Joi.object({
+      firstName: Joi.string().pattern(new RegExp('^[a-zA-Z]')).max(255).required(),
+      lastName: Joi.string().pattern(new RegExp('^[a-zA-Z]')).max(255).required(),
+      email: Joi.string().min(3).max(255).email().required(),
+      password: Joi.string().min(6).max(255).required(),
+      repeat_password: Joi.ref('password'),
+    });
+    await schema.validateAsync(req.body || {});
+
+    const count = await UserModel.countDocuments({
+      email: req.body.email,
+    });
+    if (count > 0) {
+      throw new CustomError('User already exists', 400);
+    }
+    const { companyId, projectId } = req.params;
+    const project = await ProjectModel.findById(projectId).lean().exec();
+    if (!project || project?.company?.toString() !== companyId) {
+      throw new CustomError('Project or Company does not exists', 400);
+    }
 
     next();
   } catch (error) {

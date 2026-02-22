@@ -10,6 +10,7 @@ const userSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Role',
   },
+  subRole: { type: String },
 });
 
 const UserModel = mongoose.model('User', userSchema);

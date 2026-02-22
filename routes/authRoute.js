@@ -16,9 +16,15 @@ router.post('/register/super-admin', authMiddleware.register, authController.reg
 router.post('/register/company', authMiddleware.registerCompany, authController.registerCompany);
 
 router.post(
-  '/register/company/:companyId/user',
-  authMiddleware.registerCompanyUser,
-  authController.registerCompanyUser,
+  '/register/company/:companyId/project/:projectId/manager',
+  authMiddleware.registerCompanyProjectManager,
+  authController.registerCompanyProjectManager,
+);
+
+router.post(
+  '/register/company/:companyId/project/:projectId/user',
+  authMiddleware.registerCompanyProjectUser,
+  authController.registerCompanyProjectUser,
 );
 
 module.exports = router;

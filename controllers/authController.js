@@ -23,16 +23,25 @@ authControllerObj.registerSuperAdmin = async (req, res) => {
 
 authControllerObj.registerCompany = async (req, res) => {
   try {
-    const data = await authService.registerCompany(req.body);
+    const data = await authService.registerCompany(req);
     return successResponse(res, data, 201);
   } catch (error) {
     return errorResponse(res, error);
   }
 };
 
-authControllerObj.registerCompanyUser = async (req, res) => {
+authControllerObj.registerCompanyProjectManager = async (req, res) => {
   try {
-    const data = await authService.registerCompanyUser(req.body);
+    const data = await authService.registerCompanyProjectManager(req);
+    return successResponse(res, data, 201);
+  } catch (error) {
+    return errorResponse(res, error);
+  }
+};
+
+authControllerObj.registerCompanyProjectUser = async (req, res) => {
+  try {
+    const data = await authService.registerCompanyProjectUser(req);
     return successResponse(res, data, 201);
   } catch (error) {
     return errorResponse(res, error);

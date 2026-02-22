@@ -1,5 +1,7 @@
 const UserModel = require('../models/UserModel');
 const RefreshTokenModel = require('../models/RefreshTokenModel');
+const UserProjectModel = require('../models/UserProjectModel');
+// const ProjectModel = require('../models/ProjectModel');
 const CompanyModel = require('../models/CompanyModel');
 const passwordHelper = require('../utils/passwordHelper');
 const CustomError = require('../utils/CustomError');
@@ -34,6 +36,7 @@ authServiceObj.login = async (reqBody) => {
   refreshTokenObj.save();
 
   return {
+    user: user[0],
     accessToken,
     refreshToken,
     accessTokenExpiresIn,
@@ -59,28 +62,70 @@ authServiceObj.registerSuperAdmin = async (reqBody) => {
 };
 
 authServiceObj.registerCompany = async (reqBody) => {
-  reqBody.password = await passwordHelper.generatePasswordHash(reqBody.password);
-  let company = new CompanyModel({
-    name: reqBody.name,
-  });
   const companyAdminRole = await roleService.getCompanyAdminRole();
-  company.save();
+  const { name, ...userData } = reqBody;
+  userData.password = await passwordHelper.generatePasswordHash(reqBody.password);
   let user = new UserModel({
-    ...reqBody,
+    ...userData,
     role: companyAdminRole._id,
   });
-  user = user.save();
+  user = await user.save();
+
+  let company = new CompanyModel({
+    name: name,
+    admin: user._id,
+  });
+  company.save();
+  delete reqBody.name;
+
+  // let project = new ProjectModel({
+  //   name: 'Project 1',
+  //   company: company._id
+  // });
+  // project.save();
+
+  // project = new ProjectModel({
+  //   name: 'Project 2',
+  //   company: company._id
+  // });
+  // project.save();
+
   return user;
 };
 
-authServiceObj.registerCompanyUser = async (reqBody) => {
+authServiceObj.registerCompanyProjectManager = async (req) => {
+  const reqBody = req.body;
+  const { projectId } = req.params;
+  reqBody.password = await passwordHelper.generatePasswordHash(reqBody.password);
+  const managerRole = await roleService.getManagerRole();
+  let user = new UserModel({
+    ...reqBody,
+    role: managerRole._id,
+  });
+  user = await user.save();
+  let userProject = new UserProjectModel({
+    project: projectId,
+    user: user._id,
+  });
+  await userProject.save();
+  return user;
+};
+
+authServiceObj.registerCompanyProjectUser = async (req) => {
+  const reqBody = req.body;
+  const { projectId } = req.params;
   reqBody.password = await passwordHelper.generatePasswordHash(reqBody.password);
   const userRole = await roleService.getUserRole();
   let user = new UserModel({
     ...reqBody,
     role: userRole._id,
   });
-  user = user.save();
+  user = await user.save();
+  let userProject = new UserProjectModel({
+    project: projectId,
+    user: user._id,
+  });
+  await userProject.save();
   return user;
 };
 

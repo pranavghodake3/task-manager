@@ -13,7 +13,7 @@ roleService.getSuperAdminRole = async () => {
 
 roleService.getCompanyAdminRole = async () => {
   return await RoleModel.findOne({
-    name: ROLES.SUPER_ADMIN,
+    name: ROLES.COMPANY_ADMIN,
   })
     .lean()
     .exec();
@@ -21,7 +21,7 @@ roleService.getCompanyAdminRole = async () => {
 
 roleService.getManagerRole = async () => {
   return await RoleModel.findOne({
-    name: ROLES.SUPER_ADMIN,
+    name: ROLES.MANAGER,
   })
     .lean()
     .exec();
@@ -29,7 +29,7 @@ roleService.getManagerRole = async () => {
 
 roleService.getUserRole = async () => {
   return await RoleModel.findOne({
-    name: ROLES.SUPER_ADMIN,
+    name: ROLES.USER,
   })
     .lean()
     .exec();
