@@ -6,6 +6,7 @@ const CompanyModel = require('../models/CompanyModel');
 const ProjectModel = require('../models/ProjectModel');
 const CustomError = require('../utils/CustomError');
 const jwtUtil = require('../utils/jwtUtil');
+const { SUB_ROLES } = require('../constants/index');
 
 const authMiddleware = {};
 
@@ -125,6 +126,7 @@ authMiddleware.registerCompanyProjectUser = async (req, res, next) => {
       email: Joi.string().min(3).max(255).email().required(),
       password: Joi.string().min(6).max(255).required(),
       repeat_password: Joi.ref('password'),
+      subRole: Joi.allow(...Object.values(SUB_ROLES)).required(),
     });
     await schema.validateAsync(req.body || {});
 

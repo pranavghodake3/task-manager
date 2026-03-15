@@ -2,9 +2,9 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const refreshTokenSchema = new Schema({
-  refreshToken: String,
-  userId: String,
-  expiresAt: Date,
+  refreshToken: { type: String, required: true },
+  userId: { type: String, required: true },
+  expiresAt: { type: Date, required: true },
 });
 
 const RefreshTokenModel = mongoose.model('refreshToken', refreshTokenSchema);
