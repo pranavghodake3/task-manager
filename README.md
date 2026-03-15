@@ -17,47 +17,15 @@ A task management application inspired by popular productivity tools like Jira, 
 ## 🛠️ Tech Stack
 
 - **Runtime**: Node.js (v25)
-- **Framework**: Express.js 5.2.1
-- **Logging**: Winston 3.19.0
-- **Environment**: dotenv 17.2.4
+- **Framework**: Express.js
+- **Logging**: Winston
+- **Environment**: dotenv
 - **Development Tools**:
-  - ESLint 9.39.2 - Code linting
-  - Prettier 3.8.1 - Code formatting
-  - Nodemon 3.1.11 - Auto-reload on file changes
-  - Husky 9.1.7 - Git hooks
-  - Lint-staged 16.2.7 - Pre-commit linting
-
-## 📁 Project Structure
-
-```
-task-manager/
-├── app.js                       # Main application entry point
-├── package.json                 # Project dependencies and scripts
-├── Dockerfile                   # Docker configuration
-├── docker-compose.yaml          # Docker Compose configuration
-├── eslint.config.mjs            # ESLint configuration
-├── config/
-│   ├── index.js                 # Configuration management
-│   └── logger.js                # Winston logger configuration
-├── controllers/
-│   └── taskController.js        # Task controller with business logic
-├── models/
-│   ├── index.js                 # Model exports
-│   ├── bookModel.js             # Book model definition
-│   └── siteModel.js             # Site model definition
-├── routes/
-│   ├── index.js                 # Route aggregator
-│   └── tasksRoute.js            # Task routes definition
-├── services/
-│   └── testService.js           # Service layer for business logic
-├── middlewares/
-│   └── testMiddleware.js        # Express middleware
-├── utils/
-│   ├── commonHelper.js          # Common utility functions
-│   └── responseHelper.js        # Response formatting helpers
-├── logs/                        # Application logs directory
-└── README.md                    # This file
-```
+  - ESLint - Code linting
+  - Prettier - Code formatting
+  - Nodemon - Auto-reload on file changes
+  - Husky - Git hooks
+  - Lint-staged - Pre-commit linting
 
 ## 🚀 Installation
 
@@ -195,7 +163,9 @@ All API responses follow a standard format using the response helper:
 **Success Response:**
 ```json
 {
-  "success": true,
+  "status": true,
+  "statusCode": 200,
+  "message": "Success",
   "data": { /* task data */ }
 }
 ```
@@ -204,10 +174,16 @@ All API responses follow a standard format using the response helper:
 ```json
 {
   "success": false,
-  "error": "Error message",
-  "statusCode": 400
+  "message": "Bad Request",
+  "statusCode": 400,
+  "error": {
+    "message": "Detailed error message",
+    "data": { /* optional error data */ }
+  }
 }
 ```
+
+Note: the `error` object is included in responses only when `NODE_ENV` is not `production` (the helper logs full error details in non-production).
 
 ## 🤝 Contributing
 
