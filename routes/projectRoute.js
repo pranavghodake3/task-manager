@@ -2,15 +2,36 @@ const express = require('express');
 const router = express.Router();
 const projectMiddleware = require('../middlewares/projectMiddleware');
 const projectController = require('../controllers/projectController');
+const { handleAsyncFunction } = require('../utils/commonHelper');
 
-router.get('/', projectMiddleware.isCompanyProjectValid, projectController.getProjects);
+router.get(
+  '/',
+  projectMiddleware.isCompanyProjectValid,
+  handleAsyncFunction(projectController.getProjects),
+);
 
-router.get('/:id', projectMiddleware.isCompanyProjectValid, projectController.getProjectById);
+router.get(
+  '/:id',
+  projectMiddleware.isCompanyProjectValid,
+  handleAsyncFunction(projectController.getProjectById),
+);
 
-router.post('/', projectMiddleware.isCompanyProjectValid, projectController.createProject);
+router.post(
+  '/',
+  projectMiddleware.isCompanyProjectValid,
+  handleAsyncFunction(projectController.createProject),
+);
 
-router.put('/', projectMiddleware.isCompanyProjectValid, projectController.updateProject);
+router.put(
+  '/',
+  projectMiddleware.isCompanyProjectValid,
+  handleAsyncFunction(projectController.updateProject),
+);
 
-router.delete('/:id', projectMiddleware.isCompanyProjectValid, projectController.deleteProject);
+router.delete(
+  '/:id',
+  projectMiddleware.isCompanyProjectValid,
+  handleAsyncFunction(projectController.deleteProject),
+);
 
 module.exports = router;

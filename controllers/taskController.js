@@ -1,53 +1,32 @@
-const { successResponse, errorResponse } = require('../utils/responseHelper');
 const logger = require('../config/logger');
 const tasks = [];
 
 const taskController = {};
 
-taskController.getTasks = async (req, res) => {
-  try {
-    logger.info('Get Tasks Called');
-    return successResponse(res, tasks);
-  } catch (error) {
-    return errorResponse(res, error, error.message, error.statusCode);
-  }
+taskController.getTasks = async () => {
+  logger.info('Get Tasks Called');
+  return { data: tasks };
 };
 
-taskController.getTaskById = async (req, res) => {
-  try {
-    const id = req.params.id;
-    return successResponse(res, tasks[id]);
-  } catch (error) {
-    return errorResponse(res, error, error.message, error.statusCode);
-  }
+taskController.getTaskById = async (req) => {
+  const id = req.params.id;
+  return { data: tasks[id] };
 };
 
-taskController.createTask = async (req, res) => {
-  try {
-    const task = req.body;
-    tasks.push(task);
-    return successResponse(res, task, 201);
-  } catch (error) {
-    return errorResponse(res, error, error.message, error.statusCode);
-  }
+taskController.createTask = async (req) => {
+  const task = req.body;
+  tasks.push(task);
+  return { data: task, statusCode: 201 };
 };
 
-taskController.updateTask = async (req, res) => {
-  try {
-    const task = req.body;
-    return successResponse(res, task);
-  } catch (error) {
-    return errorResponse(res, error, error.message, error.statusCode);
-  }
+taskController.updateTask = async (req) => {
+  const task = req.body;
+  return { data: task };
 };
 
-taskController.deleteTask = async (req, res) => {
-  try {
-    const id = req.params.id;
-    return successResponse(res, tasks[id], 204);
-  } catch (error) {
-    return errorResponse(res, error, error.message, error.statusCode);
-  }
+taskController.deleteTask = async (req) => {
+  const id = req.params.id;
+  return { data: tasks[id], statusCode: 204 };
 };
 
 module.exports = taskController;

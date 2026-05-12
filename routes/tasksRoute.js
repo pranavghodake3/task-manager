@@ -1,15 +1,16 @@
 const express = require('express');
 const router = express.Router();
 const taskController = require('../controllers/taskController');
+const { handleAsyncFunction } = require('../utils/commonHelper');
 
-router.get('/', taskController.getTasks);
+router.get('/', handleAsyncFunction(taskController.getTasks));
 
-router.get('/:id', taskController.getTaskById);
+router.get('/:id', handleAsyncFunction(taskController.getTaskById));
 
-router.post('/', taskController.createTask);
+router.post('/', handleAsyncFunction(taskController.createTask));
 
-router.put('/', taskController.updateTask);
+router.put('/', handleAsyncFunction(taskController.updateTask));
 
-router.delete('/:id', taskController.deleteTask);
+router.delete('/:id', handleAsyncFunction(taskController.deleteTask));
 
 module.exports = router;

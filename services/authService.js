@@ -36,7 +36,11 @@ authServiceObj.login = async (reqBody) => {
   refreshTokenObj.save();
 
   return {
-    user: user[0],
+    user: {
+      firstName: user[0].firstName,
+      lastName: user[0].lastName,
+      email: user[0].email,
+    },
     accessToken,
     refreshToken,
     accessTokenExpiresIn,
