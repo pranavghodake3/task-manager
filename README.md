@@ -87,6 +87,11 @@ docker run -p 5000:5000 task-manager
 docker-compose up
 ```
 
+### Run Migrations
+```bash
+docker compose exec backend npm run migrate
+```
+
 ## 📡 API Endpoints
 
 All endpoints are prefixed with `/api/tasks`

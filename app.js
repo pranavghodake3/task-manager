@@ -29,12 +29,12 @@ app.use((req, res) => {
 sequelize
   .authenticate()
   .then(() => {
-    console.log('SSSSSSSSSSSSSSSSSSSSSSS Postgres SQL DB Connected Successfuly!!');
+    console.log('=========== Postgres SQL DB Connected Successfuly!!');
     app.listen(PORT, () => {
-      console.log(`Server running on PORT ${PORT}`);
+      console.log(`=========== Server running on PORT ${PORT}`);
     });
   })
   .catch((error) => {
-    console.log('DB Connection Error: ', error);
-    logger.error('DB Connection Error: ', error);
+    console.log('************ DB Connection Error: ', error);
+    logger.error('************ DB Connection Error: ', error);
   });
