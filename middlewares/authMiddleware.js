@@ -18,8 +18,10 @@ authMiddleware.login = async (req, res, next) => {
     });
 
     await schema.validateAsync(req.body || {});
-    const count = await UserModel.countDocuments({
-      email: req.body.email,
+    const count = await UserModel.count({
+      where: {
+        email: req.body.email,
+      },
     });
     if (count !== 1) {
       throw new CustomError('User does not exist for this email', 401);
@@ -42,8 +44,10 @@ authMiddleware.register = async (req, res, next) => {
     });
 
     await schema.validateAsync(req.body || {});
-    const count = await UserModel.countDocuments({
-      email: req.body.email,
+    const count = await UserModel.count({
+      where: {
+        email: req.body.email,
+      },
     });
     if (count > 0) {
       throw new CustomError('User already exists', 400);
@@ -68,15 +72,19 @@ authMiddleware.registerCompany = async (req, res, next) => {
     });
     await schema.validateAsync(req.body || {});
 
-    const companyCount = await CompanyModel.countDocuments({
-      name: req.body.name,
+    const companyCount = await CompanyModel.count({
+      where: {
+        name: req.body.name,
+      },
     });
     if (companyCount > 0) {
       throw new CustomError('Company already exists', 400);
     }
 
-    const count = await UserModel.countDocuments({
-      email: req.body.email,
+    const count = await UserModel.count({
+      where: {
+        email: req.body.email,
+      },
     });
     if (count > 0) {
       throw new CustomError('User already exists', 400);
@@ -100,15 +108,17 @@ authMiddleware.registerCompanyProjectManager = async (req, res, next) => {
     });
     await schema.validateAsync(req.body || {});
 
-    const count = await UserModel.countDocuments({
-      email: req.body.email,
+    const count = await UserModel.count({
+      where: {
+        email: req.body.email,
+      },
     });
     if (count > 0) {
       throw new CustomError('User already exists', 400);
     }
     const { companyId, projectId } = req.params;
-    const project = await ProjectModel.findById(projectId).lean().exec();
-    if (!project || project?.company?.toString() !== companyId) {
+    const project = await ProjectModel.findByPk(projectId);
+    if (!project || project.company.toString() !== companyId) {
       throw new CustomError('Project or Company does not exists', 400);
     }
 
@@ -130,15 +140,17 @@ authMiddleware.registerCompanyProjectUser = async (req, res, next) => {
     });
     await schema.validateAsync(req.body || {});
 
-    const count = await UserModel.countDocuments({
-      email: req.body.email,
+    const count = await UserModel.count({
+      where: {
+        email: req.body.email,
+      },
     });
     if (count > 0) {
       throw new CustomError('User already exists', 400);
     }
     const { companyId, projectId } = req.params;
-    const project = await ProjectModel.findById(projectId).lean().exec();
-    if (!project || project?.company?.toString() !== companyId) {
+    const project = await ProjectModel.findByPk(projectId);
+    if (!project || project.company.toString() !== companyId) {
       throw new CustomError('Project or Company does not exists', 400);
     }
 
@@ -175,20 +187,19 @@ authMiddleware.isRefreshTokenAuthentic = async (req, res, next) => {
       throw new CustomError('Missing Bearer Token', 401);
     }
     const validToken = jwtUtil.verifyRefreshToken(bearerToken);
-    const refreshToken = await RefreshTokenModel.find({
-      refreshToken: bearerToken,
-    })
-      .limit(1)
-      .lean()
-      .exec();
-    if (validToken && refreshToken.length === 1) {
+    const refreshToken = await RefreshTokenModel.findOne({
+      where: {
+        refreshToken: bearerToken,
+      },
+    });
+    if (validToken && refreshToken) {
       req.auth = {
         user: {
-          userId: refreshToken[0].userId,
+          userId: refreshToken.userId,
         },
       };
       const currentDate = new Date();
-      const refreshTokenExpiry = new Date(refreshToken[0].expiresAt);
+      const refreshTokenExpiry = new Date(refreshToken.expiresAt);
       if (currentDate < refreshTokenExpiry) {
         next();
       } else {

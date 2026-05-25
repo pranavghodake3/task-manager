@@ -5,34 +5,34 @@ const roleService = {};
 
 roleService.getSuperAdminRole = async () => {
   return await RoleModel.findOne({
-    name: ROLES.SUPER_ADMIN,
-  })
-    .lean()
-    .exec();
+    where: {
+      name: ROLES.SUPER_ADMIN,
+    },
+  });
 };
 
 roleService.getCompanyAdminRole = async () => {
   return await RoleModel.findOne({
-    name: ROLES.COMPANY_ADMIN,
-  })
-    .lean()
-    .exec();
+    where: {
+      name: ROLES.COMPANY_ADMIN,
+    },
+  });
 };
 
 roleService.getManagerRole = async () => {
   return await RoleModel.findOne({
-    name: ROLES.MANAGER,
-  })
-    .lean()
-    .exec();
+    where: {
+      name: ROLES.MANAGER,
+    },
+  });
 };
 
 roleService.getUserRole = async () => {
   return await RoleModel.findOne({
-    name: ROLES.USER,
-  })
-    .lean()
-    .exec();
+    where: {
+      name: ROLES.USER,
+    },
+  });
 };
 
 module.exports = roleService;

@@ -1,10 +1,22 @@
-const mongoose = require('mongoose');
+const { DataTypes } = require('sequelize');
+const { sequelize } = require('./sequelize');
 
-const taskSchema = new mongoose.Schema({
-  title: String,
-  description: String,
-});
-
-const TaskModel = mongoose.model('Task', taskSchema);
+const TaskModel = sequelize.define(
+  'Task',
+  {
+    title: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    description: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+  },
+  {
+    tableName: 'tasks',
+    timestamps: true,
+  },
+);
 
 module.exports = TaskModel;

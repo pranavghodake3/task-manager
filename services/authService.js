@@ -11,35 +11,41 @@ const roleService = require('../services/roleService');
 const authServiceObj = {};
 
 authServiceObj.login = async (reqBody) => {
-  const user = await UserModel.find({
-    email: reqBody.email,
-  })
-    .limit(1)
-    .populate('role')
-    .lean()
-    .exec();
-  const isAuthenticated = await passwordHelper.comparePassword(reqBody.password, user[0].password);
-
-  if (!isAuthenticated) {
-    throw new CustomError('Invalid Password for this email', 401);
-  }
-  await RefreshTokenModel.deleteMany({
-    userId: user[0]._id,
+  const user = await UserModel.findOne({
+    where: {
+      email: reqBody.email,
+    },
   });
-  const { refreshToken, refreshTokenExpiresIn } = jwtUtil.getRefreshToken({ userId: user[0]._id });
-  const { accessToken, accessTokenExpiresIn } = jwtUtil.getToken({ userId: user[0]._id });
-  const refreshTokenObj = new RefreshTokenModel({
+
+  if (!user) {
+    throw new CustomError('Invalid email or password', 401);
+  }
+
+  const isAuthenticated = await passwordHelper.comparePassword(reqBody.password, user.password);
+  if (!isAuthenticated) {
+    throw new CustomError('Invalid email or password', 401);
+  }
+
+  await RefreshTokenModel.destroy({
+    where: {
+      userId: user.id,
+    },
+  });
+
+  const { refreshToken, refreshTokenExpiresIn } = jwtUtil.getRefreshToken({ userId: user.id });
+  const { accessToken, accessTokenExpiresIn } = jwtUtil.getToken({ userId: user.id });
+
+  await RefreshTokenModel.create({
     refreshToken,
-    userId: user[0]._id,
+    userId: user.id,
     expiresAt: refreshTokenExpiresIn,
   });
-  refreshTokenObj.save();
 
   return {
     user: {
-      firstName: user[0].firstName,
-      lastName: user[0].lastName,
-      email: user[0].email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
     },
     accessToken,
     refreshToken,
@@ -51,48 +57,50 @@ authServiceObj.login = async (reqBody) => {
 authServiceObj.registerSuperAdmin = async (reqBody) => {
   reqBody.password = await passwordHelper.generatePasswordHash(reqBody.password);
   const superAdminRole = await roleService.getSuperAdminRole();
-  const superAdmin = await UserModel.find({
-    role: superAdminRole._id,
-  });
-  if (superAdmin.length > 0) {
-    throw new CustomError('Super Admin exists already', 400, { email: superAdmin[0].email });
+
+  if (!superAdminRole) {
+    throw new CustomError('Super admin role is not configured', 500);
   }
-  let user = new UserModel({
-    ...reqBody,
-    role: superAdminRole._id,
+
+  const existingSuperAdmin = await UserModel.findOne({
+    where: {
+      role: superAdminRole.id,
+    },
   });
-  user = user.save();
+
+  if (existingSuperAdmin) {
+    throw new CustomError('Super Admin exists already', 400, { email: existingSuperAdmin.email });
+  }
+
+  const user = await UserModel.create({
+    ...reqBody,
+    role: superAdminRole.id,
+  });
+
   return user;
 };
 
 authServiceObj.registerCompany = async (reqBody) => {
   const companyAdminRole = await roleService.getCompanyAdminRole();
+
+  if (!companyAdminRole) {
+    throw new CustomError('Company admin role is not configured', 500);
+  }
+
   const { name, ...userData } = reqBody;
   userData.password = await passwordHelper.generatePasswordHash(reqBody.password);
-  let user = new UserModel({
+
+  const user = await UserModel.create({
     ...userData,
-    role: companyAdminRole._id,
+    role: companyAdminRole.id,
   });
-  user = await user.save();
 
-  let company = new CompanyModel({
-    name: name,
-    admin: user._id,
+  await CompanyModel.create({
+    name,
+    admin: user.id,
   });
-  company.save();
+
   delete reqBody.name;
-
-  // let project = new ProjectModel({
-  //   name: 'Project 1',
-  //   company: company._id
-  // });
-  // project.save();
-
-  // project = new ProjectModel({
-  //   name: 'Project 2',
-  //   company: company._id
-  // });
-  // project.save();
 
   return user;
 };
@@ -102,16 +110,21 @@ authServiceObj.registerCompanyProjectManager = async (req) => {
   const { projectId } = req.params;
   reqBody.password = await passwordHelper.generatePasswordHash(reqBody.password);
   const managerRole = await roleService.getManagerRole();
-  let user = new UserModel({
+
+  if (!managerRole) {
+    throw new CustomError('Manager role is not configured', 500);
+  }
+
+  const user = await UserModel.create({
     ...reqBody,
-    role: managerRole._id,
+    role: managerRole.id,
   });
-  user = await user.save();
-  let userProject = new UserProjectModel({
+
+  await UserProjectModel.create({
     project: projectId,
-    user: user._id,
+    user: user.id,
   });
-  await userProject.save();
+
   return user;
 };
 
@@ -120,33 +133,44 @@ authServiceObj.registerCompanyProjectUser = async (req) => {
   const { projectId } = req.params;
   reqBody.password = await passwordHelper.generatePasswordHash(reqBody.password);
   const userRole = await roleService.getUserRole();
-  let user = new UserModel({
+
+  if (!userRole) {
+    throw new CustomError('User role is not configured', 500);
+  }
+
+  const user = await UserModel.create({
     ...reqBody,
-    role: userRole._id,
+    role: userRole.id,
   });
-  user = await user.save();
-  let userProject = new UserProjectModel({
+
+  await UserProjectModel.create({
     project: projectId,
-    user: user._id,
+    user: user.id,
   });
-  await userProject.save();
+
   return user;
 };
 
 authServiceObj.getRefreshToken = async (req) => {
-  await RefreshTokenModel.deleteMany({
-    userId: req.auth.user.userId,
+  const userId = Number(req.auth.user.userId);
+
+  await RefreshTokenModel.destroy({
+    where: {
+      userId,
+    },
   });
+
   const { refreshToken, refreshTokenExpiresIn } = jwtUtil.getRefreshToken({
-    userId: req.auth.user.userId,
+    userId,
   });
-  const { accessToken, accessTokenExpiresIn } = jwtUtil.getToken({ userId: req.auth.user.userId });
-  const refreshTokenObj = new RefreshTokenModel({
+  const { accessToken, accessTokenExpiresIn } = jwtUtil.getToken({ userId });
+
+  await RefreshTokenModel.create({
     refreshToken,
-    userId: req.auth.user.userId,
+    userId,
     expiresAt: refreshTokenExpiresIn,
   });
-  refreshTokenObj.save();
+
   return {
     accessToken,
     refreshToken,

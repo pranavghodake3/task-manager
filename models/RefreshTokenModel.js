@@ -1,12 +1,26 @@
-const mongoose = require('mongoose');
-const { Schema } = mongoose;
+const { DataTypes } = require('sequelize');
+const { sequelize } = require('./sequelize');
 
-const refreshTokenSchema = new Schema({
-  refreshToken: { type: String, required: true },
-  userId: { type: String, required: true },
-  expiresAt: { type: Date, required: true },
-});
-
-const RefreshTokenModel = mongoose.model('refreshToken', refreshTokenSchema);
+const RefreshTokenModel = sequelize.define(
+  'RefreshToken',
+  {
+    refreshToken: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    expiresAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+    },
+  },
+  {
+    tableName: 'refresh_tokens',
+    timestamps: true,
+  },
+);
 
 module.exports = RefreshTokenModel;

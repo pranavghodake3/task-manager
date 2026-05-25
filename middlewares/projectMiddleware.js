@@ -8,10 +8,10 @@ const projectMiddleware = {};
 projectMiddleware.isCompanyProjectValid = async (req, res, next) => {
   try {
     const { companyId, id } = req.params;
-    const company = await CompanyModel.findById(companyId);
+    const company = await CompanyModel.findByPk(companyId);
     if (!company) throw new CustomError('Company does not exists', 404);
 
-    const project = await ProjectModel.findById(id).lean().exec();
+    const project = await ProjectModel.findByPk(id);
     if (!project) throw new CustomError('Project does not exists', 404);
 
     if (companyId && project.company.toString() !== companyId) {

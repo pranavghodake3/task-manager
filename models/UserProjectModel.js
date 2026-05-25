@@ -1,19 +1,22 @@
-const mongoose = require('mongoose');
-const { Schema } = mongoose;
+const { DataTypes } = require('sequelize');
+const { sequelize } = require('./sequelize');
 
-const userProjectSchema = new Schema({
-  user: {
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-    required: true,
+const UserProjectModel = sequelize.define(
+  'UserProject',
+  {
+    user: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    project: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
   },
-  project: {
-    type: Schema.Types.ObjectId,
-    ref: 'Project',
-    required: true,
+  {
+    tableName: 'user_projects',
+    timestamps: true,
   },
-});
-
-const UserProjectModel = mongoose.model('UserProject', userProjectSchema);
+);
 
 module.exports = UserProjectModel;

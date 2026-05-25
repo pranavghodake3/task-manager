@@ -4,32 +4,38 @@ const UserProjectModel = require('../models/UserProjectModel');
 const projectService = {};
 
 projectService.getProjects = async (companyId) => {
-  return await ProjectModel.find({
-    company: companyId,
-  })
-    .lean()
-    .exec();
+  return await ProjectModel.findAll({
+    where: {
+      company: companyId,
+    },
+  });
 };
 
 projectService.getProjectById = async (id) => {
-  return await ProjectModel.findById(id).lean().exec();
+  return await ProjectModel.findByPk(id);
 };
 
 projectService.createProject = async (companyId, reqBody) => {
   reqBody.company = companyId;
-  let project = new ProjectModel(reqBody);
-  project = await project.save();
+  const project = await ProjectModel.create(reqBody);
   return project;
 };
 
 projectService.updateProject = async (id, reqBody) => {
-  return await ProjectModel.findByIdAndUpdate(id, reqBody).lean().exec();
+  await ProjectModel.update(reqBody, {
+    where: { id },
+  });
+  return await ProjectModel.findByPk(id);
 };
 
 projectService.deleteProject = async (id) => {
-  await ProjectModel.findByIdAndDelete(id);
-  await UserProjectModel.deleteMany({
-    project: id,
+  await ProjectModel.destroy({
+    where: { id },
+  });
+  await UserProjectModel.destroy({
+    where: {
+      project: id,
+    },
   });
 };
 
