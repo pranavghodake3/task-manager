@@ -3,6 +3,14 @@ const RoleModel = require('../models/RoleModel');
 
 const roleService = {};
 
+roleService.getRole = async (id) => {
+  return await RoleModel.findOne({
+    where: {
+      id,
+    },
+  });
+};
+
 roleService.getSuperAdminRole = async () => {
   return await RoleModel.findOne({
     where: {

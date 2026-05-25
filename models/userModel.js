@@ -26,7 +26,7 @@ const UserModel = sequelize.define(
     },
     role: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
     },
     subRole: {
       type: DataTypes.STRING,

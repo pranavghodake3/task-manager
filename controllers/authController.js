@@ -14,8 +14,13 @@ authControllerObj.registerSuperAdmin = async (req) => {
   return { data, statusCode: 201 };
 };
 
+authControllerObj.registerUser = async (req) => {
+  const data = await authService.registerUser(req.body);
+  return { data, statusCode: 201 };
+};
+
 authControllerObj.registerCompany = async (req) => {
-  const data = await authService.registerCompany(req);
+  const data = await authService.registerCompany(req.body);
   return { data, statusCode: 201 };
 };
 

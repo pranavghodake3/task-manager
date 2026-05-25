@@ -80,6 +80,24 @@ authServiceObj.registerSuperAdmin = async (reqBody) => {
   return user;
 };
 
+authServiceObj.registerUser = async (reqBody) => {
+  reqBody.password = await passwordHelper.generatePasswordHash(reqBody.password);
+  if (reqBody.roleId) {
+    const role = await roleService.getRole(reqBody.roleId);
+
+    if (!role) {
+      throw new CustomError('Role is not configured', 404);
+    }
+  }
+
+  const user = await UserModel.create({
+    ...reqBody,
+    role: reqBody.roleId ?? null,
+  });
+
+  return user;
+};
+
 authServiceObj.registerCompany = async (reqBody) => {
   const companyAdminRole = await roleService.getCompanyAdminRole();
 

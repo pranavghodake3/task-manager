@@ -23,7 +23,11 @@ app.get('/', (req, res) => {
 });
 
 app.use((req, res) => {
-  return errorResponse(res, { message: `URL Path Not Found for this ${req.method} method` }, 404);
+  return errorResponse(
+    res,
+    { message: `URL Path ${req.path} Not Found for this ${req.method} method` },
+    404,
+  );
 });
 
 sequelize
