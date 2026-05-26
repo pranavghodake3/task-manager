@@ -11,6 +11,10 @@ services:
     env_file:
       - path: ./.env
         required: true
+    command: npm run dev
+    volumes:
+      - .:/app
+      - /app/node_modules
 
 # Use postgres/example user/password credentials
   db:
