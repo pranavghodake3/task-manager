@@ -1,3 +1,6 @@
-node_modules
-.env
-logs
+backend/node_modules
+backend/logs
+backend/.env
+
+frontend/node_modules
+frontend/.env
