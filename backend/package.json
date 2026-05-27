@@ -14,6 +14,7 @@
     "migrate": "npx sequelize-cli db:migrate",
     "db:migrate": "npx sequelize-cli db:migrate",
     "db:migrate:undo": "npx sequelize-cli db:migrate:undo",
+    "seed": "npx sequelize-cli db:seed:all",
     "db:seed": "npx sequelize-cli db:seed:all"
   },
   "repository": {

@@ -84,12 +84,16 @@ docker run -p 5000:5000 task-manager
 
 ### Run with Docker Compose
 ```bash
-docker-compose up
+docker-compose up --build
 ```
 
 ### Run Migrations
 ```bash
 docker compose exec backend npm run migrate
+```
+### Run Seeders
+```bash
+docker compose exec backend npm run seed
 ```
 
 ## 📡 API Endpoints
