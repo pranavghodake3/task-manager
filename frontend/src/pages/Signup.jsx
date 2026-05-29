@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "../assets/css/auth.css";
 import api from "../services/api";
+import { NavLink } from "react-router";
 
 export default function Signup() {
   const [isCompany, selectIsCompany] = useState("0");
@@ -40,14 +41,16 @@ export default function Signup() {
              
               <div className="form-group">
                 <label>Is Company ?</label>
-                <label>
-                  <input type="radio" name="company" checked={isCompany === "0"}  value="0" onChange={handleIsCompany} />
-                  No
-                </label>
-                <label>
-                  <input type="radio" name="company" checked={isCompany === "1"}  value="1" onChange={handleIsCompany} />
-                  Yes
-                </label>
+                <div className="radio-group">
+                  <label>
+                    <input type="radio" name="company" checked={isCompany === "0"}  value="0" onChange={handleIsCompany} />
+                    No
+                  </label>
+                  <label>
+                    <input type="radio" name="company" checked={isCompany === "1"}  value="1" onChange={handleIsCompany} />
+                    Yes
+                  </label>
+                </div>
               </div>
 
               <div className={`form-group ${ isCompany == '0' ? 'hide' : 'show' }`}>
@@ -86,7 +89,7 @@ export default function Signup() {
             </form>
 
             <p className="auth-footer">
-              Already have an account? <a href="/login">Login</a>
+              Already have an account? <NavLink to="/login" end>Login</NavLink>
             </p>
           </div>
         </div>

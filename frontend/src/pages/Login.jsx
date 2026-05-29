@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import "../assets/css/auth.css";
 import api from "../services/api";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, NavLink } from "react-router-dom";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -60,17 +60,17 @@ export default function Login() {
                   Remember me
                 </label>
 
-                <a href="/">Forgot Password?</a>
+                <NavLink to="/" end>Forgot Password?</NavLink>
               </div>
 
               <button type="submit" className="auth-btn">
                 Login
               </button>
-                <a href="/">Cancel</a>
+              <NavLink to="/" end>Cancel</NavLink>
             </form>
 
             <p className="auth-footer">
-              Don’t have an account? <a href="/signup">Sign Up</a>
+              Don’t have an account? <NavLink to="/signup" end>Sign Up</NavLink>
             </p>
           </div>
         </div>

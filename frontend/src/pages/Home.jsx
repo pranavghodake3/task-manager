@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import "../assets/css/home.css";
 
 function Home() {
@@ -9,13 +9,13 @@ function Home() {
         <h2>TaskManager Pro</h2>
 
         <div>
-          <Link to="/login" className="btn login-btn">
+          <NavLink to="/login" end className="btn login-btn">
             Login
-          </Link>
+          </NavLink>
 
-          <Link to="/signup" className="btn signup-btn">
+          <NavLink to="/signup" end className="btn signup-btn">
             Sign Up
-          </Link>
+          </NavLink>
         </div>
       </nav>
 

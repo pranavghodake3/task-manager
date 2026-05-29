@@ -89,18 +89,54 @@ body {
   gap: 20px;
 }
 
-.form-group {
+.auth-form .form-group {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
 }
 
-.form-group label {
-  margin-bottom: 8px;
+.auth-form .form-group > label:first-child {
+  margin: 0;
   font-weight: 600;
   color: #172b4d;
+  width: 100%;
+  text-align: left;
 }
 
-.form-group input {
+/* Keep additional labels (e.g., radio option labels) inline below the main label */
+.auth-form .form-group > label:not(:first-child) {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 12px 0 0;
+}
+
+/* Radio group: keep radio inputs and their labels on one line below the main label */
+.auth-form .radio-group {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  width: 100%;
+}
+
+.auth-form .radio-group label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+.auth-form .form-group input[type="text"],
+.auth-form .form-group input[type="email"],
+.auth-form .form-group input[type="password"],
+.auth-form .form-group input[type="number"],
+.auth-form .form-group textarea,
+.auth-form .form-group select {
+  width: 100%;
+}
+
+.auth-form .form-group input {
   padding: 14px;
   border: 1px solid #dfe1e6;
   border-radius: 8px;
