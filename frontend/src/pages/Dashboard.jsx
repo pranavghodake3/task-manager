@@ -1,6 +1,8 @@
 // Dashboard.jsx
 
+import { Link } from "react-router-dom";
 import "../assets/css/dashboard.css";
+import NavBar from "../compoenets/NavBar";
 
 const projects = [
   {
@@ -34,18 +36,7 @@ export default function Dashboard() {
   return (
     <div className="dashboard">
       {/* Sidebar */}
-      <aside className="sidebar">
-        <div className="logo"><a href="/">Home</a></div>
-
-        <nav className="menu">
-          <a href="/">Dashboard</a>
-          <a href="/">Projects</a>
-          <a href="/">My Issues</a>
-          <a href="/">Boards</a>
-          <a href="/">Reports</a>
-          <a href="/">Settings</a>
-        </nav>
-      </aside>
+      <NavBar />
 
       {/* Main Content */}
       <main className="main-content">

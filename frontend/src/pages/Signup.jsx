@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "../assets/css/auth.css";
 import api from "../services/api";
-import { NavLink } from "react-router";
+import { NavLink } from "react-router-dom";
 
 export default function Signup() {
   const [isCompany, selectIsCompany] = useState("0");

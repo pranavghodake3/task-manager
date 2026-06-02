@@ -1,5 +1,5 @@
 const obj = {
-  TOKEN_EXPIRY: '50m',
+  TOKEN_EXPIRY: '2m',
   REFRESH_TOKEN_EXPIRY: '1h',
   ROLES: {
     SUPER_ADMIN: 'Super Admin',

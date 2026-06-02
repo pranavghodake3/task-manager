@@ -11,17 +11,20 @@ import Dashboard from './pages/Dashboard'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import Home from './pages/Home'
+import AppRoute from './routes/AppRoute'
 
-const router = createBrowserRouter([
-  { path: '/', Component: Home },
-  { path: '/login', Component: Login },
-  { path: '/signup', Component: Signup },
-]);
+// const router = createBrowserRouter([
+//   { path: '/', Component: Home },
+//   { path: '/login', Component: Login },
+//   { path: '/signup', Component: Signup },
+//   { path: '/dashboard', Component: Dashboard },
+// ]);
 
 function App() {
 
   return (
-    <RouterProvider router={router} />
+    // <RouterProvider router={router} />/
+    <AppRoute />
   )
 }
 

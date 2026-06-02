@@ -3,6 +3,7 @@ import { useState } from "react";
 import "../assets/css/auth.css";
 import api from "../services/api";
 import { useNavigate, NavLink } from "react-router-dom";
+import { setLoginData } from "../util/auth";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -17,10 +18,10 @@ export default function Login() {
           const response = await api.post("/auth/login", {email, password});
           console.log(response);
           setIsLoginSuccess(response.data.status);
+          setLoginData(response.data.data);
+          
           if(response.data.status){
             navigate('/dashboard');
-          }else{
-            
           }
         } catch (error) {
           setApiError(error.response.data.error.message);
