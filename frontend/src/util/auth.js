@@ -4,7 +4,14 @@ export function setLoginData(data) {
     localStorage.setItem('accessTokenExpiresIn', data.accessTokenExpiresIn);
     // localStorage.setItem('refreshToken', data.refreshToken);
     // localStorage.setItem('refreshTokenExpiresIn', data.refreshTokenExpiresIn);
-    const expireMinutes = data.accessTokenExpiresIn.split('')[0];
+
+    const expireMinutes = parseInt(data.accessTokenExpiresIn, 10);
+    if (!Number.isFinite(expireMinutes) || expireMinutes <= 0) {
+        return;
+    }
+    const expiryMs = Date.now() + expireMinutes * 60 * 1000;
+    localStorage.setItem('tokenExpiry', expiryMs.toString());
+
     setTimeout(() => {
         destroyToken();
     }, expireMinutes * 60 * 1000);
@@ -13,12 +20,14 @@ export function setLoginData(data) {
 export function destroyToken() {
     localStorage.removeItem('token');
     localStorage.removeItem('accessTokenExpiresIn');
+    localStorage.removeItem('tokenExpiry');
 }
 
 export function isLoggedIn() {
     const token = localStorage.getItem('token');
-    console.log('isLoggedIn token: ', token);
-    if(!token || token == null || token == undefined || typeof token == undefined){
+    const expiry = Number(localStorage.getItem('tokenExpiry'));
+    if (!token || !expiry || Date.now() > expiry) {
+        destroyToken();
         return false;
     }
     return true;
