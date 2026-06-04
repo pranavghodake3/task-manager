@@ -1,7 +1,9 @@
 import { Link, NavLink } from "react-router-dom";
 import "../assets/css/home.css";
+import { isLoggedIn } from "../util/auth";
 
 function Home() {
+  const isLogged = isLoggedIn();
   return (
     <div className="home-page">
 
@@ -9,13 +11,20 @@ function Home() {
         <h2>TaskManager Pro</h2>
 
         <div>
-          <NavLink to="/login" end className="btn login-btn">
-            Login
-          </NavLink>
-
-          <NavLink to="/signup" end className="btn signup-btn">
-            Sign Up
-          </NavLink>
+          {isLogged ? (
+            <NavLink to="/dashboard" className="btn login-btn">
+              Dashboard
+            </NavLink>
+          ) : (
+            <>
+              <NavLink to="/login" end className="btn login-btn">
+                Login
+              </NavLink>
+              <NavLink to="/signup" end className="btn signup-btn">
+                Sign Up
+              </NavLink>
+            </>
+          )}
         </div>
       </nav>
 

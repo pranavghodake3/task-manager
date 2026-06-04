@@ -38,16 +38,33 @@ body {
   gap: 12px;
 }
 
-.menu a {
+.menu a,
+.menu a:visited,
+.menu button {
   color: white;
   text-decoration: none;
   padding: 12px;
   border-radius: 8px;
   transition: 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  font: inherit;
+  cursor: pointer;
 }
 
-.menu a:hover {
+.menu a:hover,
+.menu a:focus,
+.menu button:hover,
+.menu button:focus {
   background: rgba(255, 255, 255, 0.15);
+}
+
+.menu a.active {
+  background: rgba(255, 255, 255, 0.28);
+  font-weight: 600;
 }
 
 /* Main Content */

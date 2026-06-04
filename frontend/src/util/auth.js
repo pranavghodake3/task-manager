@@ -1,32 +1,28 @@
 
 export function setLoginData(data) {
-    localStorage.setItem('token', data.accessToken);
-    localStorage.setItem('accessTokenExpiresIn', data.accessTokenExpiresIn);
-    // localStorage.setItem('refreshToken', data.refreshToken);
-    // localStorage.setItem('refreshTokenExpiresIn', data.refreshTokenExpiresIn);
-
+    localStorage.setItem('accessToken', data.accessToken);
     const expireMinutes = parseInt(data.accessTokenExpiresIn, 10);
     if (!Number.isFinite(expireMinutes) || expireMinutes <= 0) {
         return;
     }
     const expiryMs = Date.now() + expireMinutes * 60 * 1000;
-    localStorage.setItem('tokenExpiry', expiryMs.toString());
+    localStorage.setItem('accessTokenExpiry', expiryMs.toString());
 
-    setTimeout(() => {
-        destroyToken();
-    }, expireMinutes * 60 * 1000);
+    localStorage.setItem('refreshToken', data.refreshToken);
+    localStorage.setItem('refreshTokenExpiry', data.refreshTokenExpiresIn);
 }
 
 export function destroyToken() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('accessTokenExpiresIn');
-    localStorage.removeItem('tokenExpiry');
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('accessTokenExpiry');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('refreshTokenExpiry');
 }
 
 export function isLoggedIn() {
-    const token = localStorage.getItem('token');
-    const expiry = Number(localStorage.getItem('tokenExpiry'));
-    if (!token || !expiry || Date.now() > expiry) {
+    const accessToken = localStorage.getItem('accessToken');
+    const expiry = Number(localStorage.getItem('accessTokenExpiry'));
+    if (!accessToken || !expiry || Date.now() > expiry) {
         destroyToken();
         return false;
     }

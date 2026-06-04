@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { destroyToken } from "../util/auth";
 
 export default function NavBar() {
@@ -9,15 +9,15 @@ export default function NavBar() {
     }
   return (
     <aside className="sidebar">
-        <div className="logo"><Link to="/">Home</Link></div>
+        <div className="logo"><NavLink to="/">Home</NavLink></div>
 
         <nav className="menu">
-          <Link to="/dashboard">Dashboard</Link>
-          <Link to="/">Projects</Link>
-          <Link to="/">My Issues</Link>
-          <Link to="/">Boards</Link>
-          <Link to="/">Reports</Link>
-          <Link to="/">Settings</Link>
+          <NavLink to="/dashboard">Dashboard</NavLink>
+          <NavLink to="/">Projects</NavLink>
+          <NavLink to="/">My Issues</NavLink>
+          {/* <NavLink to="/">Boards</NavLink> */}
+          {/* <NavLink to="/">Reports</NavLink> */}
+          {/* <NavLink to="/">Settings</NavLink> */}
             <button onClick={handleLogout}>Logout</button>
         </nav>
       </aside>
