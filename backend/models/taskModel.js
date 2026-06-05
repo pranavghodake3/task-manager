@@ -1,9 +1,14 @@
-const { DataTypes } = require('sequelize');
-const { sequelize } = require('./sequelize');
-
-const TaskModel = sequelize.define(
-  'Task',
-  {
+'use strict';
+const {
+  Model
+} = require('sequelize');
+module.exports = (sequelize, DataTypes) => {
+  class Task extends Model {
+    static associate(models) {
+      // define association here
+    }
+  }
+  Task.init({
     title: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -12,11 +17,11 @@ const TaskModel = sequelize.define(
       type: DataTypes.TEXT,
       allowNull: true,
     },
-  },
-  {
+  }, {
+    sequelize,
+    modelName: 'Task',
     tableName: 'tasks',
     timestamps: true,
-  },
-);
-
-module.exports = TaskModel;
+  });
+  return Task;
+};

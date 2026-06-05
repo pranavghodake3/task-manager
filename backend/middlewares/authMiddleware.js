@@ -1,9 +1,10 @@
 const Joi = require('joi');
 const { errorResponse } = require('../utils/responseHelper');
-const UserModel = require('../models/UserModel');
-const RefreshTokenModel = require('../models/RefreshTokenModel');
-const CompanyModel = require('../models/CompanyModel');
-const ProjectModel = require('../models/ProjectModel');
+const db = require('../models');
+const UserModel = db.User;
+const RefreshTokenModel = db.RefreshToken;
+const CompanyModel = db.Company;
+const ProjectModel = db.Project;
 const CustomError = require('../utils/CustomError');
 const jwtUtil = require('../utils/jwtUtil');
 const { SUB_ROLES } = require('../constants/index');

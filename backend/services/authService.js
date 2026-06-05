@@ -1,8 +1,10 @@
-const UserModel = require('../models/UserModel');
-const RefreshTokenModel = require('../models/RefreshTokenModel');
-const UserProjectModel = require('../models/UserProjectModel');
-// const ProjectModel = require('../models/ProjectModel');
-const CompanyModel = require('../models/CompanyModel');
+const db = require('../models');
+const UserModel = db.User;
+const RefreshTokenModel = db.RefreshToken;
+const UserProjectModel = db.UserProject;
+// const ProjectModel = db.Project;
+const CompanyModel = db.Company;
+const RoleModel = db.Role;
 const passwordHelper = require('../utils/passwordHelper');
 const CustomError = require('../utils/CustomError');
 const jwtUtil = require('../utils/jwtUtil');
@@ -12,9 +14,16 @@ const authServiceObj = {};
 
 authServiceObj.login = async (reqBody) => {
   const user = await UserModel.findOne({
+    attributes: ['id', 'firstName', 'lastName', 'email', 'password'],
     where: {
       email: reqBody.email,
     },
+    include: [
+      {
+        model: RoleModel,
+        as: 'roleInfo'
+      }
+    ]
   });
 
   if (!user) {
@@ -43,9 +52,11 @@ authServiceObj.login = async (reqBody) => {
 
   return {
     user: {
+      id: user.id,
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
+      role: user.roleInfo
     },
     accessToken,
     refreshToken,

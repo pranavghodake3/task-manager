@@ -1,9 +1,17 @@
-const { DataTypes } = require('sequelize');
-const { sequelize } = require('./sequelize');
-
-const RoleModel = sequelize.define(
-  'Role',
-  {
+'use strict';
+const {
+  Model
+} = require('sequelize');
+module.exports = (sequelize, DataTypes) => {
+  class Role extends Model {
+    static associate(models) {
+      Role.hasMany(models.User, {
+        foreignKey: 'role',
+        as: 'users',
+      });
+    }
+  }
+  Role.init({
     id: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
@@ -14,11 +22,11 @@ const RoleModel = sequelize.define(
       allowNull: false,
       unique: true,
     },
-  },
-  {
+  }, {
+    sequelize,
+    modelName: 'Role',
     tableName: 'roles',
     timestamps: true,
-  },
-);
-
-module.exports = RoleModel;
+  });
+  return Role;
+};

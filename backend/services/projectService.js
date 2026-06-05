@@ -1,4 +1,5 @@
-const ProjectModel = require('../models/ProjectModel');
+const db = require('../models');
+const ProjectModel = db.Project;
 const UserProjectModel = require('../models/UserProjectModel');
 
 const projectService = {};

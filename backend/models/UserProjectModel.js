@@ -1,9 +1,14 @@
-const { DataTypes } = require('sequelize');
-const { sequelize } = require('./sequelize');
-
-const UserProjectModel = sequelize.define(
-  'UserProject',
-  {
+'use strict';
+const {
+  Model
+} = require('sequelize');
+module.exports = (sequelize, DataTypes) => {
+  class UserProject extends Model {
+    static associate(models) {
+      // define association here
+    }
+  }
+  UserProject.init({
     user: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -12,11 +17,11 @@ const UserProjectModel = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-  },
-  {
+  }, {
+    sequelize,
+    modelName: 'UserProject',
     tableName: 'user_projects',
     timestamps: true,
-  },
-);
-
-module.exports = UserProjectModel;
+  });
+  return UserProject;
+};

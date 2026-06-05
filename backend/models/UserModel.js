@@ -1,9 +1,28 @@
-const { DataTypes } = require('sequelize');
-const { sequelize } = require('./sequelize');
-
-const UserModel = sequelize.define(
-  'User',
-  {
+'use strict';
+const {
+  Model
+} = require('sequelize');
+module.exports = (sequelize, DataTypes) => {
+  class User extends Model {
+    /**
+     * Helper method for defining associations.
+     * This method is not a part of Sequelize lifecycle.
+     * The `models/index` file will call this method automatically.
+     */
+    static associate(models) {
+      User.belongsTo(models.Role, {
+        foreignKey: 'role',
+        as: 'roleInfo',
+      });
+    }
+  }
+  User.init({
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncreament: true,
+      allowNull: false,
+    },
     firstName: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -32,11 +51,10 @@ const UserModel = sequelize.define(
       type: DataTypes.STRING,
       allowNull: true,
     },
-  },
-  {
-    tableName: 'users',
-    timestamps: true,
-  },
-);
-
-module.exports = UserModel;
+  }, {
+    sequelize,
+    modelName: 'User',
+    tableName: 'users'
+  });
+  return User;
+};

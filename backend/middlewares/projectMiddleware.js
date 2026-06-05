@@ -1,6 +1,7 @@
 const { errorResponse } = require('../utils/responseHelper');
 const CompanyModel = require('../models/CompanyModel');
-const ProjectModel = require('../models/ProjectModel');
+const db = require('../models');
+const ProjectModel = db.Project;
 const CustomError = require('../utils/CustomError');
 
 const projectMiddleware = {};

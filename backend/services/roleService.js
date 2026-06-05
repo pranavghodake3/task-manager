@@ -1,5 +1,6 @@
 const { ROLES } = require('../constants');
-const RoleModel = require('../models/RoleModel');
+const db = require('../models');
+const RoleModel = db.Role;
 
 const roleService = {};
 
