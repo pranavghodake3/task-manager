@@ -1,11 +1,13 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 
 import "../assets/css/auth.css";
 import api from "../services/api";
 import { useNavigate, NavLink } from "react-router-dom";
 import { setLoginData } from "../util/auth";
+import { AuthContext } from "../context/AuthContext";
 
 export default function Login() {
+  const AuthContextData = useContext(AuthContext);
   const navigate = useNavigate();
   const [apiError, setApiError] = useState("");
     const [email, setEmail] = useState("");
@@ -16,14 +18,16 @@ export default function Login() {
         e.preventDefault();
         try {
           const response = await api.post("/auth/login", {email, password});
-          console.log(response);
+          console.log("response: ",response);
           setIsLoginSuccess(response.data.status);
+          AuthContextData.setUser(response.data.data.user);
           setLoginData(response.data.data);
           
           if(response.data.status){
             navigate('/dashboard');
           }
         } catch (error) {
+          console.log("Login Error: ",error)
           setApiError(error.response.data.error.message);
           setIsLoginSuccess(error.response.data.status);
         }

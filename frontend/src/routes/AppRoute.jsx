@@ -4,23 +4,26 @@ import Dashboard from "../pages/Dashboard";
 import Login from "../pages/Login";
 import Signup from "../pages/Signup";
 import ProtectedRoute from "../compoenets/ProtectedRoute";
+import { AuthContextProvider } from "../context/AuthContext";
 
 export default function AppRoute() {
     return (
         <BrowserRouter>
-            <Routes>
-                <Route path="/" element={<Home />} />
+            <AuthContextProvider>
+                <Routes>
+                    <Route path="/" element={<Home />} />
 
-                <Route path="/dashboard" element={
-                    <ProtectedRoute>
-                        <Dashboard />
-                    </ProtectedRoute>
-                } />
+                    <Route path="/dashboard" element={
+                        <ProtectedRoute>
+                            <Dashboard />
+                        </ProtectedRoute>
+                    } />
 
-                <Route path="/login" element={<Login />} />
+                    <Route path="/login" element={<Login />} />
 
-                <Route path="/signup" element={<Signup />} />
-            </Routes>
+                    <Route path="/signup" element={<Signup />} />
+                </Routes>
+            </AuthContextProvider>
         </BrowserRouter>
     );
 };

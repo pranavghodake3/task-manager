@@ -1,5 +1,6 @@
 
 export function setLoginData(data) {
+    localStorage.setItem('user', JSON.stringify(data.user));
     localStorage.setItem('accessToken', data.accessToken);
     const expireMinutes = parseInt(data.accessTokenExpiresIn, 10);
     if (!Number.isFinite(expireMinutes) || expireMinutes <= 0) {
@@ -27,5 +28,11 @@ export function isLoggedIn() {
         return false;
     }
     return true;
+}
+
+export function getUserInfo(){
+    const user = JSON.parse(localStorage.getItem('user'));
+
+    return user;
 }
 

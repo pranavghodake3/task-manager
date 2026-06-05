@@ -3,6 +3,10 @@
 import { Link } from "react-router-dom";
 import "../assets/css/dashboard.css";
 import NavBar from "../compoenets/NavBar";
+import { getUserInfo } from "../util/auth";
+import { ROLES } from "../constants"
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 
 const projects = [
   {
@@ -33,6 +37,9 @@ const activities = [
 ];
 
 export default function Dashboard() {
+  const AuthContextData = useContext(AuthContext);
+  console.log("Dashboard AuthContextData: ",AuthContextData)
+  const user = getUserInfo();
   return (
     <div className="dashboard">
       {/* Sidebar */}
@@ -44,7 +51,7 @@ export default function Dashboard() {
         <header className="topbar">
           <div>
             <h1>Dashboard</h1>
-            <p>Welcome back, Rahul 👋</p>
+            <p>Welcome back, { user.firstName + ' ' + user.lastName + ROLES.SUPER_ADMIN } == { AuthContextData.user.email } 👋</p>
           </div>
 
           <button className="create-btn">+ Create Issue</button>

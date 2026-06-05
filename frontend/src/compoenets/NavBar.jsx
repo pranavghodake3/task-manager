@@ -1,7 +1,9 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import { destroyToken } from "../util/auth";
+import { destroyToken, getUserInfo } from "../util/auth";
+import { ROLES } from "../constants";
 
 export default function NavBar() {
+  const user = getUserInfo();
     const navigate = useNavigate();
     function handleLogout(params) {
         destroyToken();
