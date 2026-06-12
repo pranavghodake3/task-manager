@@ -214,4 +214,40 @@ authMiddleware.isRefreshTokenAuthentic = async (req, res, next) => {
   }
 };
 
+authMiddleware.isRefreshTokenCookieAuthentic = async (req, res, next) => {
+  try {
+    console.log('Cookies: ', req.cookies.refreshToken);
+    let bearerToken = req.cookies.refreshToken;
+    if (!bearerToken) {
+      throw new CustomError('Missing Refresh Token', 401);
+    }
+    const validToken = jwtUtil.verifyRefreshToken(bearerToken);
+    const refreshToken = await RefreshTokenModel.findOne({
+      where: {
+        refreshToken: bearerToken,
+      },
+    });
+    console.log("validToken: ",validToken);
+    console.log("refreshToken: ",refreshToken);
+    if (validToken && refreshToken) {
+      req.auth = {
+        user: {
+          userId: refreshToken.userId,
+        },
+      };
+      const currentDate = new Date();
+      const refreshTokenExpiry = new Date(refreshToken.expiresAt);
+      if (currentDate < refreshTokenExpiry) {
+        next();
+      } else {
+        throw new CustomError('Bearer Refresh Token is expired', 401);
+      }
+    } else {
+      throw new CustomError('Invalid Bearer Refresh Token or it has expired', 401);
+    }
+  } catch (error) {
+    return errorResponse(res, error, 401);
+  }
+};
+
 module.exports = authMiddleware;

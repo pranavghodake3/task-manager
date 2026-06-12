@@ -2,11 +2,22 @@ const authService = require('../services/authService');
 
 const authControllerObj = {};
 
-authControllerObj.login = async (req) => {
+authControllerObj.login = async (req, res) => {
   const data = await authService.login(req.body);
+  res.cookie('refreshToken', data.refreshToken, {
+        maxAge: 900000, // Expires after 15 minutes (in milliseconds)
+        httpOnly: true, // Prevent client-side JS access for security
+        secure: true,   // Only sent over HTTPS or secure localhost
+        sameSite: 'None' // Protects against CSRF attacks
+    });
   return {
     data,
   };
+};
+
+authControllerObj.logout = async (req, res) => {
+  res.clearCookie('refreshToken');
+  return {};
 };
 
 authControllerObj.registerSuperAdmin = async (req) => {
@@ -36,6 +47,11 @@ authControllerObj.registerCompanyProjectUser = async (req) => {
 
 authControllerObj.getRefreshToken = async (req) => {
   const data = await authService.getRefreshToken(req);
+  return { data };
+};
+
+authControllerObj.getRefreshAccessToken = async (req) => {
+  const data = await authService.getRefreshAccessToken(req);
   return { data };
 };
 

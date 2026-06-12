@@ -3,7 +3,6 @@ import { useContext, useState } from "react";
 import "../assets/css/auth.css";
 import api from "../services/api";
 import { useNavigate, NavLink } from "react-router-dom";
-import { setLoginData } from "../util/auth";
 import { AuthContext } from "../context/AuthContext";
 
 export default function Login() {
@@ -14,14 +13,22 @@ export default function Login() {
     const [password, setPassword] = useState("");
     const [isLoginSuccess, setIsLoginSuccess] = useState(true);
 
+    function setLoginData(data, AuthContextData) {
+      AuthContextData.setUser(data.user);
+      AuthContextData.setAccessToken(data.accessToken);
+      const expireMinutes = parseInt(data.accessTokenExpiresIn, 10);
+      const expiryMs = Date.now() + expireMinutes * 60 * 1000;
+      AuthContextData.setAccessTokenExpiry(expiryMs.toString());
+      AuthContextData.setIsLoggedIn(true);
+      localStorage.setItem('user', JSON.stringify(data.user));
+    }
+
     async function handleSubmit(e){
         e.preventDefault();
         try {
           const response = await api.post("/auth/login", {email, password});
-          console.log("response: ",response);
           setIsLoginSuccess(response.data.status);
-          AuthContextData.setUser(response.data.data.user);
-          setLoginData(response.data.data);
+          setLoginData(response.data.data, AuthContextData);
           
           if(response.data.status){
             navigate('/dashboard');

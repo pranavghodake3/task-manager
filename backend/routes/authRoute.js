@@ -6,6 +6,20 @@ const { handleAsyncFunction } = require('../utils/commonHelper');
 
 router.post('/login', authMiddleware.login, handleAsyncFunction(authController.login));
 
+// router.get('/logout', authMiddleware.isAuthentic, handleAsyncFunction(authController.logout));
+
+router.get(
+  '/refresh-access-token',
+  authMiddleware.isRefreshTokenCookieAuthentic,
+  handleAsyncFunction(authController.getRefreshAccessToken),
+);
+
+router.get(
+  '/logout',
+  authMiddleware.isRefreshTokenCookieAuthentic,
+  handleAsyncFunction(authController.logout),
+);
+
 router.get(
   '/get-refresh-token',
   authMiddleware.isRefreshTokenAuthentic,

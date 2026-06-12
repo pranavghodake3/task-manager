@@ -34,12 +34,12 @@ authServiceObj.login = async (reqBody) => {
   if (!isAuthenticated) {
     throw new CustomError('Invalid email or password', 401);
   }
-
-  await RefreshTokenModel.destroy({
+  const data = await RefreshTokenModel.destroy({
     where: {
       userId: user.id,
     },
   });
+  console.log("UserID: ",user.id, data);
 
   const { refreshToken, refreshTokenExpiresIn } = jwtUtil.getRefreshToken({ userId: user.id });
   const { accessToken, accessTokenExpiresIn } = jwtUtil.getToken({ userId: user.id });
@@ -205,6 +205,26 @@ authServiceObj.getRefreshToken = async (req) => {
     refreshToken,
     accessTokenExpiresIn,
     refreshTokenExpiresIn,
+  };
+};
+
+authServiceObj.getRefreshAccessToken = async (req) => {
+  const userId = Number(req.auth.user.userId);
+  const { accessToken, accessTokenExpiresIn } = jwtUtil.getToken({ userId });
+
+  return {
+    accessToken,
+    accessTokenExpiresIn,
+  };
+};
+
+authServiceObj.logout = async (req) => {
+  const userId = Number(req.auth.user.userId);
+  const { accessToken, accessTokenExpiresIn } = jwtUtil.getToken({ userId });
+
+  return {
+    accessToken,
+    accessTokenExpiresIn,
   };
 };
 

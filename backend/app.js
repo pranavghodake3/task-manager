@@ -9,8 +9,13 @@ const swaggerDocument = require('./swagger.json');
 const { sequelize } = require('./models/sequelize');
 const logger = require('./config/logger.js');
 const { errorResponse, successResponse } = require('./utils/responseHelper.js');
+const cookieParser = require('cookie-parser');
 
-app.use(cors());
+app.use(cookieParser());
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true,
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
