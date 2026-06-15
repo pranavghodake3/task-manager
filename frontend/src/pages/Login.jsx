@@ -3,10 +3,10 @@ import { useContext, useState } from "react";
 import "../assets/css/auth.css";
 import api from "../services/api";
 import { useNavigate, NavLink } from "react-router-dom";
-import { AuthContextProvider} from "../context/AuthContextProvider";
+import { AuthContext } from "../context/AuthContext";
 
 export default function Login() {
-  const AuthContextData = useContext(AuthContextProvider);
+  const AuthContextData = useContext(AuthContext);
   const navigate = useNavigate();
   const [apiError, setApiError] = useState("");
     const [email, setEmail] = useState("");

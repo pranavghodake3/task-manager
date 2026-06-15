@@ -2,12 +2,14 @@
 import { useContext, useEffect, useState } from "react";
 import "../assets/css/dashboard.css";
 import NavBar from "../compoenets/NavBar";
-import { AuthContextProvider} from "../context/AuthContextProvider";
 import api from "../services/api";
+import { AuthContext } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export default function Users() {
-  const AuthContextData = useContext(AuthContextProvider);
+  const AuthContextData = useContext(AuthContext);
   const [users, setUsers] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function loadUsers() {
@@ -18,6 +20,10 @@ export default function Users() {
     }
     loadUsers();
   }, []);
+
+  function handleAddUser() {
+    navigate('/users/add');
+  }
 
   return (
     <div className="dashboard">
@@ -33,7 +39,7 @@ export default function Users() {
             <p>Manage and view all your users</p>
           </div>
 
-          <button className="create-btn">+ New User</button>
+          <button className="create-btn" onClick={handleAddUser}>+ New User</button>
         </header>
 
         {/* Projects Table */}

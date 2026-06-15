@@ -1,10 +1,10 @@
 import { Link, NavLink } from "react-router-dom";
 import "../assets/css/home.css";
 import { useContext } from "react";
-import { AuthContextProvider} from "../context/AuthContextProvider";
+import { AuthContext } from "../context/AuthContext";
 
 function Home() {
-  const AuthContextData = useContext(AuthContextProvider);
+  const AuthContextData = useContext(AuthContext);
   const isLogged = AuthContextData.isLoggedIn;
   return (
     <div className="home-page">

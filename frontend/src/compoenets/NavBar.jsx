@@ -1,10 +1,10 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { destroyToken } from "../util/auth";
 import { useContext } from "react";
-import { AuthContextProvider} from "../context/AuthContextProvider";
+import { AuthContext } from "../context/AuthContext";
 
 export default function NavBar() {
-    const AuthContextData = useContext(AuthContextProvider);
+    const AuthContextData = useContext(AuthContext);
     const navigate = useNavigate();
     function handleLogout() {
         AuthContextData.setIsLoggedIn(false);

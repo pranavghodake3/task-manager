@@ -5,7 +5,7 @@ import "../assets/css/dashboard.css";
 import NavBar from "../compoenets/NavBar";
 // import { ROLES } from "../constants"
 import { useContext } from "react";
-import { AuthContextProvider} from "../context/AuthContextProvider";
+import { AuthContext } from "../context/AuthContext";
 
 const projects = [
   {
@@ -36,7 +36,7 @@ const activities = [
 ];
 
 export default function Dashboard() {
-  const AuthContextData = useContext(AuthContextProvider);
+  const AuthContextData = useContext(AuthContext);
   const user = AuthContextData.user;
   return (
     <div className="dashboard">

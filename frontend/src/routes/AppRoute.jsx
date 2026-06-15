@@ -7,6 +7,7 @@ import Signup from "../pages/Signup";
 import ProtectedRoute from "../compoenets/ProtectedRoute";
 import { AuthContextProvider } from "../context/AuthContextProvider";
 import Users from "../pages/Users";
+import AddUser from "../pages/AddUser";
 
 export default function AppRoute() {
     return (
@@ -30,6 +31,12 @@ export default function AppRoute() {
                     <Route path="/users" element={
                         <ProtectedRoute>
                             <Users />
+                        </ProtectedRoute>
+                    } />
+
+                    <Route path="/users/add" element={
+                        <ProtectedRoute>
+                            <AddUser />
                         </ProtectedRoute>
                     } />
 

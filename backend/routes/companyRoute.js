@@ -5,4 +5,6 @@ const { handleAsyncFunction } = require('../utils/commonHelper');
 
 router.get('/:companyId/users', handleAsyncFunction(companyController.getUsers));
 
+router.post('/:companyId/users', handleAsyncFunction(companyController.addUsers));
+
 module.exports = router;

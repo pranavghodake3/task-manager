@@ -25,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
-      autoIncreament: true,
+      autoIncrement: true,
       allowNull: false,
     },
     firstName: {
@@ -60,7 +60,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: true,
       references: {
-        model: 'users',
+        model: 'companies',
         key: 'id'
       }
     }

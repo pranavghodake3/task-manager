@@ -9,6 +9,7 @@ const passwordHelper = require('../utils/passwordHelper');
 const CustomError = require('../utils/CustomError');
 const jwtUtil = require('../utils/jwtUtil');
 const roleService = require('../services/roleService');
+const { ROLES } = require('../constants');
 
 const authServiceObj = {};
 
@@ -49,6 +50,14 @@ authServiceObj.login = async (reqBody) => {
     userId: user.id,
     expiresAt: refreshTokenExpiresIn,
   });
+  let company;
+  if(user.roleInfo.name === ROLES.COMPANY_ADMIN){
+    company = await CompanyModel.findOne({
+      where: {
+        admin: user.id
+      }
+    });
+  }
 
   return {
     user: {
@@ -56,7 +65,8 @@ authServiceObj.login = async (reqBody) => {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
-      role: user.roleInfo
+      role: user.roleInfo,
+      ...(company && { company })
     },
     accessToken,
     refreshToken,
