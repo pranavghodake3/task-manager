@@ -10,7 +10,7 @@ export default function Signup() {
   const [lastName, selectLastName] = useState("");
   const [email, selectEmail] = useState("");
   const [password, selectPassword] = useState("");
-  const [confirmPassword, selectConfirmPassword] = useState("");
+  const [selectConfirmPassword] = useState("");
 
   function handleIsCompany(e) {
     selectIsCompany(e.target.value);

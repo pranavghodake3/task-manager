@@ -1,0 +1,34 @@
+{
+  "name": "task-manager",
+  "version": "1.0.0",
+  "description": "Task Manager SAAS Platform",
+  "homepage": "https://github.com/pranavghodake3/task-manager#readme",
+  "bugs": {
+    "url": "https://github.com/pranavghodake3/task-manager/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pranavghodake3/task-manager.git"
+  },
+  "license": "ISC",
+  "author": "Pranav Ghodake",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky",
+    "lint:backend": "npm --prefix backend run lint",
+    "lint:frontend": "npm --prefix frontend run lint"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7"
+  },
+  "lint-staged": {
+    "backend/**/*.js": [
+      "cd backend && npm run lint"
+    ],
+    "frontend/**/*.{js,jsx,ts,tsx}": [
+      "cd frontend && npm run lint"
+    ]
+  }
+}

@@ -23,7 +23,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use('/api', routes);
 
-app.get('/', (req, res) => {
+app.get('/', (_req, res) => {
   return successResponse(res);
 });
 

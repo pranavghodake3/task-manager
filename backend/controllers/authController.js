@@ -15,7 +15,7 @@ authControllerObj.login = async (req, res) => {
   };
 };
 
-authControllerObj.logout = async (req, res) => {
+authControllerObj.logout = async (_req, res) => {
   res.clearCookie('refreshToken');
   return {};
 };

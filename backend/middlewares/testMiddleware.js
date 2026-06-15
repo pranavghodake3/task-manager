@@ -1,4 +1,4 @@
-const testMiddlewareFun = (req, res, next) => {
+const testMiddlewareFun = (_req, _res, next) => {
   next();
 };
 

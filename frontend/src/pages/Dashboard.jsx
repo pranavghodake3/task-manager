@@ -1,11 +1,11 @@
 // Dashboard.jsx
 
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import "../assets/css/dashboard.css";
 import NavBar from "../compoenets/NavBar";
-import { ROLES } from "../constants"
+// import { ROLES } from "../constants"
 import { useContext } from "react";
-import { AuthContext } from "../context/AuthContext";
+import { AuthContextProvider} from "../context/AuthContextProvider";
 
 const projects = [
   {
@@ -36,9 +36,8 @@ const activities = [
 ];
 
 export default function Dashboard() {
-  const AuthContextData = useContext(AuthContext);
+  const AuthContextData = useContext(AuthContextProvider);
   const user = AuthContextData.user;
-  const cookie = document.cookie;
   return (
     <div className="dashboard">
       {/* Sidebar */}

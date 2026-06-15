@@ -5,7 +5,7 @@ import Project from "../pages/Project";
 import Login from "../pages/Login";
 import Signup from "../pages/Signup";
 import ProtectedRoute from "../compoenets/ProtectedRoute";
-import { AuthContextProvider } from "../context/AuthContext";
+import { AuthContextProvider } from "../context/AuthContextProvider";
 import Users from "../pages/Users";
 
 export default function AppRoute() {

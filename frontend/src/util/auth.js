@@ -1,13 +1,13 @@
 import api from "../services/api";
 
 export async function destroyToken() {
-    const response = await api.get('auth/logout');
+    await api.get('auth/logout');
     localStorage.removeItem('user');
 }
 
 export function isLoggedIn(AuthContextData) {
     const accessToken = AuthContextData.accessToken;
-    const expiry = Number(AuthContextData.accessTokenExpiry);
+    // const expiry = Number(AuthContextData.accessTokenExpiry);
     if (!accessToken && !AuthContextData.isLoggedIn) {
         destroyToken();
         return false;

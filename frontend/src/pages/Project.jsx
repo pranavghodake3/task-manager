@@ -1,9 +1,8 @@
 
-import { useContext } from "react";
-import { Link } from "react-router-dom";
+// import { useContext } from "react";
 import "../assets/css/dashboard.css";
 import NavBar from "../compoenets/NavBar";
-import { AuthContext } from "../context/AuthContext";
+// import { AuthContextProvider} from "../context/AuthContextProvider";
 
 const projects = [
   {
@@ -59,8 +58,8 @@ const projects = [
 ];
 
 export default function Project() {
-  const AuthContextData = useContext(AuthContext);
-  const user = AuthContextData.user;
+//   const AuthContextData = useContext(AuthContextProvider);
+//   const user = AuthContextData.user;
 
   return (
     <div className="dashboard">
@@ -189,7 +188,7 @@ export default function Project() {
           font-weight: 600;
         }
 
-        .status-in\ progress {
+        .status-in progress {
           background: #e2e8f0;
           color: #0052cc;
         }
