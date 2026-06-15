@@ -14,6 +14,11 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'role',
         as: 'roleInfo',
       });
+
+      User.belongsTo(models.Company, {
+        foreignKey: 'companyId',
+        // as: 'company'
+      })
     }
   }
   User.init({
@@ -51,6 +56,14 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
+    companyId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'users',
+        key: 'id'
+      }
+    }
   }, {
     sequelize,
     modelName: 'User',

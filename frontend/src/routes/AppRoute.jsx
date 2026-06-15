@@ -6,6 +6,7 @@ import Login from "../pages/Login";
 import Signup from "../pages/Signup";
 import ProtectedRoute from "../compoenets/ProtectedRoute";
 import { AuthContextProvider } from "../context/AuthContext";
+import Users from "../pages/Users";
 
 export default function AppRoute() {
     return (
@@ -23,6 +24,12 @@ export default function AppRoute() {
                     <Route path="/projects" element={
                         <ProtectedRoute>
                             <Project />
+                        </ProtectedRoute>
+                    } />
+
+                    <Route path="/users" element={
+                        <ProtectedRoute>
+                            <Users />
                         </ProtectedRoute>
                     } />
 
