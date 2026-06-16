@@ -19,7 +19,7 @@ export default function Users() {
         setUsers(response.data.data);
     }
     loadUsers();
-  }, []);
+  }, [AuthContextData.accessToken]);
 
   function handleAddUser() {
     navigate('/users/add');
