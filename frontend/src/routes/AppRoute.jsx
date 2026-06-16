@@ -8,6 +8,8 @@ import ProtectedRoute from "../compoenets/ProtectedRoute";
 import { AuthContextProvider } from "../context/AuthContextProvider";
 import Users from "../pages/Users";
 import AddUser from "../pages/AddUser";
+import { ROLES } from "../constants";
+import Unathorized from "../pages/Unathorized";
 
 export default function AppRoute() {
     return (
@@ -29,13 +31,19 @@ export default function AppRoute() {
                     } />
 
                     <Route path="/users" element={
-                        <ProtectedRoute>
+                        <ProtectedRoute allowedRoles={[
+                            ROLES.COMPANY_ADMIN,
+                            ROLES.SUPER_ADMIN
+                        ]}>
                             <Users />
                         </ProtectedRoute>
                     } />
 
                     <Route path="/users/add" element={
-                        <ProtectedRoute>
+                        <ProtectedRoute allowedRoles={[
+                            ROLES.COMPANY_ADMIN,
+                            ROLES.SUPER_ADMIN
+                        ]}>
                             <AddUser />
                         </ProtectedRoute>
                     } />
@@ -43,6 +51,8 @@ export default function AppRoute() {
                     <Route path="/login" element={<Login />} />
 
                     <Route path="/signup" element={<Signup />} />
+
+                    <Route path="/unathorized" element={<Unathorized />} />
                 </Routes>
             </AuthContextProvider>
         </BrowserRouter>

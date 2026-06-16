@@ -1,11 +1,14 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import { destroyToken } from "../util/auth";
+import { destroyToken, getRole } from "../util/auth";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
+import { ROLES } from "../constants";
 
 export default function NavBar() {
     const AuthContextData = useContext(AuthContext);
     const navigate = useNavigate();
+    const role = getRole();
+    const myRole = role?.name;
     function handleLogout() {
         AuthContextData.setIsLoggedIn(false);
         AuthContextData.setAccessToken(null);
@@ -19,7 +22,7 @@ export default function NavBar() {
         <nav className="menu">
           <NavLink to="/dashboard">Dashboard</NavLink>
           <NavLink to="/projects">Projects</NavLink>
-          <NavLink to="/users">Users</NavLink>
+          { [ROLES.COMPANY_ADMIN, ROLES.SUPER_ADMIN].includes(myRole) && <NavLink to="/users">Users</NavLink> }
           <NavLink to="/">My Issues</NavLink>
           {/* <NavLink to="/">Boards</NavLink> */}
           {/* <NavLink to="/">Reports</NavLink> */}

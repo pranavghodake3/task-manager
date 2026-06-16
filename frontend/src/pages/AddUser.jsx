@@ -75,7 +75,7 @@ export default function AddUser() {
                     </div>
 
                     <button type="submit" className="auth-btn">
-                        Create Account
+                        Add User
                     </button>
                     </form>
               </div>

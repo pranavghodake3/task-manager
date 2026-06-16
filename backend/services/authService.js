@@ -51,7 +51,7 @@ authServiceObj.login = async (reqBody) => {
     expiresAt: refreshTokenExpiresIn,
   });
   let company;
-  if(user.roleInfo.name === ROLES.COMPANY_ADMIN){
+  if(user.roleInfo?.name === ROLES.COMPANY_ADMIN){
     company = await CompanyModel.findOne({
       where: {
         admin: user.id
