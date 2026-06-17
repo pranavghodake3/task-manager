@@ -4,12 +4,11 @@ const obj = {
   ROLES: {
     SUPER_ADMIN: 'Super Admin',
     COMPANY_ADMIN: 'Company Admin',
-    MANAGER: 'Manager',
-    USER: 'User',
-  },
-  SUB_ROLES: {
+    PROJECT_MANAGER: 'Project Manager',
+    SCRUM_MASTER: 'Scrum Master',
     DEVELOPER: 'Developer',
     QA: 'QA',
+    DEVOPS: 'DevOps'
   },
 };
 

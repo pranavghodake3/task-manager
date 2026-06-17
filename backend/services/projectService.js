@@ -1,14 +1,20 @@
+const { ROLES } = require('../constants');
 const db = require('../models');
 const ProjectModel = db.Project;
 const UserProjectModel = require('../models/UserProjectModel');
+const { getMyCompany } = require('./companyService');
 
 const projectService = {};
 
-projectService.getProjects = async (companyId) => {
+projectService.getProjects = async ({ userId, role, companyId }) => {
+  if(role === ROLES.COMPANY_ADMIN){
+    companyId = (await getMyCompany(userId)).id;
+  }
+  const where = {
+    ...(companyId && { companyId })
+  };
   return await ProjectModel.findAll({
-    where: {
-      company: companyId,
-    },
+    ...(where && { where }),
   });
 };
 
@@ -17,7 +23,7 @@ projectService.getProjectById = async (id) => {
 };
 
 projectService.createProject = async (companyId, reqBody) => {
-  reqBody.company = companyId;
+  reqBody.companyId = companyId;
   const project = await ProjectModel.create(reqBody);
   return project;
 };

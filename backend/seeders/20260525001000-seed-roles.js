@@ -16,12 +16,27 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
-          name: 'Manager',
+          name: 'Project Manager',
           createdAt: new Date(),
           updatedAt: new Date(),
         },
         {
-          name: 'User',
+          name: 'Scrum Master',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          name: 'Developer',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          name: 'QA',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          name: 'DevOps',
           createdAt: new Date(),
           updatedAt: new Date(),
         },

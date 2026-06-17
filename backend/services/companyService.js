@@ -1,5 +1,6 @@
 const db = require('../models');
 const UserModel = db.User;
+const CompanyModel = db.Company;
 const passwordHelper = require('../utils/passwordHelper');
 
 const companyService = {};
@@ -20,5 +21,17 @@ companyService.addUsers = async (reqBody) => {
 
     return user;
 };
+
+companyService.getMyCompany = async (userId) => {
+    const company = await CompanyModel.findOne({
+        where: {
+            admin: userId
+        }
+    });
+
+    return company.get({
+        plain: true
+    });
+}
 
 module.exports =companyService;

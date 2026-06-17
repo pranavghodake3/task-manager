@@ -5,9 +5,9 @@ const UserModel = db.User;
 const RefreshTokenModel = db.RefreshToken;
 const CompanyModel = db.Company;
 const ProjectModel = db.Project;
+const { getUserByIdWithRole } = require('../services/userService');
 const CustomError = require('../utils/CustomError');
 const jwtUtil = require('../utils/jwtUtil');
-const { SUB_ROLES } = require('../constants/index');
 
 const authMiddleware = {};
 
@@ -137,7 +137,6 @@ authMiddleware.registerCompanyProjectUser = async (req, res, next) => {
       email: Joi.string().min(3).max(255).email().required(),
       password: Joi.string().min(6).max(255).required(),
       repeat_password: Joi.ref('password'),
-      subRole: Joi.allow(...Object.values(SUB_ROLES)).required(),
     });
     await schema.validateAsync(req.body || {});
 
@@ -161,16 +160,18 @@ authMiddleware.registerCompanyProjectUser = async (req, res, next) => {
   }
 };
 
-authMiddleware.isAuthentic = (req, res, next) => {
+authMiddleware.isAuthentic = async (req, res, next) => {
   try {
     let bearerToken = req.headers.authorization?.split('Bearer ')[1];
     if (!req.headers.authorization || !bearerToken) {
       throw new CustomError('Missing Bearer Token', 401);
     }
     const data = jwtUtil.verifyToken(bearerToken);
+    console.log("datadatadatadatadata: ",data);
     req.auth = {
-      user: data.user,
+      user: await getUserByIdWithRole(data.userId),
     };
+    console.log("req.auth: ",req.auth);
     if (data) {
       next();
     } else {

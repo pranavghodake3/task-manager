@@ -52,10 +52,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: true,
     },
-    subRole: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
     companyId: {
       type: DataTypes.INTEGER,
       allowNull: true,

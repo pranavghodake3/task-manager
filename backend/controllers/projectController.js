@@ -3,8 +3,13 @@ const projectService = require('../services/projectService');
 const projectController = {};
 
 projectController.getProjects = async (req) => {
-  const { companyId } = req.params;
-  const projects = await projectService.getProjects(companyId);
+  const { companyId } = req.query;
+  const role = req.auth.user.roleInfo.name;
+  const projects = await projectService.getProjects({
+    userId: req.auth.user.id,
+    role,
+    companyId
+  });
   return { data: projects };
 };
 

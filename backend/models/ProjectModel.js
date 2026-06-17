@@ -4,8 +4,11 @@ const {
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Project extends Model {
-    static associate(_models) {
-      // define association here
+    static associate(models) {
+      Project.belongsTo(models.Company, {
+        foreignKey: 'companyId',
+        // as: 'company'
+      })
     }
   }
   Project.init({
@@ -13,9 +16,13 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    company: {
+    companyId: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      references: {
+        model: 'companies',
+        key: 'id'
+      }
     },
   }, {
     sequelize,

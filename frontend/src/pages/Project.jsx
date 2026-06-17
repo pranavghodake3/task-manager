@@ -1,65 +1,32 @@
 
-// import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import "../assets/css/dashboard.css";
 import NavBar from "../compoenets/NavBar";
-// import { AuthContextProvider} from "../context/AuthContextProvider";
+import api from "../services/api";
+import { AuthContext } from "../context/AuthContext";
 
-const projects = [
-  {
-    id: 1,
-    name: "Task Manager App",
-    key: "TM",
-    description: "Main task management application",
-    issues: 24,
-    team: 8,
-    status: "In Progress",
-    createdAt: "2024-01-15",
-  },
-  {
-    id: 2,
-    name: "Auth Service",
-    key: "AUTH",
-    description: "Authentication and authorization service",
-    issues: 12,
-    team: 5,
-    status: "In Progress",
-    createdAt: "2024-02-10",
-  },
-  {
-    id: 3,
-    name: "Notification System",
-    key: "NOTIFY",
-    description: "Real-time notification service",
-    issues: 8,
-    team: 4,
-    status: "Planning",
-    createdAt: "2024-03-05",
-  },
-  {
-    id: 4,
-    name: "Analytics Dashboard",
-    key: "ANALYTICS",
-    description: "Data analytics and reporting dashboard",
-    issues: 15,
-    team: 6,
-    status: "In Progress",
-    createdAt: "2024-01-20",
-  },
-  {
-    id: 5,
-    name: "Mobile App",
-    key: "MOBILE",
-    description: "React Native mobile application",
-    issues: 20,
-    team: 7,
-    status: "In Progress",
-    createdAt: "2024-02-28",
-  },
-];
 
 export default function Project() {
-//   const AuthContextData = useContext(AuthContextProvider);
-//   const user = AuthContextData.user;
+  const AuthContextData = useContext(AuthContext);
+const [projects, setProjetcs] = useState([]);
+
+  useEffect(() => {
+    async function loadProjects() {
+      try {
+          const response = await api.get(`/projects`, {
+          headers: {
+            Authorization: `Bearer ${AuthContextData.accessToken}`
+          }
+        });
+        setProjetcs(response.data.data);
+      } catch (error) {
+        console.log('Error: ',error)
+        setProjetcs([]);
+      }
+      
+    }
+    loadProjects();
+  }, [AuthContextData.accessToken]);
 
   return (
     <div className="dashboard">

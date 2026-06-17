@@ -1,12 +1,12 @@
 const express = require('express');
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 const projectMiddleware = require('../middlewares/projectMiddleware');
 const projectController = require('../controllers/projectController');
 const { handleAsyncFunction } = require('../utils/commonHelper');
 
 router.get(
   '/',
-  projectMiddleware.isCompanyProjectValid,
+  // projectMiddleware.isCompanyProjectValid,
   handleAsyncFunction(projectController.getProjects),
 );
 
