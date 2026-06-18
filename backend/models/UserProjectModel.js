@@ -4,18 +4,34 @@ const {
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class UserProject extends Model {
-    static associate(_models) {
-      // define association here
+    static associate(models) {
+      UserProject.belongsTo(models.User, {
+        foreignKey: 'userId',
+        // as: 'roleInfo',
+      });
+
+      UserProject.belongsTo(models.Project, {
+        foreignKey: 'projectId',
+        // as: 'company'
+      })
     }
   }
   UserProject.init({
-    user: {
+    userId: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      references: {
+        model: 'users',
+        key: 'id'
+      }
     },
-    project: {
+    projectId: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      references: {
+        model: 'projects',
+        key: 'id'
+      }
     },
   }, {
     sequelize,

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router({ mergeParams: true });
-const projectMiddleware = require('../middlewares/projectMiddleware');
+// const projectMiddleware = require('../middlewares/projectMiddleware');
 const projectController = require('../controllers/projectController');
 const { handleAsyncFunction } = require('../utils/commonHelper');
 
@@ -12,25 +12,25 @@ router.get(
 
 router.get(
   '/:id',
-  projectMiddleware.isCompanyProjectValid,
+  // projectMiddleware.isCompanyProjectValid,
   handleAsyncFunction(projectController.getProjectById),
 );
 
 router.post(
   '/',
-  projectMiddleware.isCompanyProjectValid,
+  // projectMiddleware.isCompanyProjectValid,
   handleAsyncFunction(projectController.createProject),
 );
 
 router.put(
-  '/',
-  projectMiddleware.isCompanyProjectValid,
+  '/:id',
+  // projectMiddleware.isCompanyProjectValid,
   handleAsyncFunction(projectController.updateProject),
 );
 
 router.delete(
   '/:id',
-  projectMiddleware.isCompanyProjectValid,
+  // projectMiddleware.isCompanyProjectValid,
   handleAsyncFunction(projectController.deleteProject),
 );
 

@@ -20,8 +20,8 @@ projectController.getProjectById = async (req) => {
 };
 
 projectController.createProject = async (req) => {
-  const { companyId } = req.params;
-  const project = await projectService.createProject(companyId, req.body);
+  const role = req.auth.user.roleInfo.name;
+  const project = await projectService.createProject(role, req.auth.user.id, req.body);
   return { data: project, statusCode: 201 };
 };
 

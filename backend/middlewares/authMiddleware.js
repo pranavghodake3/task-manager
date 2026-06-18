@@ -163,8 +163,9 @@ authMiddleware.registerCompanyProjectUser = async (req, res, next) => {
 authMiddleware.isAuthentic = async (req, res, next) => {
   try {
     let bearerToken = req.headers.authorization?.split('Bearer ')[1];
-    if (!req.headers.authorization || !bearerToken) {
-      throw new CustomError('Missing Bearer Token', 401);
+
+    if (!bearerToken) {
+      throw new CustomError('Missing Bearer Token or it is Undefined', 401);
     }
     const data = jwtUtil.verifyToken(bearerToken);
     console.log("datadatadatadatadata: ",data);

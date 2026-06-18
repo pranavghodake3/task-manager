@@ -9,7 +9,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      user: {
+      userId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
@@ -17,9 +17,9 @@ module.exports = {
           key: 'id',
         },
         onUpdate: 'CASCADE',
-        onDelete: 'RESTRICT',
+        onDelete: 'CASCADE',
       },
-      project: {
+      projectId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
@@ -27,7 +27,7 @@ module.exports = {
           key: 'id',
         },
         onUpdate: 'CASCADE',
-        onDelete: 'RESTRICT',
+        onDelete: 'CASCADE',
       },
       createdAt: {
         allowNull: false,

@@ -1,7 +1,6 @@
 const { ROLES } = require('../constants');
 const db = require('../models');
 const ProjectModel = db.Project;
-const UserProjectModel = require('../models/UserProjectModel');
 const { getMyCompany } = require('./companyService');
 
 const projectService = {};
@@ -22,8 +21,10 @@ projectService.getProjectById = async (id) => {
   return await ProjectModel.findByPk(id);
 };
 
-projectService.createProject = async (companyId, reqBody) => {
-  reqBody.companyId = companyId;
+projectService.createProject = async (role, userId, reqBody) => {
+  if(role === ROLES.COMPANY_ADMIN){
+    reqBody.companyId = (await getMyCompany(userId)).id;
+  }
   const project = await ProjectModel.create(reqBody);
   return project;
 };
@@ -38,11 +39,6 @@ projectService.updateProject = async (id, reqBody) => {
 projectService.deleteProject = async (id) => {
   await ProjectModel.destroy({
     where: { id },
-  });
-  await UserProjectModel.destroy({
-    where: {
-      project: id,
-    },
   });
 };
 

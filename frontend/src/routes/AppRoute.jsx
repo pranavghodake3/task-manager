@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Home from "../pages/Home";
 import Dashboard from "../pages/Dashboard";
-import Project from "../pages/Project";
+import ProjectList from "../pages/ProjectList";
 import Login from "../pages/Login";
 import Signup from "../pages/Signup";
 import ProtectedRoute from "../compoenets/ProtectedRoute";
@@ -10,6 +10,9 @@ import Users from "../pages/Users";
 import AddUser from "../pages/AddUser";
 import { ROLES } from "../constants";
 import Unathorized from "../pages/Unathorized";
+import ProjectView from "../pages/ProjectView";
+import ProjectCreate from "../pages/ProjectCreate";
+import ProjectEdit from "../pages/ProjectEdit";
 
 export default function AppRoute() {
     return (
@@ -25,8 +28,38 @@ export default function AppRoute() {
                     } />
 
                     <Route path="/projects" element={
-                        <ProtectedRoute>
-                            <Project />
+                        <ProtectedRoute allowedRoles={[
+                            ROLES.COMPANY_ADMIN,
+                            ROLES.SUPER_ADMIN
+                        ]}>
+                            <ProjectList />
+                        </ProtectedRoute>
+                    } />
+
+                    <Route path="/projects/create" element={
+                        <ProtectedRoute allowedRoles={[
+                            ROLES.COMPANY_ADMIN,
+                            ROLES.SUPER_ADMIN
+                        ]}>
+                           <ProjectCreate />
+                        </ProtectedRoute>
+                    } />
+
+                    <Route path="/projects/:id" element={
+                        <ProtectedRoute allowedRoles={[
+                            ROLES.COMPANY_ADMIN,
+                            ROLES.SUPER_ADMIN
+                        ]}>
+                           <ProjectView />
+                        </ProtectedRoute>
+                    } />
+
+                    <Route path="/projects/:id/edit" element={
+                        <ProtectedRoute allowedRoles={[
+                            ROLES.COMPANY_ADMIN,
+                            ROLES.SUPER_ADMIN
+                        ]}>
+                           <ProjectEdit />
                         </ProtectedRoute>
                     } />
 

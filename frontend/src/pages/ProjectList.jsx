@@ -4,11 +4,13 @@ import "../assets/css/dashboard.css";
 import NavBar from "../compoenets/NavBar";
 import api from "../services/api";
 import { AuthContext } from "../context/AuthContext";
+import { NavLink, useNavigate } from "react-router-dom";
 
 
-export default function Project() {
+export default function ProjectList() {
   const AuthContextData = useContext(AuthContext);
-const [projects, setProjetcs] = useState([]);
+const [projects, setProjects] = useState([]);
+const navigate = useNavigate();
 
   useEffect(() => {
     async function loadProjects() {
@@ -18,15 +20,28 @@ const [projects, setProjetcs] = useState([]);
             Authorization: `Bearer ${AuthContextData.accessToken}`
           }
         });
-        setProjetcs(response.data.data);
+        setProjects(response.data.data);
       } catch (error) {
         console.log('Error: ',error)
-        setProjetcs([]);
+        setProjects([]);
       }
       
     }
     loadProjects();
   }, [AuthContextData.accessToken]);
+  async function handleDeleteProject(e) {
+    const projectIndex = parseInt(e.currentTarget.dataset.projectIndex, 10);
+    const projectId = e.currentTarget.dataset.projectId;
+    const conf = confirm('Are you sure you want to delete this project? ' + projectIndex);
+    if (conf) {
+      await api.delete(`/projects/${projectId}`, {
+        headers: {
+          Authorization: `Bearer ${AuthContextData.accessToken}`
+        }
+      });
+      setProjects((currentProjects) => currentProjects.filter((_, idx) => idx !== projectIndex));
+    }
+  }
 
   return (
     <div className="dashboard">
@@ -41,8 +56,7 @@ const [projects, setProjetcs] = useState([]);
             <h1>Projects</h1>
             <p>Manage and view all your projects</p>
           </div>
-
-          <button className="create-btn">+ New Project</button>
+          <button className="create-btn" onClick={()=> navigate('/projects/create')}>+ New Project</button>
         </header>
 
         {/* Projects Table */}
@@ -53,14 +67,27 @@ const [projects, setProjetcs] = useState([]);
                 <tr>
                   <th>ID</th>
                   <th>Name</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {projects.map((project) => (
+                {projects.map((project, index) => (
                   <tr key={project.id} className="project-row">
                     <td className="project-key">{project.id}</td>
                     <td className="project-name">
-                      {project.name}
+                      <NavLink to={`/projects/${project.id}`}>{project.name}</NavLink>
+                    </td>
+                    <td>
+                      <NavLink to={`/projects/${project.id}/edit`}>Edit</NavLink>
+                      <button
+                        type="button"
+                        className=""
+                        onClick={handleDeleteProject}
+                        data-project-index={index}
+                        data-project-id={project.id}
+                      >
+                        Delete
+                      </button>
                     </td>
                     {/* <td className="actions">
                       <Link to={`/project/${project.id}`} className="action-link">
