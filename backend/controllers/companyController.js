@@ -19,4 +19,10 @@ companyController.addUsers = async (req) => {
     };
 }
 
+companyController.updateUsers = async (req) => {
+    const { userId } = req.params;
+    const user = await companyService.updateUsers(userId, req.body);
+    return { data: user };
+}
+
 module.exports = companyController;

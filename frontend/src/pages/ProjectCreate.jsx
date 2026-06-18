@@ -13,13 +13,15 @@ export default function ProjectCreate() {
                 <main className="main-content">
                     {/* Header */}
                     <Header title='Create Project' description='' button={
-                    <NavLink className='create-btn' to='/projects'>Back</NavLink>
-                } />
+                        <NavLink className='create-btn' to='/projects'>Back</NavLink>
+                    } />
                     
     
                     {/* Projects Table */}
                     <section className="projects-table-section">
-                        <ProjectCreateEditForm mode='create' />
+                        <div className="card">
+                            <ProjectCreateEditForm mode='create' />
+                        </div>
                     </section>
                     
                 </main>

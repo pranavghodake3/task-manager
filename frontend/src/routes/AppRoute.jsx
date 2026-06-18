@@ -6,13 +6,15 @@ import Login from "../pages/Login";
 import Signup from "../pages/Signup";
 import ProtectedRoute from "../compoenets/ProtectedRoute";
 import { AuthContextProvider } from "../context/AuthContextProvider";
-import Users from "../pages/Users";
-import AddUser from "../pages/AddUser";
+import UserList from "../pages/UserList";
+import UserAdd from "../pages/UserAdd";
 import { ROLES } from "../constants";
 import Unathorized from "../pages/Unathorized";
 import ProjectView from "../pages/ProjectView";
 import ProjectCreate from "../pages/ProjectCreate";
 import ProjectEdit from "../pages/ProjectEdit";
+import UserView from "../pages/UserView";
+import UserEdit from "../pages/UserEdit";
 
 export default function AppRoute() {
     return (
@@ -68,7 +70,25 @@ export default function AppRoute() {
                             ROLES.COMPANY_ADMIN,
                             ROLES.SUPER_ADMIN
                         ]}>
-                            <Users />
+                            <UserList />
+                        </ProtectedRoute>
+                    } />
+
+                    <Route path="/users/:id/edit" element={
+                        <ProtectedRoute allowedRoles={[
+                            ROLES.COMPANY_ADMIN,
+                            ROLES.SUPER_ADMIN
+                        ]}>
+                            <UserEdit />
+                        </ProtectedRoute>
+                    } />
+
+                    <Route path="/users/:id" element={
+                        <ProtectedRoute allowedRoles={[
+                            ROLES.COMPANY_ADMIN,
+                            ROLES.SUPER_ADMIN
+                        ]}>
+                            <UserView />
                         </ProtectedRoute>
                     } />
 
@@ -77,7 +97,7 @@ export default function AppRoute() {
                             ROLES.COMPANY_ADMIN,
                             ROLES.SUPER_ADMIN
                         ]}>
-                            <AddUser />
+                            <UserAdd />
                         </ProtectedRoute>
                     } />
 

@@ -5,6 +5,7 @@ import NavBar from "../compoenets/NavBar";
 import api from "../services/api";
 import { AuthContext } from "../context/AuthContext";
 import { NavLink, useNavigate } from "react-router-dom";
+import Header from "../compoenets/Header";
 
 
 export default function ProjectList() {
@@ -32,7 +33,7 @@ const navigate = useNavigate();
   async function handleDeleteProject(e) {
     const projectIndex = parseInt(e.currentTarget.dataset.projectIndex, 10);
     const projectId = e.currentTarget.dataset.projectId;
-    const conf = confirm('Are you sure you want to delete this project? ' + projectIndex);
+    const conf = confirm('Are you sure you want to delete this project ?');
     if (conf) {
       await api.delete(`/projects/${projectId}`, {
         headers: {
@@ -51,13 +52,9 @@ const navigate = useNavigate();
       {/* Main Content */}
       <main className="main-content">
         {/* Header */}
-        <header className="topbar">
-          <div>
-            <h1>Projects</h1>
-            <p>Manage and view all your projects</p>
-          </div>
-          <button className="create-btn" onClick={()=> navigate('/projects/create')}>+ New Project</button>
-        </header>
+        <Header title='Projects' description='Manage and view all your projects' button={
+            <button className="create-btn" onClick={()=> navigate('/projects/create')}>+ New Project</button>
+        } />
 
         {/* Projects Table */}
         <section className="projects-table-section">
@@ -74,14 +71,18 @@ const navigate = useNavigate();
                 {projects.map((project, index) => (
                   <tr key={project.id} className="project-row">
                     <td className="project-key">{project.id}</td>
-                    <td className="project-name">
+                    <td className="">
                       <NavLink to={`/projects/${project.id}`}>{project.name}</NavLink>
                     </td>
-                    <td>
-                      <NavLink to={`/projects/${project.id}/edit`}>Edit</NavLink>
+                    <td className="actions">
+                      <NavLink to={`/projects/${project.id}`} className="action-link">
+                        View
+                      </NavLink>
+                      <NavLink to={`/projects/${project.id}/edit`} className='action-link action-btn'>Edit</NavLink>
+                      {/* <button className="action-link action-btn">Edit</button> */}
                       <button
                         type="button"
-                        className=""
+                        className="action-link delete-link"
                         onClick={handleDeleteProject}
                         data-project-index={index}
                         data-project-id={project.id}
@@ -89,13 +90,6 @@ const navigate = useNavigate();
                         Delete
                       </button>
                     </td>
-                    {/* <td className="actions">
-                      <Link to={`/project/${project.id}`} className="action-link">
-                        View
-                      </Link>
-                      <button className="action-link action-btn">Edit</button>
-                      <button className="action-link delete-link">Delete</button>
-                    </td> */}
                   </tr>
                 ))}
               </tbody>

@@ -1,3 +1,5 @@
+import { ROLES } from "../constants";
+
 export function formatDate(date, format = 'DD-MM-YYYY') {
   const d = new Date(date);
 
@@ -15,3 +17,10 @@ export function formatDate(date, format = 'DD-MM-YYYY') {
     .replace('MM', month)
     .replace('YYYY', year);
 };
+
+export default function getUserRoles() {
+  const roles = {... ROLES};
+  delete roles.COMPANY_ADMIN;
+  delete roles.SUPER_ADMIN;
+  return Object.values(roles);
+}

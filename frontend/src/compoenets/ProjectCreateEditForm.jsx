@@ -41,7 +41,7 @@ export default function ProjectCreateEditForm({ mode, project }) {
         }
     }
     return (
-        <form className="project-form" onSubmit={handleSubmit}>
+        <form className="auth-form project-form" onSubmit={handleSubmit}>
               <div className="form-group">
                 <label>Name</label>
                 <input type="text" placeholder="Enter project name" value={name} onChange={(e) => setProjectName(e.target.value)} />

@@ -4,26 +4,40 @@ import "../assets/css/dashboard.css";
 import NavBar from "../compoenets/NavBar";
 import api from "../services/api";
 import { AuthContext } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import Header from "../compoenets/Header";
 
-export default function Users() {
+export default function UserList() {
   const AuthContextData = useContext(AuthContext);
   const [users, setUsers] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
     async function loadUsers() {
-        const response = await api.get('/company/1/users', {
+        const response = await api.get(`/company/${AuthContextData.user.company.id}/users`, {
             headers: { Authorization: 'Bearer ' + AuthContextData.accessToken },
         });
         setUsers(response.data.data);
     }
     loadUsers();
-  }, [AuthContextData.accessToken]);
+  }, [AuthContextData.accessToken, AuthContextData.user.company.id]);
 
   function handleAddUser() {
     navigate('/users/add');
   }
+  async function handleDeleteUser(e) {
+      const userIndex = parseInt(e.currentTarget.dataset.userIndex, 10);
+      const userId = e.currentTarget.dataset.userId;
+      const conf = confirm('Are you sure you want to delete this user ?');
+      if (conf) {
+        await api.delete(`/users/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${AuthContextData.accessToken}`
+          }
+        });
+        setUsers((currentUsers) => currentUsers.filter((_, idx) => idx !== userIndex));
+      }
+    }
 
   return (
     <div className="dashboard">
@@ -33,29 +47,25 @@ export default function Users() {
       {/* Main Content */}
       <main className="main-content">
         {/* Header */}
-        <header className="topbar">
-          <div>
-            <h1>Users</h1>
-            <p>Manage and view all your users</p>
-          </div>
+        <Header title='Users' description='Manage and view all your users' button={
+            <button className="create-btn" onClick={handleAddUser}>+ New User</button>
+        } />
 
-          <button className="create-btn" onClick={handleAddUser}>+ New User</button>
-        </header>
-
-        {/* Projects Table */}
-        <section className="projects-table-section">
+        {/* Users Table */}
+        <section className="users-table-section">
           <div className="card">
-            <table className="projects-table">
+            <table className="users-table">
               <thead>
                 <tr>
                   <th>ID</th>
                   <th>Name</th>
                   <th>Email</th>
                   <th>Role</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {users.map((user) => (
+                {users.map((user, index) => (
                   <tr key={user.id} className="">
                     <td className="">{user.id}</td>
                     <td className="">
@@ -65,15 +75,17 @@ export default function Users() {
                       {user.email}
                     </td>
                     <td className="">
-                      {user.email}
+                      {user?.roleInfo?.name}
                     </td>
-                    {/* <td className="actions">
-                      <Link to={`/project/${project.id}`} className="action-link">
+                    <td className="actions">
+                      <NavLink to={`/users/${user.id}`} className="action-link">
                         View
-                      </Link>
-                      <button className="action-link action-btn">Edit</button>
-                      <button className="action-link delete-link">Delete</button>
-                    </td> */}
+                      </NavLink>
+                      <NavLink to={`/users/${user.id}/edit`} className="action-link">
+                        Edit
+                      </NavLink>
+                      <button className="action-link delete-link" onClick={handleDeleteUser} data-user-index={index} data-user-id={user.id}>Delete</button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -83,46 +95,46 @@ export default function Users() {
       </main>
 
       <style>{`
-        .projects-table-section {
+        .users-table-section {
           margin-bottom: 32px;
         }
 
-        .projects-table {
+        .users-table {
           width: 100%;
           border-collapse: collapse;
           font-size: 14px;
         }
 
-        .projects-table thead {
+        .users-table thead {
           background: #f5f6f7;
           border-bottom: 2px solid #eee;
         }
 
-        .projects-table th {
+        .users-table th {
           padding: 16px;
           text-align: left;
           font-weight: 600;
           color: #172b4d;
         }
 
-        .projects-table td {
+        .users-table td {
           padding: 16px;
           border-bottom: 1px solid #eee;
           color: #172b4d;
         }
 
-        .project-row:hover {
+        .user-row:hover {
           background: #f9f9f9;
         }
 
-        .project-name {
+        .user-name {
           display: flex;
           align-items: center;
           gap: 12px;
           font-weight: 500;
         }
 
-        .project-avatar-mini {
+        .user-avatar-mini {
           width: 40px;
           height: 40px;
           border-radius: 8px;
@@ -135,12 +147,12 @@ export default function Users() {
           font-size: 12px;
         }
 
-        .project-key {
+        .user-key {
           font-weight: 600;
           color: #0052cc;
         }
 
-        .project-description {
+        .user-description {
           color: #5e6c84;
           max-width: 300px;
           overflow: hidden;
@@ -210,23 +222,23 @@ export default function Users() {
         }
 
         @media (max-width: 1200px) {
-          .project-description {
+          .user-description {
             display: none;
           }
 
-          .projects-table th:nth-child(3),
-          .projects-table td:nth-child(3) {
+          .users-table th:nth-child(3),
+          .users-table td:nth-child(3) {
             display: none;
           }
         }
 
         @media (max-width: 768px) {
-          .projects-table {
+          .users-table {
             font-size: 12px;
           }
 
-          .projects-table th,
-          .projects-table td {
+          .users-table th,
+          .users-table td {
             padding: 10px;
           }
 
