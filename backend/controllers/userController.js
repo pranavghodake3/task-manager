@@ -1,13 +1,20 @@
 const userService = require('../services/userService');
+const makeBoolean = require('../utils/booleanHelper');
 
 const userController = {};
 
-userController.getUsers = async () => {
-    const users = await userService.getUsers();
-
-    return {
-        data: users
-    };
+userController.getUsers = async (req) => {
+    const { companyId } = req.query;
+    let { isDropdown } = req.query;
+    isDropdown = makeBoolean(isDropdown);
+    const role = req.auth.user.roleInfo.name;
+    const users = await userService.getUsers({
+      userId: req.auth.user.id,
+      role,
+      companyId,
+      isDropdown,
+    });
+    return { data: users };
 };
 
 userController.getUserRoles = async () => {

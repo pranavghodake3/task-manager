@@ -12,10 +12,14 @@
     "lint:fix": "eslint . --fix",
     "prepare": "husky",
     "migrate": "npx sequelize-cli db:migrate",
+    "migrate:undo": "npx sequelize-cli db:migrate:undo",
     "db:migrate": "npx sequelize-cli db:migrate",
     "db:migrate:undo": "npx sequelize-cli db:migrate:undo",
-    "seed": "npx sequelize-cli db:seed:all",
-    "db:seed": "npx sequelize-cli db:seed:all"
+    "seed": "npx sequelize-cli db:seed --seed",
+    "seed:undo": "npx sequelize-cli db:seed:undo --seed",
+    "seed:all": "npx sequelize-cli db:seed:all",
+    "seed:undo:all": "npx sequelize-cli db:seed:undo:all",
+    "db:seed:all": "npx sequelize-cli db:seed:all"
   },
   "repository": {
     "type": "git",

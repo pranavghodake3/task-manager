@@ -8,6 +8,8 @@ const ProjectModel = db.Project;
 const { getUserByIdWithRole } = require('../services/userService');
 const CustomError = require('../utils/CustomError');
 const jwtUtil = require('../utils/jwtUtil');
+const { ROLES } = require('../constants');
+const { getMyCompany } = require('../services/companyService');
 
 const authMiddleware = {};
 
@@ -169,9 +171,16 @@ authMiddleware.isAuthentic = async (req, res, next) => {
     }
     const data = jwtUtil.verifyToken(bearerToken);
     console.log("datadatadatadatadata: ",data);
+    const user = await getUserByIdWithRole(data.userId);
     req.auth = {
-      user: await getUserByIdWithRole(data.userId),
+      user,
     };
+    if(user.roleInfo.name === ROLES.COMPANY_ADMIN){
+      req.auth = {
+        ...req.auth,
+        company: await getMyCompany(user.id),
+      }
+    }
     console.log("req.auth: ",req.auth);
     if (data) {
       next();

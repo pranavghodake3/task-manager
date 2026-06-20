@@ -10,6 +10,9 @@ const obj = {
     QA: 'QA',
     DEVOPS: 'DevOps'
   },
+  STATUSES: {
+    
+  }
 };
 
 module.exports = obj;

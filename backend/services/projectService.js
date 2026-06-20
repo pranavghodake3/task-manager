@@ -5,15 +5,20 @@ const { getMyCompany } = require('./companyService');
 
 const projectService = {};
 
-projectService.getProjects = async ({ userId, role, companyId }) => {
+projectService.getProjects = async ({ userId, role, companyId, isDropdown = false }) => {
   if(role === ROLES.COMPANY_ADMIN){
     companyId = (await getMyCompany(userId)).id;
   }
   const where = {
     ...(companyId && { companyId })
   };
+  let attributes = [];
+  if(isDropdown){
+    attributes = ['id', 'name'];
+  }
   return await ProjectModel.findAll({
     ...(where && { where }),
+    ...(attributes.length > 0 && { attributes }),
   });
 };
 

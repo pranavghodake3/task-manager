@@ -9,7 +9,7 @@ router.get('/:id', handleAsyncFunction(taskController.getTaskById));
 
 router.post('/', handleAsyncFunction(taskController.createTask));
 
-router.put('/', handleAsyncFunction(taskController.updateTask));
+router.put('/:id', handleAsyncFunction(taskController.updateTask));
 
 router.delete('/:id', handleAsyncFunction(taskController.deleteTask));
 

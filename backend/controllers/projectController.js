@@ -1,14 +1,18 @@
 const projectService = require('../services/projectService');
+const makeBoolean = require('../utils/booleanHelper');
 
 const projectController = {};
 
 projectController.getProjects = async (req) => {
   const { companyId } = req.query;
+  let { isDropdown } = req.query;
+  isDropdown = makeBoolean(isDropdown);
   const role = req.auth.user.roleInfo.name;
   const projects = await projectService.getProjects({
     userId: req.auth.user.id,
     role,
-    companyId
+    companyId,
+    isDropdown,
   });
   return { data: projects };
 };
