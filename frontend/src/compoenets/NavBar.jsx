@@ -21,9 +21,13 @@ export default function NavBar() {
 
         <nav className="menu">
           <NavLink to="/dashboard">Dashboard</NavLink>
+
           { [ROLES.COMPANY_ADMIN, ROLES.SUPER_ADMIN].includes(myRole) && <NavLink to="/projects">Projects</NavLink> }
+
           { [ROLES.COMPANY_ADMIN, ROLES.SUPER_ADMIN].includes(myRole) && <NavLink to="/users">Users</NavLink> }
-          { ![ROLES.COMPANY_ADMIN, ROLES.SUPER_ADMIN].includes(myRole) && <NavLink to="/tasks">Tasks</NavLink> }
+
+          <NavLink to="/tasks">Tasks</NavLink>
+          
           {/* <NavLink to="/">Boards</NavLink> */}
           {/* <NavLink to="/">Reports</NavLink> */}
           {/* <NavLink to="/">Settings</NavLink> */}

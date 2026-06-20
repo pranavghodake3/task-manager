@@ -1,1 +1,16 @@
+docker compose exec backend npm run migrate
+docker compose exec backend npm run seed
+
 npx sequelize-cli migration:generate --name add-column-to-users
+
+npx sequelize-cli model:generate --name Status --attributes name:string,color:string,display_Order:integer,isClosed:boolean
+
+npx sequelize-cli model:generate --name Priority --attributes name:string,rank:integer,color:string
+
+npx sequelize-cli migration:generate --name add-columns-to-tasks
+
+npx sequelize-cli seed:generate --name statuses
+
+npx sequelize-cli seed:generate --name priorities
+
+npx sequelize-cli migration:generate --name alter-foreign-key-constraint-refresh_tokens

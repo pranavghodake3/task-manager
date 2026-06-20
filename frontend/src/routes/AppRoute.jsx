@@ -15,6 +15,10 @@ import ProjectCreate from "../pages/ProjectCreate";
 import ProjectEdit from "../pages/ProjectEdit";
 import UserView from "../pages/UserView";
 import UserEdit from "../pages/UserEdit";
+import TaskList from "../pages/TaskList";
+import TaskEdit from "../pages/TaskEdit";
+import TaskView from "../pages/TaskView";
+import TaskCreate from "../pages/TaskCreate";
 
 export default function AppRoute() {
     return (
@@ -98,6 +102,39 @@ export default function AppRoute() {
                             ROLES.SUPER_ADMIN
                         ]}>
                             <UserAdd />
+                        </ProtectedRoute>
+                    } />
+
+                    <Route path="/tasks" element={
+                        <ProtectedRoute>
+                            <TaskList />
+                        </ProtectedRoute>
+                    } />
+
+                    <Route path="/tasks/create" element={
+                        <ProtectedRoute allowedRoles={[
+                            // ROLES.COMPANY_ADMIN,
+                            // ROLES.SUPER_ADMIN
+                        ]}>
+                           <TaskCreate />
+                        </ProtectedRoute>
+                    } />
+
+                    <Route path="/tasks/:id" element={
+                        <ProtectedRoute allowedRoles={[
+                            // ROLES.COMPANY_ADMIN,
+                            // ROLES.SUPER_ADMIN
+                        ]}>
+                           <TaskView />
+                        </ProtectedRoute>
+                    } />
+
+                    <Route path="/tasks/:id/edit" element={
+                        <ProtectedRoute allowedRoles={[
+                            // ROLES.COMPANY_ADMIN,
+                            // ROLES.SUPER_ADMIN
+                        ]}>
+                           <TaskEdit />
                         </ProtectedRoute>
                     } />
 

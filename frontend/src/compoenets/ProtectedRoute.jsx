@@ -7,7 +7,7 @@ export default function ProtectedRoute({ allowedRoles, children }) {
     const AuthContextData = useContext(AuthContext);
     const role = getRole();
     const myRole = role?.name;
-    console.log('Protected Route AuthContextData: ',AuthContextData);
+    // console.log('Protected Route AuthContextData: ',AuthContextData);
     if(AuthContextData.authLoading){
         return null;
     }
@@ -15,7 +15,7 @@ export default function ProtectedRoute({ allowedRoles, children }) {
         return <Navigate to="/login" />
     }
 
-    if(allowedRoles && !allowedRoles.includes(myRole)){
+    if(allowedRoles && allowedRoles.length > 0 && !allowedRoles.includes(myRole)){
         return <Navigate to='/unathorized' />
     }
 

@@ -185,6 +185,37 @@ body {
   color: #5e6c84;
 }
 
+/* Detail key/value table used in TaskView and similar single-entity views */
+.detail-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+.detail-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #eee;
+  vertical-align: top;
+}
+.detail-table td:first-child {
+  width: 30%;
+  font-weight: 600;
+  color: #172b4d;
+  text-align: left;
+}
+.detail-table td:last-child {
+  width: 70%;
+  text-align: left;
+  color: #5e6c84;
+}
+@media (max-width: 768px) {
+  .detail-table td:first-child {
+    width: 40%;
+  }
+  .detail-table td:last-child {
+    text-align: left;
+  }
+}
+
 /* Activity */
 
 .activity-card {

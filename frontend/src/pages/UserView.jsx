@@ -38,7 +38,7 @@ export default function UserView() {
                 <section className="users-table-section">
           <div className="card">
                 { user ? 
-                    <table className="projects-table">
+                    <table className="detail-table">
                         <tbody>
                             <tr>
                                 <td><b>Id: </b></td>

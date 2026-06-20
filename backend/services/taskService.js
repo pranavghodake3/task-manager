@@ -73,9 +73,11 @@ taskService.getTaskById = async (id) => {
   });
 };
 
-taskService.createTask = async (loggedInUserId, companyId, reqBody) => {
+taskService.createTask = async (loggedInUserId, role, reqBody) => {
     reqBody.creatorId = loggedInUserId;
-    reqBody.companyId = companyId;
+    if(role === ROLES.COMPANY_ADMIN){
+        reqBody.companyId = (await getMyCompany(loggedInUserId)).id;
+    }
   const task = await TaskModel.create(reqBody);
   return task;
 };

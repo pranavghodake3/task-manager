@@ -37,7 +37,7 @@ export default function ProjectView() {
                 {/* Projects Table */}
                 <section className="projects-table-section">
                 { project ? 
-                    <table>
+                    <table className="detail-table">
                         <tbody>
                             <tr>
                                 <td><b>Id: </b></td>
