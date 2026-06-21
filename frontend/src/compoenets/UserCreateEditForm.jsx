@@ -98,10 +98,11 @@ export default function UserCreateEditForm({ mode, user }) {
 
             <div className="form-group">
                 <label htmlFor="role">Select Role</label>
-                <select name="role" id="role" onChange={(e) => selectRoleId(e.target.value)}>
-                    {
-                        userRoles.map((userRole) => <option key={userRole.id} value={userRole.id} selected={ user?.role && user.role == userRole.id ? true : false}>{userRole.name}</option>)
-                    }
+                <select name="roleId" id="roleId" value={roleId ?? user?.role} onChange={(e) => selectRoleId(e.target.value)}>
+                    <option value="">Select Role</option>
+                    {userRoles.map((userRole) => (
+                        <option key={userRole.id} value={userRole.id}>{userRole.name}</option>
+                    ))}
                 </select>
             </div>
 

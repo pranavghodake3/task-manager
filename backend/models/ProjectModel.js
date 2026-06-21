@@ -24,6 +24,24 @@ module.exports = (sequelize, DataTypes) => {
         key: 'id'
       }
     },
+    description: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    key: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    createdBy: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'users', // Target table name
+        key: 'id',       // Target column name
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE',
+    }
   }, {
     sequelize,
     modelName: 'Project',

@@ -22,11 +22,15 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       unique: true,
     },
+    slug: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
   }, {
     sequelize,
     modelName: 'Role',
     tableName: 'roles',
-    timestamps: true,
+    timestamps: false,
   });
   return Role;
 };

@@ -14,3 +14,11 @@ npx sequelize-cli seed:generate --name statuses
 npx sequelize-cli seed:generate --name priorities
 
 npx sequelize-cli migration:generate --name alter-foreign-key-constraint-refresh_tokens
+
+npx sequelize-cli migration:generate --name add-column-slug-to-roles
+
+npx sequelize-cli seed:generate --name roles-alter
+
+npx sequelize-cli model:generate --name Job_Title --attributes name:string,slug:string
+
+npx sequelize-cli model:generate --name CompanyMember --attributes companyId:integer,userId:integer,roleId:integer,jobTitleId:integer

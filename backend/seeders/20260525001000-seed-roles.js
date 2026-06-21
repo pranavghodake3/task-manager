@@ -7,38 +7,27 @@ module.exports = {
       [
         {
           name: 'Super Admin',
-          createdAt: new Date(),
-          updatedAt: new Date(),
+          slug: 'super_admin',
         },
         {
           name: 'Company Admin',
-          createdAt: new Date(),
-          updatedAt: new Date(),
+          slug: 'company_admin',
+        },
+        {
+          name: 'Project Admin',
+          slug: 'project_admin',
         },
         {
           name: 'Project Manager',
-          createdAt: new Date(),
-          updatedAt: new Date(),
+          slug: 'project_manager',
         },
         {
-          name: 'Scrum Master',
-          createdAt: new Date(),
-          updatedAt: new Date(),
+          name: 'Project Member',
+          slug: 'project_member',
         },
         {
-          name: 'Developer',
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-        {
-          name: 'QA',
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-        {
-          name: 'DevOps',
-          createdAt: new Date(),
-          updatedAt: new Date(),
+          name: 'Viewer',
+          slug: 'viewer',
         },
       ],
       {},
