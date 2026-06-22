@@ -26,15 +26,10 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      role: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'roles',
-          key: 'id',
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'RESTRICT',
+      isActive: {
+        type: Sequelize.BOOLEAN,
+        allowNull: true,
+        default: false
       },
       createdAt: {
         allowNull: false,

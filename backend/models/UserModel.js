@@ -9,16 +9,7 @@ module.exports = (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate(models) {
-      User.belongsTo(models.Role, {
-        foreignKey: 'role',
-        as: 'roleInfo',
-      });
-
-      User.belongsTo(models.Company, {
-        foreignKey: 'companyId',
-        // as: 'company'
-      })
+    static associate(_models) {
     }
   }
   User.init({
@@ -48,18 +39,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    role: {
-      type: DataTypes.INTEGER,
+    isActive: {
+      type: DataTypes.BOOLEAN,
       allowNull: true,
+      defaultValue: false,
     },
-    companyId: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-      references: {
-        model: 'companies',
-        key: 'id'
-      }
-    }
   }, {
     sequelize,
     modelName: 'User',
