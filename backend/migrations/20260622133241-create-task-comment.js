@@ -2,48 +2,35 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('companyMembers', {
+    await queryInterface.createTable('taskComments', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      companyId: {
+      taskId: {
         type: Sequelize.INTEGER,
+        allowNull: false,
         references: {
-          model: 'companies',
-          key: 'id',
+          model: 'tasks', // Target table name
+          key: 'id',       // Target column name
         },
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
       },
-      userId: {
+      companyMemberId: {
         type: Sequelize.INTEGER,
+        allowNull: false,
         references: {
-          model: 'users',
-          key: 'id',
+          model: 'companyMembers', // Target table name
+          key: 'id',       // Target column name
         },
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
       },
-      roleId: {
-        type: Sequelize.INTEGER,
-        references: {
-          model: 'roles',
-          key: 'id',
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE',
-      },
-      jobTitleId: {
-        type: Sequelize.INTEGER,
-        references: {
-          model: 'jobTitles',
-          key: 'id',
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE',
+      comment: {
+        type: Sequelize.TEXT
       },
       createdAt: {
         allowNull: false,
@@ -56,6 +43,6 @@ module.exports = {
     });
   },
   async down(queryInterface, _Sequelize) {
-    await queryInterface.dropTable('companyMembers');
+    await queryInterface.dropTable('taskComments');
   }
 };

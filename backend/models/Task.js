@@ -46,6 +46,9 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.TEXT,
       allowNull: true,
     },
+    storyPoints:{
+      type: DataTypes.INTEGER,
+    },
     userId: {
       type: DataTypes.INTEGER,
       allowNull: true,
