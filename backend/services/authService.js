@@ -120,26 +120,34 @@ authServiceObj.registerUser = async (reqBody) => {
 };
 
 authServiceObj.registerCompany = async (reqBody) => {
+  const { name, ...userData } = reqBody;
+  userData.password = await passwordHelper.generatePasswordHash(reqBody.password);
+  const company = await CompanyModel.create({
+    name,
+  });
+
+  const user = await UserModel.create({
+    ...userData,
+  });
+
   const companyAdminRole = await roleService.getCompanyAdminRole();
+
+  const jobTitle = await db.JobTitle.findOne({
+    where: {
+      slug: 'product_owner'
+    }
+  });
 
   if (!companyAdminRole) {
     throw new CustomError('Company admin role is not configured', 500);
   }
 
-  const { name, ...userData } = reqBody;
-  userData.password = await passwordHelper.generatePasswordHash(reqBody.password);
-
-  const user = await UserModel.create({
-    ...userData,
-    role: companyAdminRole.id,
+  await db.CompanyMember.create({
+    companyId: company.id,
+    userId: user.id,
+    roleId: companyAdminRole.id,
+    jobTitleId: jobTitle.id
   });
-
-  await CompanyModel.create({
-    name,
-    admin: user.id,
-  });
-
-  delete reqBody.name;
 
   return user;
 };
