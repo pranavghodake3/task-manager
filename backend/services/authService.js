@@ -22,7 +22,7 @@ authServiceObj.login = async (reqBody) => {
     include: [
       {
         model: RoleModel,
-        as: 'roleInfo'
+        as: 'roles'
       }
     ]
   });
@@ -65,7 +65,7 @@ authServiceObj.login = async (reqBody) => {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
-      role: user.roleInfo,
+      roles: user.roles,
       ...(company && { company })
     },
     accessToken,

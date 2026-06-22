@@ -24,3 +24,7 @@ npx sequelize-cli model:generate --name Job_Title --attributes name:string,slug:
 npx sequelize-cli model:generate --name CompanyMember --attributes companyId:integer,userId:integer,roleId:integer,jobTitleId:integer
 
 npx sequelize-cli migration:generate --name alter-columns-in-projectMembers
+
+npx sequelize-cli model:generate --name TaskComment --attributes taskId:integer,companyMemberId:integer,comment:text
+
+npx sequelize-cli model:generate --name TaskAttachment --attributes taskId:integer,fileName:string,fileUrl:text
