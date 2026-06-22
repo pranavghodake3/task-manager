@@ -7,8 +7,10 @@ import { ROLES } from "../constants";
 export default function NavBar() {
     const AuthContextData = useContext(AuthContext);
     const navigate = useNavigate();
-    const role = getRole();
-    const myRole = role?.name;
+    const roles = getRole();
+    const myRole = roles?.[0].name;
+    console.log('NavBar AuthContextData: ',AuthContextData);
+    console.log('NavBar myRole: ',myRole);
     function handleLogout() {
         AuthContextData.setIsLoggedIn(false);
         AuthContextData.setAccessToken(null);

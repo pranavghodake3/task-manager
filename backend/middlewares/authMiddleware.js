@@ -175,10 +175,10 @@ authMiddleware.isAuthentic = async (req, res, next) => {
     req.auth = {
       user,
     };
-    if(user.roleInfo.name === ROLES.COMPANY_ADMIN){
+    if(user.roles.some(role => role.name === ROLES.COMPANY_ADMIN)){
       req.auth = {
         ...req.auth,
-        company: await getMyCompany(user.id),
+        company: await getMyCompany(user.roles[0].CompanyMember.companyId),
       }
     }
     console.log("req.auth: ",req.auth);

@@ -73,7 +73,7 @@ userService.getUserByIdWithRole = async (userId) => {
         include: [
             {
             model: RoleModel,
-            as: 'roleInfo'
+            as: 'roles'
             }
         ]
     });

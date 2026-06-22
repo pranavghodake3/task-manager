@@ -24,6 +24,6 @@ export function getUserInfo(){
 export function getRole(){
     const user = JSON.parse(localStorage.getItem('user'));
 
-    return user?.role;
+    return user?.roles;
 }
 

@@ -49,7 +49,7 @@ export default function Dashboard() {
         <header className="topbar">
           <div>
             <h1>Dashboard</h1>
-            <p>Welcome back, { `${user.firstName} ${user.lastName} (${AuthContextData.user?.role?.name ?? ''})` } 👋</p>
+            <p>Welcome back, { `${user.firstName} ${user.lastName} (${AuthContextData.user?.roles[0]?.name ?? ''})` } 👋</p>
           </div>
 
           <button className="create-btn">+ Create Issue</button>
