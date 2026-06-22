@@ -3,25 +3,25 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class UserProject extends Model {
+  class ProjectMember extends Model {
     static associate(models) {
-      UserProject.belongsTo(models.User, {
-        foreignKey: 'userId',
-        // as: 'roleInfo',
+      ProjectMember.belongsTo(models.CompanyMember, {
+        foreignKey: 'companyMemberId',
+        as: 'companyMember',
       });
 
-      UserProject.belongsTo(models.Project, {
+      ProjectMember.belongsTo(models.Project, {
         foreignKey: 'projectId',
-        // as: 'company'
+        as: 'project'
       })
     }
   }
-  UserProject.init({
-    userId: {
+  ProjectMember.init({
+    companyMemberId: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'users',
+        model: 'companyMembers',
         key: 'id'
       }
     },
@@ -35,9 +35,9 @@ module.exports = (sequelize, DataTypes) => {
     },
   }, {
     sequelize,
-    modelName: 'UserProject',
-    tableName: 'user_projects',
+    modelName: 'ProjectMember',
+    tableName: 'projectMembers',
     timestamps: true,
   });
-  return UserProject;
+  return ProjectMember;
 };

@@ -3,12 +3,12 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class Job_Title extends Model {
+  class JobTitle extends Model {
     static associate(_models) {
       // define association here
     }
   }
-  Job_Title.init({
+  JobTitle.init({
     name: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -18,9 +18,9 @@ module.exports = (sequelize, DataTypes) => {
     },
   }, {
     sequelize,
-    modelName: 'Job_Title',
+    modelName: 'JobTitle',
     tableName: 'jobTitles',
     timestamps: false
   });
-  return Job_Title;
+  return JobTitle;
 };

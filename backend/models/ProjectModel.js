@@ -7,8 +7,13 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       Project.belongsTo(models.Company, {
         foreignKey: 'companyId',
-        // as: 'company'
-      })
+        as: 'company'
+      });
+
+      Project.belongsTo(models.User, {
+        foreignKey: 'createdBy',
+        as: 'createdBy'
+      });
     }
   }
   Project.init({

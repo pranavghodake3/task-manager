@@ -22,3 +22,5 @@ npx sequelize-cli seed:generate --name roles-alter
 npx sequelize-cli model:generate --name Job_Title --attributes name:string,slug:string
 
 npx sequelize-cli model:generate --name CompanyMember --attributes companyId:integer,userId:integer,roleId:integer,jobTitleId:integer
+
+npx sequelize-cli migration:generate --name alter-columns-in-projectMembers
