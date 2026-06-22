@@ -7,17 +7,13 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       Company.hasMany(models.Project, {
         foreignKey: 'companyId',
-        // as: 'users',
+        as: 'projects',
       });
     }
   }
   Company.init({
     name: {
       type: DataTypes.STRING,
-      allowNull: false,
-    },
-    admin: {
-      type: DataTypes.INTEGER,
       allowNull: false,
     },
   }, {
