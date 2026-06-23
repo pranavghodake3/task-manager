@@ -172,6 +172,7 @@ authMiddleware.isAuthentic = async (req, res, next) => {
     const data = jwtUtil.verifyToken(bearerToken);
     console.log("datadatadatadatadata: ",data);
     const user = await getUserByIdWithRole(data.userId);
+    console.log('authMiddleware - user: ', user);
     req.auth = {
       user,
     };

@@ -65,18 +65,36 @@ userService.deleteUser = async (id) => {
 };
 
 userService.getUserByIdWithRole = async (userId) => {
-    const user = await UserModel.findOne({
-        attributes: ['id', 'firstName', 'lastName', 'email'],
-        where: {
-            id: userId,
-        },
+  const user = await db.User.findByPk(userId, {
+    include: [
+      {
+        model: db.CompanyMember,
+        as: 'companyMemberships',
         include: [
-            {
-            model: RoleModel,
-            as: 'roles'
-            }
+          {
+            model: db.Company,
+            as: 'company'
+          },
+          {
+            model: db.Role,
+            as: 'role'
+          }
         ]
-    });
+      }
+    ]
+  });
+    // const user = await UserModel.findOne({
+    //     attributes: ['id', 'firstName', 'lastName', 'email'],
+    //     where: {
+    //         id: userId,
+    //     },
+    //     include: [
+    //         {
+    //         model: RoleModel,
+    //         as: 'roles'
+    //         }
+    //     ]
+    // });
     return user.get({
         plain: true
     });

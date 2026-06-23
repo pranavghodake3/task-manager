@@ -14,7 +14,7 @@ companyService.getUsers = async (companyId) => {
         include: [
             {
                 model: RoleModel,
-                as: 'roleInfo'
+                as: 'roles'
             }
         ]
     });
@@ -38,10 +38,10 @@ companyService.updateUsers = async (id, reqBody) => {
     return reqBody;
 };
 
-companyService.getMyCompany = async (userId) => {
+companyService.getMyCompany = async (companyId) => {
     const company = await CompanyModel.findOne({
         where: {
-            admin: userId
+            id: companyId
         }
     });
 
