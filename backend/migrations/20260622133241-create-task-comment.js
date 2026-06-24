@@ -19,11 +19,11 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
       },
-      companyMemberId: {
+      userId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'companyMembers', // Target table name
+          model: 'users', // Target table name
           key: 'id',       // Target column name
         },
         onUpdate: 'CASCADE',

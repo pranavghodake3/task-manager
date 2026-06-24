@@ -13,15 +13,25 @@ module.exports = (sequelize, DataTypes) => {
       ProjectMember.belongsTo(models.Project, {
         foreignKey: 'projectId',
         as: 'project'
-      })
+      });
+
+      ProjectMember.belongsTo(models.Role, {
+        foreignKey: 'roleId',
+        as: 'role'
+      });
+
+      ProjectMember.belongsTo(models.JobTitle, {
+        foreignKey: 'jobTitleId',
+        as: 'jobTitle'
+      });
     }
   }
   ProjectMember.init({
-    companyMemberId: {
+    userId: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'companyMembers',
+        model: 'users',
         key: 'id'
       }
     },
@@ -30,6 +40,22 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       references: {
         model: 'projects',
+        key: 'id'
+      }
+    },
+    roleId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'roles',
+        key: 'id'
+      }
+    },
+    jobTitleId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'jobTitles',
         key: 'id'
       }
     },

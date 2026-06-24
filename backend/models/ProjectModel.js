@@ -11,8 +11,8 @@ module.exports = (sequelize, DataTypes) => {
       });
 
       Project.belongsTo(models.User, {
-        foreignKey: 'createdBy',
-        // as: 'createdBy'
+        foreignKey: 'createdById',
+        as: 'createdBy'
       });
     }
   }
@@ -37,7 +37,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    createdBy: {
+    createdById: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {

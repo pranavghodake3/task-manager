@@ -6,14 +6,6 @@ module.exports = {
       'roles',
       [
         {
-          name: 'Super Admin',
-          slug: 'super_admin',
-        },
-        {
-          name: 'Company Admin',
-          slug: 'company_admin',
-        },
-        {
           name: 'Project Admin',
           slug: 'project_admin',
         },
@@ -38,7 +30,7 @@ module.exports = {
     await queryInterface.bulkDelete(
       'roles',
       {
-        name: ['Super Admin', 'Company Admin', 'Manager', 'User'],
+        name: ['Project Admin', 'Project Manager', 'Project Member', 'Viewer'],
       },
       {},
     );

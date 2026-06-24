@@ -10,9 +10,9 @@ module.exports = (sequelize, DataTypes) => {
         as: 'task'
       });
 
-      TaskComment.belongsTo(models.CompanyMember, {
-        foreignKey: 'companyMemberId',
-        as: 'companyMember'
+      TaskComment.belongsTo(models.User, {
+        foreignKey: 'userId',
+        as: 'user'
       });
     }
   }
@@ -27,11 +27,11 @@ module.exports = (sequelize, DataTypes) => {
       onUpdate: 'CASCADE',
       onDelete: 'CASCADE',
     },
-    companyMemberId: {
+    userId: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'companyMembers', // Target table name
+        model: 'users', // Target table name
         key: 'id',       // Target column name
       },
       onUpdate: 'CASCADE',

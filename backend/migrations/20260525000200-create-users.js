@@ -31,6 +31,20 @@ module.exports = {
         allowNull: true,
         default: false
       },
+      companyId: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'companies',
+          key: 'id'
+        }
+      },
+      globalRoleId: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'globalRoles',
+          key: 'id'
+        }
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

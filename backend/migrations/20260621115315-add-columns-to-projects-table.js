@@ -13,7 +13,7 @@ module.exports = {
       allowNull: true,
       after: 'description'
     });
-    await queryInterface.addColumn('projects', 'createdBy', {
+    await queryInterface.addColumn('projects', 'createdById', {
       type: Sequelize.INTEGER,
       allowNull: false,
       references: {
@@ -27,7 +27,7 @@ module.exports = {
   },
 
   async down (queryInterface, _Sequelize) {
-    await queryInterface.removeColumn('projects', 'createdBy');
+    await queryInterface.removeColumn('projects', 'createdById');
     await queryInterface.removeColumn('projects', 'key');
     await queryInterface.removeColumn('projects', 'description');
   }

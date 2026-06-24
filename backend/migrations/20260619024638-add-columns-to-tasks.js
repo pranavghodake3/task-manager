@@ -69,6 +69,16 @@ module.exports = {
       onUpdate: 'CASCADE',
       onDelete: 'CASCADE',
     });
+    await queryInterface.addColumn('tasks', 'taskTypeId', {
+      type: Sequelize.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'taskTypes', // Target table name
+        key: 'id',       // Target column name
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE',
+    });
   },
 
   async down (queryInterface, _Sequelize) {
@@ -78,6 +88,7 @@ module.exports = {
      * Example:
      * await queryInterface.dropTable('tasks');
      */
+    await queryInterface.removeColumn('tasks', 'taskTypeId');
     await queryInterface.removeColumn('tasks', 'companyId');
     await queryInterface.removeColumn('tasks', 'priorityId');
     await queryInterface.removeColumn('tasks', 'statusId');

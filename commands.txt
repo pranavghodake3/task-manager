@@ -28,3 +28,11 @@ npx sequelize-cli migration:generate --name alter-columns-in-projectMembers
 npx sequelize-cli model:generate --name TaskComment --attributes taskId:integer,companyMemberId:integer,comment:text
 
 npx sequelize-cli model:generate --name TaskAttachment --attributes taskId:integer,fileName:string,fileUrl:text
+
+npx sequelize-cli model:generate --name GlobalRole --attributes name:string,slug:string
+
+npx sequelize-cli seed:generate --name globalRoles
+
+npx sequelize-cli model:generate --name TaskType --attributes name:string,slug:string
+
+npx sequelize-cli seed:generate --name taskTypes

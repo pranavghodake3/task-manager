@@ -34,6 +34,16 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'companyId',
         as: 'company'
       });
+
+      Task.belongsTo(models.TaskType, {
+        foreignKey: 'taskTypeId',
+        as: 'taskType'
+      });
+
+      Task.hasMany(models.TaskComment, {
+        foreignKey: 'taskId',
+        as: 'comments'
+      });
       
     }
   }
@@ -94,6 +104,14 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
       references: {
         model: 'companies', // Target table name
+        key: 'id',       // Target column name
+      },
+    },
+    taskTypeId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'taskTypes', // Target table name
         key: 'id',       // Target column name
       },
     }
