@@ -3,10 +3,9 @@ const taskService = require('../services/taskService');
 const taskController = {};
 
 taskController.getTasks = async (req) => {
-  const role = req.auth.user.roleInfo.name;
   const tasks = await taskService.getTasks({
-    userId: req.auth.user.id,
-    role,
+    auth: req.auth,
+    companyId: req.query.companyId
   });
   return { data: tasks };
 };

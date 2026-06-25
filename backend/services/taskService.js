@@ -9,15 +9,12 @@ const { getMyCompany } = require('./companyService');
 
 const taskService = {};
 
-taskService.getTasks = async ({ userId, companyId, role }) => {
-    if(role === GLOBAL_ROLES.COMPANY_ADMIN){
-        companyId = (await getMyCompany(userId)).id;
-    }
+taskService.getTasks = async ({ auth, companyId }) => {
     const where = {
-    ...(companyId && { companyId })
+        companyId: companyId || auth.user?.company?.id,
   };
-  if(![GLOBAL_ROLES.SUPER_ADMIN, GLOBAL_ROLES.COMPANY_ADMIN].includes(role)){
-    where.userId = userId;
+  if(![GLOBAL_ROLES.SUPER_ADMIN, GLOBAL_ROLES.COMPANY_ADMIN].includes(auth.user.globalRole.name)){
+    where.userId = auth.user.id;
   }
   return await TaskModel.findAll({
     ...(where && { where }),

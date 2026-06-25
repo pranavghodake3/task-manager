@@ -26,6 +26,12 @@ userController.getUserRoles = async () => {
     };
 };
 
+userController.createUser = async (req) => {
+  const { auth } = req;
+  const user = await userService.createUser(auth, req.body);
+  return { data: user };
+};
+
 userController.getUser = async (req) => {
   const { id } = req.params;
   const user = await userService.getUserById(id);

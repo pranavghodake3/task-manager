@@ -3,6 +3,7 @@ const db = require('../models/index');
 const { getUserRoles } = require('../utils/commonHelper');
 const UserModel = db.User;
 const RoleModel = db.Role;
+const passwordHelper = require('../utils/passwordHelper');
 
 const userService = {};
 
@@ -38,6 +39,29 @@ userService.getUsers = async ({ auth, companyId, isDropdown = false }) => {
     ...(attributes.length > 0 && { attributes }),
     ...(include.length > 0 && { include })
   });
+};
+
+userService.createUser = async (auth, reqBody) => {
+  const projectUserRole = await db.GlobalRole.findOne({
+    attributes: ['id'],
+    where: {
+      name: GLOBAL_ROLES.PROJECT_USER,
+    },
+  });
+  reqBody.password = await passwordHelper.generatePasswordHash(reqBody.password);
+  reqBody.globalRoleId = projectUserRole.id;
+  reqBody.companyId = auth.user.company.id;
+  reqBody.isActive = true;
+  const result = db.sequelize.transaction(async (t) => {
+    const user = await UserModel.create(reqBody, { transaction: t });
+    const projectMembership = await db.ProjectMember.create({
+      userId: user.id,
+      projectId: parseInt(reqBody.projectId),
+      roleId: parseInt(reqBody.roleId),
+    }, { transaction: t });
+    return { user, projectMembership };
+  });
+  return result;
 };
 
 userService.getUserRoles = async () => {

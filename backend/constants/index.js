@@ -4,7 +4,7 @@ const obj = {
   GLOBAL_ROLES: {
     SUPER_ADMIN: 'Super Admin',
     COMPANY_ADMIN: 'Company Admin',
-    USER: 'User',
+    PROJECT_USER: 'Project User',
   },
   ROLES: {
     PROJECT_ADMIN: 'Project Admin',

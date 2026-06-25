@@ -1,14 +1,9 @@
-const { GLOBAL_ROLES } = require('../constants');
 const db = require('../models');
 const ProjectModel = db.Project;
-const { getMyCompany } = require('./companyService');
 
 const projectService = {};
 
-projectService.getProjects = async ({ userId, role, companyId, isDropdown = false }) => {
-  if(role === GLOBAL_ROLES.COMPANY_ADMIN){
-    companyId = (await getMyCompany(userId)).id;
-  }
+projectService.getProjects = async ({ companyId, isDropdown = false }) => {
   const where = {
     ...(companyId && { companyId })
   };
@@ -16,6 +11,9 @@ projectService.getProjects = async ({ userId, role, companyId, isDropdown = fals
   if(isDropdown){
     attributes = ['id', 'name'];
   }
+  console.log('where', where);
+  console.log('isDropdown', isDropdown);
+  
   return await ProjectModel.findAll({
     ...(where && { where }),
     ...(attributes.length > 0 && { attributes }),
@@ -26,10 +24,11 @@ projectService.getProjectById = async (id) => {
   return await ProjectModel.findByPk(id);
 };
 
-projectService.createProject = async (role, userId, reqBody) => {
-  if(role === GLOBAL_ROLES.COMPANY_ADMIN){
-    reqBody.companyId = (await getMyCompany(userId)).id;
-  }
+projectService.createProject = async (auth, reqBody) => {
+  const { user } = auth;
+  reqBody.companyId = user.company.id;
+  reqBody.createdById = user.id;
+  reqBody.key = reqBody.name.toUpperCase().replace(/\s+/g, '-');
   const project = await ProjectModel.create(reqBody);
   return project;
 };

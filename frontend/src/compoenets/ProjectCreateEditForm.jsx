@@ -6,6 +6,7 @@ import { AuthContext } from "../context/AuthContext";
 export default function ProjectCreateEditForm({ mode, project }) {
     const AuthContextData = useContext(AuthContext);
     const [name, setProjectName] = useState(() => project?.name ?? '');
+    const [description, setProjectDescription] = useState(() => project?.description ?? '');
     const [formErrorMessage, setFormErrorMessage] = useState('');
     const navigate = useNavigate();
     async function handleSubmit(e) {
@@ -14,6 +15,7 @@ export default function ProjectCreateEditForm({ mode, project }) {
             if (mode === 'create') {
                 const response = await api.post('/projects', {
                     name,
+                    description
                 }, {
                     headers: {
                         Authorization: `Bearer ${AuthContextData.accessToken}`
@@ -25,6 +27,7 @@ export default function ProjectCreateEditForm({ mode, project }) {
             }else{
                 const response = await api.put('/projects/'+project.id, {
                     name,
+                    description
                 }, {
                     headers: {
                         Authorization: `Bearer ${AuthContextData.accessToken}`
@@ -45,6 +48,11 @@ export default function ProjectCreateEditForm({ mode, project }) {
               <div className="form-group">
                 <label>Name</label>
                 <input type="text" placeholder="Enter project name" value={name} onChange={(e) => setProjectName(e.target.value)} />
+              </div>
+
+              <div className="form-group">
+                <label>Description</label>
+                <textarea name="description" id="description" value={description} onChange={(e) => setProjectDescription(e.target.value)}></textarea>
               </div>
 
               <div className={formErrorMessage ? 'error' : 'success'}>

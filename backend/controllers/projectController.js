@@ -4,13 +4,14 @@ const makeBoolean = require('../utils/booleanHelper');
 const projectController = {};
 
 projectController.getProjects = async (req) => {
-  const { companyId } = req.query;
+  const { auth } = req;
+  const companyId = req.query.companyId ?? auth.user.company.id;
   let { isDropdown } = req.query;
   isDropdown = makeBoolean(isDropdown);
-  const role = req.auth.user.roleInfo.name;
+  console.log('companyId', companyId);
+  console.log('isDropdown', isDropdown);
   const projects = await projectService.getProjects({
-    userId: req.auth.user.id,
-    role,
+    auth,
     companyId,
     isDropdown,
   });
@@ -24,8 +25,8 @@ projectController.getProjectById = async (req) => {
 };
 
 projectController.createProject = async (req) => {
-  const role = req.auth.user.roleInfo.name;
-  const project = await projectService.createProject(role, req.auth.user.id, req.body);
+  const { auth } = req;
+  const project = await projectService.createProject(auth, req.body);
   return { data: project, statusCode: 201 };
 };
 

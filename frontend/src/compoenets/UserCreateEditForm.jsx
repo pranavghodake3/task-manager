@@ -6,22 +6,31 @@ import { AuthContext } from "../context/AuthContext";
 export default function UserCreateEditForm({ mode, user }) {
     const AuthContextData = useContext(AuthContext);
     const [userRoles, setUserRoles] = useState([]);
+    const [projects, setProjects] = useState([]);
     const [firstName, selectFirstName] = useState(() => user?.firstName ?? '');
     const [lastName, selectLastName] = useState(() => user?.lastName ?? '');
     const [email, selectEmail] = useState(() => user?.email ?? '');
     const [password, selectPassword] = useState('');
     const [confirmPassword, selectConfirmPassword] = useState('');
     const [roleId, selectRoleId] = useState(() => user?.role ?? '');
+    const [projectId, selectProjectId] = useState(() => user?.projectId ?? '');
     // const [formErrorMessage, setFormErrorMessage] = useState('');
     const navigate = useNavigate();
 
     useEffect(() => {
         async function loadRoles() {
             try {
-                const response = await api.get('/users/roles', { headers: {
-                    Authorization: `Bearer ${AuthContextData.accessToken}`
-                }});
-                setUserRoles(response.data.data);
+                const [userRoleResponse, projectResponse] = await Promise.all([
+                    api.get('/users/roles', { headers: {
+                        Authorization: `Bearer ${AuthContextData.accessToken}`
+                    }}),
+                    api.get('/projects?isDropdown=true', { headers: {
+                            Authorization: `Bearer ${AuthContextData.accessToken}`
+                        }
+                    })
+                ]);
+                setUserRoles(userRoleResponse.data.data);
+                setProjects(projectResponse.data.data);
             } catch (error) {
                 console.log(error);
             }
@@ -32,12 +41,13 @@ export default function UserCreateEditForm({ mode, user }) {
         e.preventDefault();
         try {
             if (mode === 'create') {
-                const response = await api.post(`/company/${AuthContextData.user.company?.id}/users`, {
+                const response = await api.post(`/users`, {
                     firstName,
                     lastName,
                     email,
                     password,
-                    role: roleId
+                    roleId,
+                    projectId
                 }, {
                     headers: {
                     Authorization: `Bearer ${AuthContextData.accessToken}`
@@ -47,12 +57,13 @@ export default function UserCreateEditForm({ mode, user }) {
                     navigate('/users');
                 }
             }else{
-                const response = await api.put(`/company/${AuthContextData.user.company?.id}/users/${user.id}`, {
+                const response = await api.put(`/users/${user.id}`, {
                     firstName,
                     lastName,
                     email,
                     password,
-                    role: roleId
+                    roleId,
+                    projectId
                 }, {
                     headers: {
                     Authorization: `Bearer ${AuthContextData.accessToken}`
@@ -70,6 +81,16 @@ export default function UserCreateEditForm({ mode, user }) {
     }
     return (
         <form className="auth-form" onSubmit={handleSubmit}>
+
+            <div className="form-group">
+                <label htmlFor="projectId">Select Project</label>
+                <select name="projectId" id="projectId" value={projectId ?? user?.projectId} onChange={(e) => selectProjectId(e.target.value)}>
+                    <option value="">Select Project</option>
+                    {projects.map((project) => (
+                        <option key={project.id} value={project.id}>{project.name}</option>
+                    ))}
+                </select>
+            </div>
              
             <div className="form-group">
                 <label>First Name</label>

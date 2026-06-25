@@ -28,6 +28,14 @@ roleService.getCompanyAdminRole = async () => {
   });
 };
 
+roleService.getProjectUserRole = async () => {
+  return await db.GlobalRole.findOne({
+    where: {
+      name: GLOBAL_ROLES.PROJECT_USER,
+    },
+  });
+};
+
 roleService.getManagerRole = async () => {
   return await RoleModel.findOne({
     where: {
