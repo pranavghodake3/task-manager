@@ -4,8 +4,11 @@ const {
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class JobTitle extends Model {
-    static associate(_models) {
-      // define association here
+    static associate(models) {
+      JobTitle.hasMany(models.ProjectMember, {
+        foreignKey: 'jobTitleId',
+        as: 'projectMembers'
+      });
     }
   }
   JobTitle.init({

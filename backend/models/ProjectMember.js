@@ -15,6 +15,11 @@ module.exports = (sequelize, DataTypes) => {
         as: 'role'
       });
 
+      ProjectMember.belongsTo(models.User, {
+        foreignKey: 'userId',
+        as: 'user'
+      });
+
       ProjectMember.belongsTo(models.JobTitle, {
         foreignKey: 'jobTitleId',
         as: 'jobTitle'

@@ -8,7 +8,7 @@ import ProtectedRoute from "../compoenets/ProtectedRoute";
 import { AuthContextProvider } from "../context/AuthContextProvider";
 import UserList from "../pages/UserList";
 import UserAdd from "../pages/UserAdd";
-import { ROLES } from "../constants";
+import { GLOBAL_ROLES } from "../constants";
 import Unathorized from "../pages/Unathorized";
 import ProjectView from "../pages/ProjectView";
 import ProjectCreate from "../pages/ProjectCreate";
@@ -35,8 +35,8 @@ export default function AppRoute() {
 
                     <Route path="/projects" element={
                         <ProtectedRoute allowedRoles={[
-                            ROLES.COMPANY_ADMIN,
-                            ROLES.SUPER_ADMIN
+                            GLOBAL_ROLES.COMPANY_ADMIN,
+                            GLOBAL_ROLES.SUPER_ADMIN
                         ]}>
                             <ProjectList />
                         </ProtectedRoute>
@@ -44,8 +44,8 @@ export default function AppRoute() {
 
                     <Route path="/projects/create" element={
                         <ProtectedRoute allowedRoles={[
-                            ROLES.COMPANY_ADMIN,
-                            ROLES.SUPER_ADMIN
+                            GLOBAL_ROLES.COMPANY_ADMIN,
+                            GLOBAL_ROLES.SUPER_ADMIN
                         ]}>
                            <ProjectCreate />
                         </ProtectedRoute>
@@ -53,8 +53,8 @@ export default function AppRoute() {
 
                     <Route path="/projects/:id" element={
                         <ProtectedRoute allowedRoles={[
-                            ROLES.COMPANY_ADMIN,
-                            ROLES.SUPER_ADMIN
+                            GLOBAL_ROLES.COMPANY_ADMIN,
+                            GLOBAL_ROLES.SUPER_ADMIN
                         ]}>
                            <ProjectView />
                         </ProtectedRoute>
@@ -62,8 +62,8 @@ export default function AppRoute() {
 
                     <Route path="/projects/:id/edit" element={
                         <ProtectedRoute allowedRoles={[
-                            ROLES.COMPANY_ADMIN,
-                            ROLES.SUPER_ADMIN
+                            GLOBAL_ROLES.COMPANY_ADMIN,
+                            GLOBAL_ROLES.SUPER_ADMIN
                         ]}>
                            <ProjectEdit />
                         </ProtectedRoute>
@@ -71,8 +71,8 @@ export default function AppRoute() {
 
                     <Route path="/users" element={
                         <ProtectedRoute allowedRoles={[
-                            ROLES.COMPANY_ADMIN,
-                            ROLES.SUPER_ADMIN
+                            GLOBAL_ROLES.COMPANY_ADMIN,
+                            GLOBAL_ROLES.SUPER_ADMIN
                         ]}>
                             <UserList />
                         </ProtectedRoute>
@@ -80,8 +80,8 @@ export default function AppRoute() {
 
                     <Route path="/users/:id/edit" element={
                         <ProtectedRoute allowedRoles={[
-                            ROLES.COMPANY_ADMIN,
-                            ROLES.SUPER_ADMIN
+                            GLOBAL_ROLES.COMPANY_ADMIN,
+                            GLOBAL_ROLES.SUPER_ADMIN
                         ]}>
                             <UserEdit />
                         </ProtectedRoute>
@@ -89,8 +89,8 @@ export default function AppRoute() {
 
                     <Route path="/users/:id" element={
                         <ProtectedRoute allowedRoles={[
-                            ROLES.COMPANY_ADMIN,
-                            ROLES.SUPER_ADMIN
+                            GLOBAL_ROLES.COMPANY_ADMIN,
+                            GLOBAL_ROLES.SUPER_ADMIN
                         ]}>
                             <UserView />
                         </ProtectedRoute>
@@ -98,8 +98,8 @@ export default function AppRoute() {
 
                     <Route path="/users/add" element={
                         <ProtectedRoute allowedRoles={[
-                            ROLES.COMPANY_ADMIN,
-                            ROLES.SUPER_ADMIN
+                            GLOBAL_ROLES.COMPANY_ADMIN,
+                            GLOBAL_ROLES.SUPER_ADMIN
                         ]}>
                             <UserAdd />
                         </ProtectedRoute>
@@ -113,8 +113,8 @@ export default function AppRoute() {
 
                     <Route path="/tasks/create" element={
                         <ProtectedRoute allowedRoles={[
-                            // ROLES.COMPANY_ADMIN,
-                            // ROLES.SUPER_ADMIN
+                            // GLOBAL_ROLES.COMPANY_ADMIN,
+                            // GLOBAL_ROLES.SUPER_ADMIN
                         ]}>
                            <TaskCreate />
                         </ProtectedRoute>
@@ -122,8 +122,8 @@ export default function AppRoute() {
 
                     <Route path="/tasks/:id" element={
                         <ProtectedRoute allowedRoles={[
-                            // ROLES.COMPANY_ADMIN,
-                            // ROLES.SUPER_ADMIN
+                            // GLOBAL_ROLES.COMPANY_ADMIN,
+                            // GLOBAL_ROLES.SUPER_ADMIN
                         ]}>
                            <TaskView />
                         </ProtectedRoute>
@@ -131,8 +131,8 @@ export default function AppRoute() {
 
                     <Route path="/tasks/:id/edit" element={
                         <ProtectedRoute allowedRoles={[
-                            // ROLES.COMPANY_ADMIN,
-                            // ROLES.SUPER_ADMIN
+                            // GLOBAL_ROLES.COMPANY_ADMIN,
+                            // GLOBAL_ROLES.SUPER_ADMIN
                         ]}>
                            <TaskEdit />
                         </ProtectedRoute>

@@ -56,6 +56,14 @@ export default function ProjectView() {
                                 <td>{project.key}</td>
                             </tr>
                             <tr>
+                                <td><b>Project Admins: </b></td>
+                                <td>{
+                                    project?.projectMembers?.map((member) => member.role?.name === 'Project Admin' ? (
+                                        <><span key={member.user.id}>{member.user.firstName} {member.user.lastName}</span><br /></>
+                                    ) : null)
+                                }</td>
+                            </tr>
+                            <tr>
                                 <td><b>Created By: </b></td>
                                 <td>{project.createdBy?.firstName} {project.createdBy?.lastName}</td>
                             </tr>

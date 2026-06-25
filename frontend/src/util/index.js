@@ -1,4 +1,4 @@
-import { ROLES } from "../constants";
+import { ROLES, GLOBAL_ROLES } from "../constants";
 
 export function formatDate(date, format = 'DD-MM-YYYY') {
   const d = new Date(date);
@@ -23,7 +23,7 @@ export function formatDate(date, format = 'DD-MM-YYYY') {
 };
 
 export default function getUserRoles() {
-  const roles = {... ROLES};
+  const roles = {... ROLES, ...GLOBAL_ROLES};
   delete roles.COMPANY_ADMIN;
   delete roles.SUPER_ADMIN;
   return Object.values(roles);

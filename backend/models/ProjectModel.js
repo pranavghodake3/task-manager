@@ -20,9 +20,14 @@ module.exports = (sequelize, DataTypes) => {
           through: models.ProjectMember,
           foreignKey: 'projectId',
           otherKey: 'userId',
-          as: 'users'
+          as: 'users',
         }
       );
+
+      Project.hasMany(models.ProjectMember, {
+        foreignKey: 'projectId',
+        as: 'projectMembers'
+      });
     }
   }
   Project.init({

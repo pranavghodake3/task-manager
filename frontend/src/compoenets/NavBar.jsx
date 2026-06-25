@@ -2,7 +2,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { destroyToken, getRole } from "../util/auth";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
-import { ROLES } from "../constants";
+import { GLOBAL_ROLES } from "../constants";
 
 export default function NavBar() {
     const AuthContextData = useContext(AuthContext);
@@ -24,9 +24,9 @@ export default function NavBar() {
         <nav className="menu">
           <NavLink to="/dashboard">Dashboard</NavLink>
 
-          { [ROLES.COMPANY_ADMIN, ROLES.SUPER_ADMIN].includes(myRole) && <NavLink to="/projects">Projects</NavLink> }
+          { [GLOBAL_ROLES.COMPANY_ADMIN, GLOBAL_ROLES.SUPER_ADMIN].includes(myRole) && <NavLink to="/projects">Projects</NavLink> }
 
-          { [ROLES.COMPANY_ADMIN, ROLES.SUPER_ADMIN].includes(myRole) && <NavLink to="/users">Users</NavLink> }
+          { [GLOBAL_ROLES.COMPANY_ADMIN, GLOBAL_ROLES.SUPER_ADMIN].includes(myRole) && <NavLink to="/users">Users</NavLink> }
 
           <NavLink to="/tasks">Tasks</NavLink>
           

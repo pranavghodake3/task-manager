@@ -20,11 +20,6 @@ projectService.getProjects = async ({ companyId, isDropdown = false }) => {
         as: 'createdBy',
         attributes: ['id', 'firstName', 'lastName', 'email'],
       },
-      {
-        model: db.User,
-        as: 'users',
-        attributes: ['id', 'firstName', 'lastName', 'email'],
-      }
     ];
   }
   
@@ -42,6 +37,25 @@ projectService.getProjectById = async (id) => {
         model: db.User,
         as: 'createdBy',
         attributes: ['id', 'firstName', 'lastName', 'email'],
+      },
+      {
+        model: db.ProjectMember,
+        as: 'projectMembers',
+        include: [
+          {
+            model: db.User,
+            as: 'user',
+            attributes: ['id', 'firstName', 'lastName', 'email'],
+          },
+          {
+            model: db.JobTitle,
+            as: 'jobTitle'
+          },
+          {
+            model: db.Role,
+            as: 'role'
+          }
+        ]
       }
     ]
   });

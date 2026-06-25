@@ -13,7 +13,14 @@ const obj = {
     VIEWER: 'Viewer',
   },
   JOB_TITLE: {
-    PRODUCT_OWNER: 'Product Owner'
+    DEVELOPER: 'Developer',
+    QA_ENGINEER: 'QA Engineer',
+    DEVOPS_ENGINEER: 'DevOps Engineer',
+    SCRUM_MASTER: 'Scrum Master',
+    PRODUCT_OWNER: 'Product Owner',
+    DESIGNER: 'Designer',
+    TECH_LEAD: 'Tech Lead',
+    BUSINESS_ANALYST:'Business Analyst',
   },
   ENTITIES: {
     USER: 'User',
