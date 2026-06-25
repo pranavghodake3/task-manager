@@ -64,6 +64,8 @@ const navigate = useNavigate();
                 <tr>
                   <th>ID</th>
                   <th>Name</th>
+                  <th>Key</th>
+                  <th>Created By</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -74,6 +76,8 @@ const navigate = useNavigate();
                     <td className="">
                       <NavLink to={`/projects/${project.id}`}>{project.name}</NavLink>
                     </td>
+                    <td className="">{project.key}</td>
+                    <td className="">{project.createdBy?.firstName} {project.createdBy?.lastName}</td>
                     <td className="actions">
                       <NavLink to={`/projects/${project.id}`} className="action-link">
                         View
@@ -116,7 +120,6 @@ const navigate = useNavigate();
 
         .projects-table th {
           padding: 16px;
-          text-align: left;
           font-weight: 600;
           color: #172b4d;
         }
@@ -191,10 +194,10 @@ const navigate = useNavigate();
           color: #155724;
         }
 
-        .actions {
-          display: flex;
-          gap: 8px;
-        }
+        // .actions {
+        //   display: flex;
+        //   gap: 8px;
+        // }
 
         .action-link {
           padding: 6px 10px;

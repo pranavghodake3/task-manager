@@ -48,8 +48,24 @@ export default function ProjectView() {
                                 <td>{project.name}</td>
                             </tr>
                             <tr>
+                                <td><b>Description: </b></td>
+                                <td>{project.description}</td>
+                            </tr>
+                            <tr>
+                                <td><b>Key: </b></td>
+                                <td>{project.key}</td>
+                            </tr>
+                            <tr>
+                                <td><b>Created By: </b></td>
+                                <td>{project.createdBy?.firstName} {project.createdBy?.lastName}</td>
+                            </tr>
+                            <tr>
                                 <td><b>Created At:</b></td>
-                                <td>{formatDate(project.createdAt, 'DD-MMM-YYYY')}</td>
+                                <td>{formatDate(project.createdAt, 'DD-MMM-YYYY HH:MM')}</td>
+                            </tr>
+                            <tr>
+                                <td><b>Last Updated At:</b></td>
+                                <td>{formatDate(project.updatedAt, 'DD-MMM-YYYY HH:MM:SS')}</td>
                             </tr>
                         </tbody>
                     </table>

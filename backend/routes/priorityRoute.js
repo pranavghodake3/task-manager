@@ -7,6 +7,6 @@ router.get('/', handleAsyncFunction(priorityController.getPriorities));
 
 router.get('/:id', handleAsyncFunction(priorityController.getPriority));
 
-router.put('/id', handleAsyncFunction(priorityController.updatePriority));
+router.put('/:id', handleAsyncFunction(priorityController.updatePriority));
 
 module.exports = router;

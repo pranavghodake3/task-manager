@@ -15,7 +15,11 @@ export function formatDate(date, format = 'DD-MM-YYYY') {
     .replace('DD', day)
     .replace('MMM', shortMonth)
     .replace('MM', month)
-    .replace('YYYY', year);
+    .replace('YYYY', year)
+    .replace('YY', String(year).slice(-2))
+    .replace('HH', String(d.getHours()).padStart(2, '0'))
+    .replace('MM', String(d.getMinutes()).padStart(2, '0'))
+    .replace('SS', String(d.getSeconds()).padStart(2, '0'));
 };
 
 export default function getUserRoles() {

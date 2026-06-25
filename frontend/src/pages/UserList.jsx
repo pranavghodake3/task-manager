@@ -112,7 +112,6 @@ export default function UserList() {
 
         .users-table th {
           padding: 16px;
-          text-align: left;
           font-weight: 600;
           color: #172b4d;
         }
@@ -187,10 +186,10 @@ export default function UserList() {
           color: #155724;
         }
 
-        .actions {
-          display: flex;
-          gap: 8px;
-        }
+        // .actions {
+        //   display: flex;
+        //   gap: 8px;
+        // }
 
         .action-link {
           padding: 6px 10px;

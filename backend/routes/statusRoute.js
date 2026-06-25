@@ -7,6 +7,6 @@ router.get('/', handleAsyncFunction(statusController.getStatuses));
 
 router.get('/:id', handleAsyncFunction(statusController.getStatus));
 
-router.put('/id', handleAsyncFunction(statusController.updateStatus));
+router.put('/:id', handleAsyncFunction(statusController.updateStatus));
 
 module.exports = router;

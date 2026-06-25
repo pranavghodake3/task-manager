@@ -12,6 +12,9 @@ const obj = {
     PROJECT_MEMBER: 'Project Member',
     VIEWER: 'Viewer',
   },
+  JOB_TITLE: {
+    PRODUCT_OWNER: 'Product Owner'
+  },
   ENTITIES: {
     USER: 'User',
     COMPANY: 'Company',
