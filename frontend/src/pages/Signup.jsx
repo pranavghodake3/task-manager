@@ -2,8 +2,10 @@ import { useState } from "react";
 import "../assets/css/auth.css";
 import api from "../services/api";
 import { NavLink } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function Signup() {
+  const navigate = useNavigate();
   const [isCompany, selectIsCompany] = useState("0");
   const [companyName, selectCompanyName] = useState("");
   const [firstName, selectFirstName] = useState("");
@@ -17,14 +19,18 @@ export default function Signup() {
   }
   async function handleSubmit(e) {
     e.preventDefault();
-    const response = await api.post(isCompany == 1 ? "/auth/register/company" : "auth/register", {
-      ...(isCompany == 1 ? {name: companyName} : null),
-      firstName,
-      lastName,
-      email,
-      password
-    });
-    console.log(response);
+    try {
+      await api.post(isCompany == 1 ? "/auth/register/company" : "auth/register", {
+        ...(isCompany == 1 ? {name: companyName} : null),
+        firstName,
+        lastName,
+        email,
+        password
+      });
+      navigate("/login");
+    } catch (error) {
+      console.error("Error occurred while signing up:", error);
+    }
   }
   return (
     <div className="auth-page">

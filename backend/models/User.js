@@ -12,12 +12,30 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       User.belongsToMany(models.Role,
         {
-          through: models.CompanyMember,
+          through: models.ProjectMember,
           foreignKey: 'userId',
           otherKey: 'roleId',
           as: 'roles'
         }
       );
+      User.belongsToMany(models.Project,
+        {
+          through: models.ProjectMember,
+          foreignKey: 'userId',
+          otherKey: 'projectId',
+          as: 'projects'
+        }
+      );
+
+      User.belongsTo(models.Company, {
+        foreignKey: 'companyId',
+        as: 'company'
+      });
+
+      User.belongsTo(models.GlobalRole, {
+        foreignKey: 'globalRoleId',
+        as: 'globalRole'
+      });
     }
   }
   User.init({
@@ -51,6 +69,20 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.BOOLEAN,
       allowNull: true,
       defaultValue: false,
+    },
+    companyId: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: 'companies',
+        key: 'id'
+      }
+    },
+    globalRoleId: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: 'globalRoles',
+        key: 'id'
+      }
     },
   }, {
     sequelize,

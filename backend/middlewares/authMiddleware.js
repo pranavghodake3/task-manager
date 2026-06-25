@@ -175,10 +175,10 @@ authMiddleware.isAuthentic = async (req, res, next) => {
     req.auth = {
       user,
     };
-    if(user.roles.some(role => role.name === ROLES.COMPANY_ADMIN)){
+    if(user.globalRole.name !== ROLES.SUPER_ADMIN){
       req.auth = {
         ...req.auth,
-        company: await getMyCompany(user.roles[0].CompanyMember.companyId),
+        company: await getMyCompany(user.company.id),
       }
     }
     console.log("req.auth: ",req.auth);

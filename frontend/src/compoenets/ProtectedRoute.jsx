@@ -5,8 +5,8 @@ import { AuthContext } from "../context/AuthContext";
 
 export default function ProtectedRoute({ allowedRoles, children }) {
     const AuthContextData = useContext(AuthContext);
-    const roles = getRole();
-    const myRole = roles?.[0].name;
+    const role = getRole();
+    const myRole = role?.name;
     // console.log('Protected Route AuthContextData: ',AuthContextData);
     if(AuthContextData.authLoading){
         return null;

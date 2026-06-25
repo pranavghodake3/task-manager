@@ -7,8 +7,8 @@ import { ROLES } from "../constants";
 export default function NavBar() {
     const AuthContextData = useContext(AuthContext);
     const navigate = useNavigate();
-    const roles = getRole();
-    const myRole = roles?.[0].name;
+    const role = getRole();
+    const myRole = role?.name;
     console.log('NavBar AuthContextData: ',AuthContextData);
     console.log('NavBar myRole: ',myRole);
     function handleLogout() {

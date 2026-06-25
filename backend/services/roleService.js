@@ -13,7 +13,7 @@ roleService.getRole = async (id) => {
 };
 
 roleService.getSuperAdminRole = async () => {
-  return await RoleModel.findOne({
+  return await db.GlobalRole.findOne({
     where: {
       name: ROLES.SUPER_ADMIN,
     },
@@ -21,7 +21,7 @@ roleService.getSuperAdminRole = async () => {
 };
 
 roleService.getCompanyAdminRole = async () => {
-  return await RoleModel.findOne({
+  return await db.GlobalRole.findOne({
     where: {
       name: ROLES.COMPANY_ADMIN,
     },

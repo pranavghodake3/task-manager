@@ -26,11 +26,11 @@ router.get(
   handleAsyncFunction(authController.getRefreshToken),
 );
 
-// router.post(
-//   '/register/super-admin',
-//   authMiddleware.register,
-//   handleAsyncFunction(authController.registerSuperAdmin),
-// );
+router.post(
+  '/register/super-admin',
+  authMiddleware.register,
+  handleAsyncFunction(authController.registerSuperAdmin),
+);
 
 router.post('/register', authMiddleware.register, handleAsyncFunction(authController.registerUser));
 

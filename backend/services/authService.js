@@ -23,6 +23,14 @@ authServiceObj.login = async (reqBody) => {
       {
         model: RoleModel,
         as: 'roles'
+      },
+      {
+        model: CompanyModel,
+        as: 'company'
+      },
+      {
+        model: db.GlobalRole,
+        as: 'globalRole'
       }
     ]
   });
@@ -51,13 +59,14 @@ authServiceObj.login = async (reqBody) => {
     expiresAt: refreshTokenExpiresIn,
   });
   let company;
-  if(user.roles.some(role => role.name === ROLES.COMPANY_ADMIN)){
+  if(user.globalRole.name === ROLES.COMPANY_ADMIN){
     company = await CompanyModel.findOne({
       where: {
-        id: user.roles[0].CompanyMember.companyId
+        id: user.company.id
       }
     });
   }
+  console.log("USERRRR: ",user);
 
   return {
     user: {
@@ -66,6 +75,7 @@ authServiceObj.login = async (reqBody) => {
       lastName: user.lastName,
       email: user.email,
       roles: user.roles,
+      globalRole: user.globalRole,
       ...(company && { company })
     },
     accessToken,
@@ -85,7 +95,7 @@ authServiceObj.registerSuperAdmin = async (reqBody) => {
 
   const existingSuperAdmin = await UserModel.findOne({
     where: {
-      role: superAdminRole.id,
+      globalRoleId: superAdminRole.id,
     },
   });
 
@@ -95,7 +105,8 @@ authServiceObj.registerSuperAdmin = async (reqBody) => {
 
   const user = await UserModel.create({
     ...reqBody,
-    role: superAdminRole.id,
+    globalRoleId: superAdminRole.id,
+    isActive: true,
   });
 
   return user;
@@ -113,7 +124,8 @@ authServiceObj.registerUser = async (reqBody) => {
 
   const user = await UserModel.create({
     ...reqBody,
-    role: reqBody.roleId ?? null,
+    globalRoleId: reqBody.roleId ?? null,
+    isActive: true,
   });
 
   return user;
@@ -125,28 +137,16 @@ authServiceObj.registerCompany = async (reqBody) => {
   const company = await CompanyModel.create({
     name,
   });
-
-  const user = await UserModel.create({
-    ...userData,
-  });
-
   const companyAdminRole = await roleService.getCompanyAdminRole();
-
-  const jobTitle = await db.JobTitle.findOne({
-    where: {
-      slug: 'product_owner'
-    }
-  });
-
   if (!companyAdminRole) {
     throw new CustomError('Company admin role is not configured', 500);
   }
 
-  await db.CompanyMember.create({
+  const user = await UserModel.create({
+    ...userData,
+    globalRoleId: companyAdminRole.id,
     companyId: company.id,
-    userId: user.id,
-    roleId: companyAdminRole.id,
-    jobTitleId: jobTitle.id
+    isActive: true,
   });
 
   return user;

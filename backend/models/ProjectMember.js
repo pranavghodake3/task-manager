@@ -5,11 +5,6 @@ const {
 module.exports = (sequelize, DataTypes) => {
   class ProjectMember extends Model {
     static associate(models) {
-      ProjectMember.belongsTo(models.CompanyMember, {
-        foreignKey: 'companyMemberId',
-        as: 'companyMember',
-      });
-
       ProjectMember.belongsTo(models.Project, {
         foreignKey: 'projectId',
         as: 'project'
