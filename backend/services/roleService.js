@@ -1,4 +1,4 @@
-const { ROLES } = require('../constants');
+const { ROLES, GLOBAL_ROLES } = require('../constants');
 const db = require('../models');
 const RoleModel = db.Role;
 
@@ -15,7 +15,7 @@ roleService.getRole = async (id) => {
 roleService.getSuperAdminRole = async () => {
   return await db.GlobalRole.findOne({
     where: {
-      name: ROLES.SUPER_ADMIN,
+      name: GLOBAL_ROLES.SUPER_ADMIN,
     },
   });
 };
@@ -23,7 +23,7 @@ roleService.getSuperAdminRole = async () => {
 roleService.getCompanyAdminRole = async () => {
   return await db.GlobalRole.findOne({
     where: {
-      name: ROLES.COMPANY_ADMIN,
+      name: GLOBAL_ROLES.COMPANY_ADMIN,
     },
   });
 };

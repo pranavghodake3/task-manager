@@ -2,8 +2,10 @@ const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
 const { handleAsyncFunction } = require('../utils/commonHelper');
+const { hasAccess } = require('../middlewares/authMiddleware');
+const { ENTITIES, ACTION_TYPES } = require('../constants');
 
-router.get('/', handleAsyncFunction(userController.getUsers));
+router.get('/', hasAccess(ENTITIES.USER, ACTION_TYPES.READ), handleAsyncFunction(userController.getUsers));
 
 router.get('/roles', handleAsyncFunction(userController.getUserRoles));
 

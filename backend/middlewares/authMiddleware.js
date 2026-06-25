@@ -8,8 +8,7 @@ const ProjectModel = db.Project;
 const { getUserByIdWithRole } = require('../services/userService');
 const CustomError = require('../utils/CustomError');
 const jwtUtil = require('../utils/jwtUtil');
-const { ROLES } = require('../constants');
-const { getMyCompany } = require('../services/companyService');
+const permissionUtil = require('../utils/permission');
 
 const authMiddleware = {};
 
@@ -55,7 +54,6 @@ authMiddleware.register = async (req, res, next) => {
     if (count > 0) {
       throw new CustomError('User already exists', 400);
     }
-    console.log('User Count: ', count);
 
     next();
   } catch (error) {
@@ -92,7 +90,6 @@ authMiddleware.registerCompany = async (req, res, next) => {
     if (count > 0) {
       throw new CustomError('User already exists', 400);
     }
-    console.log('User Count: ', count);
 
     next();
   } catch (error) {
@@ -170,17 +167,10 @@ authMiddleware.isAuthentic = async (req, res, next) => {
       throw new CustomError('Missing Bearer Token or it is Undefined', 401);
     }
     const data = jwtUtil.verifyToken(bearerToken);
-    console.log("datadatadatadatadata: ",data);
     const user = await getUserByIdWithRole(data.userId);
     req.auth = {
       user,
     };
-    if(user.globalRole.name !== ROLES.SUPER_ADMIN){
-      req.auth = {
-        ...req.auth,
-        company: await getMyCompany(user.company.id),
-      }
-    }
     console.log("req.auth: ",req.auth);
     if (data) {
       next();
@@ -238,8 +228,6 @@ authMiddleware.isRefreshTokenCookieAuthentic = async (req, res, next) => {
         refreshToken: bearerToken,
       },
     });
-    console.log("validToken: ",validToken);
-    console.log("refreshToken: ",refreshToken);
     if (validToken && refreshToken) {
       req.auth = {
         user: {
@@ -259,6 +247,21 @@ authMiddleware.isRefreshTokenCookieAuthentic = async (req, res, next) => {
   } catch (error) {
     return errorResponse(res, error, 401);
   }
+};
+
+authMiddleware.hasAccess = (entity, action) => {
+  return (req, res, next) => {
+    try {
+      const user = req.auth.user;
+      const hasPermission = permissionUtil[user.globalRole.name]?.[entity]?.includes(action);
+      if (!hasPermission) {
+        throw new CustomError('Insufficient permissions', 403);
+      }
+      next();
+    } catch (error) {
+      return errorResponse(res, error, 403);
+    }
+  };
 };
 
 module.exports = authMiddleware;

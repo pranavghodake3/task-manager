@@ -1,4 +1,4 @@
-const { ROLES } = require('../constants');
+const { GLOBAL_ROLES } = require('../constants');
 const db = require('../models');
 const ProjectModel = db.Project;
 const { getMyCompany } = require('./companyService');
@@ -6,7 +6,7 @@ const { getMyCompany } = require('./companyService');
 const projectService = {};
 
 projectService.getProjects = async ({ userId, role, companyId, isDropdown = false }) => {
-  if(role === ROLES.COMPANY_ADMIN){
+  if(role === GLOBAL_ROLES.COMPANY_ADMIN){
     companyId = (await getMyCompany(userId)).id;
   }
   const where = {
@@ -27,7 +27,7 @@ projectService.getProjectById = async (id) => {
 };
 
 projectService.createProject = async (role, userId, reqBody) => {
-  if(role === ROLES.COMPANY_ADMIN){
+  if(role === GLOBAL_ROLES.COMPANY_ADMIN){
     reqBody.companyId = (await getMyCompany(userId)).id;
   }
   const project = await ProjectModel.create(reqBody);

@@ -1,4 +1,4 @@
-const { ROLES } = require('../constants');
+const { GLOBAL_ROLES } = require('../constants');
 const db = require('../models');
 const TaskModel = db.Task;
 const StatusModel = db.Status;
@@ -10,13 +10,13 @@ const { getMyCompany } = require('./companyService');
 const taskService = {};
 
 taskService.getTasks = async ({ userId, companyId, role }) => {
-    if(role === ROLES.COMPANY_ADMIN){
+    if(role === GLOBAL_ROLES.COMPANY_ADMIN){
         companyId = (await getMyCompany(userId)).id;
     }
     const where = {
     ...(companyId && { companyId })
   };
-  if(![ROLES.SUPER_ADMIN, ROLES.COMPANY_ADMIN].includes(role)){
+  if(![GLOBAL_ROLES.SUPER_ADMIN, GLOBAL_ROLES.COMPANY_ADMIN].includes(role)){
     where.userId = userId;
   }
   return await TaskModel.findAll({
@@ -75,7 +75,7 @@ taskService.getTaskById = async (id) => {
 
 taskService.createTask = async (loggedInUserId, role, reqBody) => {
     reqBody.creatorId = loggedInUserId;
-    if(role === ROLES.COMPANY_ADMIN){
+    if(role === GLOBAL_ROLES.COMPANY_ADMIN){
         reqBody.companyId = (await getMyCompany(loggedInUserId)).id;
     }
   const task = await TaskModel.create(reqBody);

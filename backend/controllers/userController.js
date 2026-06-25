@@ -4,12 +4,13 @@ const makeBoolean = require('../utils/booleanHelper');
 const userController = {};
 
 userController.getUsers = async (req) => {
+  const { auth } = req;
     const { companyId } = req.query;
     let { isDropdown } = req.query;
     isDropdown = makeBoolean(isDropdown);
-    const role = req.auth.user.roleInfo.name;
+    const role = req.auth.user.globalRole.name;
     const users = await userService.getUsers({
-      userId: req.auth.user.id,
+      auth,
       role,
       companyId,
       isDropdown,

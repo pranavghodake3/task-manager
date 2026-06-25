@@ -1,6 +1,5 @@
 const db = require('../models');
 const UserModel = db.User;
-const RoleModel = db.Role;
 const CompanyModel = db.Company;
 const passwordHelper = require('../utils/passwordHelper');
 
@@ -13,8 +12,8 @@ companyService.getUsers = async (companyId) => {
         },
         include: [
             {
-                model: RoleModel,
-                as: 'roleInfo'
+                model: db.GlobalRole,
+                as: 'globalRole'
             }
         ]
     });

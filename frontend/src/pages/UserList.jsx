@@ -14,13 +14,13 @@ export default function UserList() {
 
   useEffect(() => {
     async function loadUsers() {
-        const response = await api.get(`/company/${AuthContextData.user.company.id}/users`, {
+        const response = await api.get(`/users`, {
             headers: { Authorization: 'Bearer ' + AuthContextData.accessToken },
         });
         setUsers(response.data.data);
     }
     loadUsers();
-  }, [AuthContextData.accessToken, AuthContextData.user.company.id]);
+  }, [AuthContextData.accessToken]);
 
   function handleAddUser() {
     navigate('/users/add');

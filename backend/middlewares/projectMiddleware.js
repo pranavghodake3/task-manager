@@ -9,7 +9,6 @@ const projectMiddleware = {};
 projectMiddleware.isCompanyProjectValid = async (req, res, next) => {
   try {
     const { companyId } = req.params;
-    console.log('companyId: ',companyId);
     const company = await CompanyModel.findByPk(companyId);
     if (!company) throw new CustomError('Company does not exists', 404);
 

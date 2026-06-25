@@ -1,4 +1,4 @@
-const { ROLES } = require('../constants');
+const { ROLES, GLOBAL_ROLES } = require('../constants');
 const { successResponse, errorResponse } = require('./responseHelper');
 
 const handleAsyncFunction = (asyncFunction) => {
@@ -13,7 +13,7 @@ const handleAsyncFunction = (asyncFunction) => {
 };
 
 const getUserRoles = () => {
-  const roles = { ...ROLES };
+  const roles = { ...GLOBAL_ROLES, ...ROLES };
   delete roles.COMPANY_ADMIN;
   delete roles.SUPER_ADMIN;
   return Object.values(roles);

@@ -9,7 +9,7 @@ const passwordHelper = require('../utils/passwordHelper');
 const CustomError = require('../utils/CustomError');
 const jwtUtil = require('../utils/jwtUtil');
 const roleService = require('../services/roleService');
-const { ROLES } = require('../constants');
+const permissionUtil = require('../utils/permission');
 
 const authServiceObj = {};
 
@@ -43,12 +43,11 @@ authServiceObj.login = async (reqBody) => {
   if (!isAuthenticated) {
     throw new CustomError('Invalid email or password', 401);
   }
-  const data = await RefreshTokenModel.destroy({
+  await RefreshTokenModel.destroy({
     where: {
       userId: user.id,
     },
   });
-  console.log("UserID: ",user.id, data);
 
   const { refreshToken, refreshTokenExpiresIn } = jwtUtil.getRefreshToken({ userId: user.id });
   const { accessToken, accessTokenExpiresIn } = jwtUtil.getToken({ userId: user.id });
@@ -58,15 +57,6 @@ authServiceObj.login = async (reqBody) => {
     userId: user.id,
     expiresAt: refreshTokenExpiresIn,
   });
-  let company;
-  if(user.globalRole.name === ROLES.COMPANY_ADMIN){
-    company = await CompanyModel.findOne({
-      where: {
-        id: user.company.id
-      }
-    });
-  }
-  console.log("USERRRR: ",user);
 
   return {
     user: {
@@ -75,8 +65,9 @@ authServiceObj.login = async (reqBody) => {
       lastName: user.lastName,
       email: user.email,
       roles: user.roles,
+      company: user.company,
       globalRole: user.globalRole,
-      ...(company && { company })
+      permissions: permissionUtil[user.globalRole.name] || {}
     },
     accessToken,
     refreshToken,
