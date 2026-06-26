@@ -115,14 +115,25 @@ projectService.updateProject = async (id, reqBody) => {
     await ProjectModel.update(reqBody, {
       where: { id },
     }, { transaction: t });
-    await db.ProjectMember.update({
-      userId: reqBody.projectAdminId
-    }, {
-      where: {
-        userId: reqBody.existingProjectMemberUserId,
+    if(reqBody.existingProjectMemberUserId){
+      await db.ProjectMember.update({
+        userId: reqBody.projectAdminId
+      }, {
+        where: {
+          userId: reqBody.existingProjectMemberUserId,
+          projectId: id,
+        }
+      }, { transaction: t });
+    }else{
+      const jobTitle = await roleHelper.getJobTitleByName(JOB_TITLE.PRODUCT_OWNER);
+      const projectAdminRole = await roleHelper.getRoleByName(ROLES.PROJECT_ADMIN);
+      await db.ProjectMember.create({
+        userId: reqBody.projectAdminId,
         projectId: id,
-      }
-    }, { transaction: t });
+        roleId: projectAdminRole.id,
+        jobTitleId: jobTitle.id
+      }, { transaction: t });
+    }
 
     await t.commit();
 
