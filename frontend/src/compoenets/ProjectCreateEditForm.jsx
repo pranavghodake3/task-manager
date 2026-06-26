@@ -2,6 +2,7 @@ import { useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { AuthContext } from "../context/AuthContext";
+import { ROLES } from "../constants";
 
 export default function ProjectCreateEditForm({ mode, project }) {
     const AuthContextData = useContext(AuthContext);
@@ -9,7 +10,9 @@ export default function ProjectCreateEditForm({ mode, project }) {
     const [users, setUsers] = useState([]);
     const [name, setProjectName] = useState(() => project?.name ?? '');
     const [description, setProjectDescription] = useState(() => project?.description ?? '');
-    const [userId, selectUserId] = useState(() => project?.userId ?? '');
+    const existingUsers = project?.projectMembers?.filter(pm => pm.role?.name === ROLES.PROJECT_ADMIN);
+    console.log("existingUsers: ",existingUsers)
+    const [userId, selectUserId] = useState(() => existingUsers?.[0]?.userId ?? '');
 
     const [firstName, selectFirstName] = useState(() => project?.firstName ?? '');
     const [lastName, selectLastName] = useState(() => project?.lastName ?? '');
@@ -67,6 +70,7 @@ export default function ProjectCreateEditForm({ mode, project }) {
                     description,
                     createNew,
                     projectAdminId: userId,
+                    existingProjectMemberUserId: existingUsers?.[0]?.userId
                 }, {
                     headers: {
                         Authorization: `Bearer ${AuthContextData.accessToken}`
@@ -116,7 +120,7 @@ export default function ProjectCreateEditForm({ mode, project }) {
 
               <div className={`form-group ${ createNew === '1' && mode === 'create' ? 'hide' : 'show' }`}>
                 <label htmlFor="userId">Select User</label>
-                <select name="userId" id="userId" value={userId ?? project?.userId} onChange={(e) => selectUserId(e.target.value)} multiple>
+                <select name="userId" id="userId" value={userId ?? existingUsers?.[0]?.userId} onChange={(e) => selectUserId(e.target.value)}>
                     <option value="">Select User</option>
                     {users.map((user) => (
                         <option key={user.id} value={user.id}>{user.firstName} {user.lastName}</option>
@@ -128,17 +132,17 @@ export default function ProjectCreateEditForm({ mode, project }) {
                 <div className={`form-group ${ createNew === '0' ? 'hide' : 'show' }`}>
                     <div className="form-group">
                         <label>First Name</label>
-                        <input type="text" placeholder="Enter your first name" value={firstName} onChange={(e) => selectFirstName(e.target.value)} />
+                        <input type="text" placeholder="Enter first name" value={firstName} onChange={(e) => selectFirstName(e.target.value)} />
                     </div>
 
                     <div className="form-group">
                         <label>Last Name</label>
-                        <input type="text" placeholder="Enter your last name" value={lastName} onChange={(e) => selectLastName(e.target.value)} />
+                        <input type="text" placeholder="Enter last name" value={lastName} onChange={(e) => selectLastName(e.target.value)} />
                     </div>
 
                     <div className="form-group">
                         <label>Email</label>
-                        <input type="email" placeholder="Enter your email" value={email} onChange={(e) => selectEmail(e.target.value)} />
+                        <input type="email" placeholder="Enter email" value={email} onChange={(e) => selectEmail(e.target.value)} />
                     </div>
 
                     <div className="form-group">

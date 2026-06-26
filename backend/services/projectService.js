@@ -110,10 +110,27 @@ projectService.createProject = async (auth, reqBody) => {
 };
 
 projectService.updateProject = async (id, reqBody) => {
-  await ProjectModel.update(reqBody, {
-    where: { id },
-  });
-  return await ProjectModel.findByPk(id);
+  const t = await db.sequelize.transaction();
+  try {
+    await ProjectModel.update(reqBody, {
+      where: { id },
+    }, { transaction: t });
+    await db.ProjectMember.update({
+      userId: reqBody.projectAdminId
+    }, {
+      where: {
+        userId: reqBody.existingProjectMemberUserId,
+        projectId: id,
+      }
+    }, { transaction: t });
+
+    await t.commit();
+
+    return {id, ...reqBody};
+  } catch (error) {
+    console.log('Erro Updating Project: ',error)
+    await t.rollback();
+  }
 };
 
 projectService.deleteProject = async (id) => {
