@@ -49,6 +49,10 @@ export default function ProjectCreateEditForm({ mode, project }) {
                     description,
                     createNew,
                     projectAdminId: userId,
+                    firstName,
+                    lastName,
+                    email,
+                    password
                 }, {
                     headers: {
                         Authorization: `Bearer ${AuthContextData.accessToken}`
@@ -94,23 +98,25 @@ export default function ProjectCreateEditForm({ mode, project }) {
                 <label>Assign Project Admin: </label>
               </div>
 
-              <div className="form-group">
-                <label>Create New ?</label>
-                <div className="radio-group">
-                  <label>
-                    <input type="radio" name="company" checked={createNew === "0"}  value="0" onChange={handleCreateNew} />
-                    No
-                  </label>
-                  <label>
-                    <input type="radio" name="company" checked={createNew === "1"}  value="1" onChange={handleCreateNew} />
-                    Yes
-                  </label>
+              { mode === 'create' &&
+                <div className="form-group">
+                    <label>Create New ?</label>
+                    <div className="radio-group">
+                    <label>
+                        <input type="radio" name="company" checked={createNew === "0"}  value="0" onChange={handleCreateNew} />
+                        No
+                    </label>
+                    <label>
+                        <input type="radio" name="company" checked={createNew === "1"}  value="1" onChange={handleCreateNew} />
+                        Yes
+                    </label>
+                    </div>
                 </div>
-              </div>
+              }
 
-              <div className={`form-group ${ createNew === '1' ? 'hide' : 'show' }`}>
+              <div className={`form-group ${ createNew === '1' && mode === 'create' ? 'hide' : 'show' }`}>
                 <label htmlFor="userId">Select User</label>
-                <select name="userId" id="userId" value={userId ?? project?.userId} onChange={(e) => selectUserId(e.target.value)}>
+                <select name="userId" id="userId" value={userId ?? project?.userId} onChange={(e) => selectUserId(e.target.value)} multiple>
                     <option value="">Select User</option>
                     {users.map((user) => (
                         <option key={user.id} value={user.id}>{user.firstName} {user.lastName}</option>
@@ -118,32 +124,34 @@ export default function ProjectCreateEditForm({ mode, project }) {
                 </select>
               </div>
 
-              <div className={`form-group ${ createNew === '0' ? 'hide' : 'show' }`}>
-                <div className="form-group">
-                    <label>First Name</label>
-                    <input type="text" placeholder="Enter your first name" value={firstName} onChange={(e) => selectFirstName(e.target.value)} />
-                </div>
+              { mode === 'create' &&
+                <div className={`form-group ${ createNew === '0' ? 'hide' : 'show' }`}>
+                    <div className="form-group">
+                        <label>First Name</label>
+                        <input type="text" placeholder="Enter your first name" value={firstName} onChange={(e) => selectFirstName(e.target.value)} />
+                    </div>
 
-                <div className="form-group">
-                    <label>Last Name</label>
-                    <input type="text" placeholder="Enter your last name" value={lastName} onChange={(e) => selectLastName(e.target.value)} />
-                </div>
+                    <div className="form-group">
+                        <label>Last Name</label>
+                        <input type="text" placeholder="Enter your last name" value={lastName} onChange={(e) => selectLastName(e.target.value)} />
+                    </div>
 
-                <div className="form-group">
-                    <label>Email</label>
-                    <input type="email" placeholder="Enter your email" value={email} onChange={(e) => selectEmail(e.target.value)} />
-                </div>
+                    <div className="form-group">
+                        <label>Email</label>
+                        <input type="email" placeholder="Enter your email" value={email} onChange={(e) => selectEmail(e.target.value)} />
+                    </div>
 
-                <div className="form-group">
-                    <label>Password</label>
-                    <input type="password" placeholder="Create password" value={password} onChange={(e) => selectPassword(e.target.value)} />
-                </div>
+                    <div className="form-group">
+                        <label>Password</label>
+                        <input type="password" placeholder="Create password" value={password} onChange={(e) => selectPassword(e.target.value)} />
+                    </div>
 
-                <div className="form-group">
-                    <label>Confirm Password</label>
-                    <input type="password" placeholder="Confirm password" value={confirmPassword} onChange={(e) => selectConfirmPassword(e.target.value)} />
+                    <div className="form-group">
+                        <label>Confirm Password</label>
+                        <input type="password" placeholder="Confirm password" value={confirmPassword} onChange={(e) => selectConfirmPassword(e.target.value)} />
+                    </div>
                 </div>
-              </div>
+              }
 
               <div className={formErrorMessage ? 'error' : 'success'}>
                 <label>{formErrorMessage}</label>

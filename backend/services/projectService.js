@@ -1,7 +1,9 @@
-const { ROLES, JOB_TITLE } = require('../constants');
+const { ROLES, JOB_TITLE, GLOBAL_ROLES } = require('../constants');
 const db = require('../models');
 const ProjectModel = db.Project;
 const roleHelper = require('../helpers/roleHelper');
+const makeBoolean = require('../utils/booleanHelper');
+const passwordHelper = require('../utils/passwordHelper');
 
 const projectService = {};
 
@@ -70,20 +72,37 @@ projectService.createProject = async (auth, reqBody) => {
     reqBody.key = reqBody.name.toUpperCase().replace(/\s+/g, '-');
 
     const project = await ProjectModel.create(reqBody, { transaction: t });
+    const jobTitle = await roleHelper.getJobTitleByName(JOB_TITLE.PRODUCT_OWNER);
+    const projectAdminRole = await roleHelper.getRoleByName(ROLES.PROJECT_ADMIN);
 
-    if(reqBody.projectAdminId){
-      const projectAdminRole = await roleHelper.getRoleByName(ROLES.PROJECT_ADMIN);
-      const jobTitle = await roleHelper.getJobTitleByName(JOB_TITLE.PRODUCT_OWNER);
-      await db.ProjectMember.create({
-        userId: parseInt(reqBody.projectAdminId),
-        projectId: project.id,
-        roleId: projectAdminRole.id,
-        jobTitleId: jobTitle.id
-      }, { transaction: t });
+    let projectAdminId;
+
+    if(makeBoolean(reqBody.createNew)){
+      const projectUserRole = await db.GlobalRole.findOne({
+        attributes: ['id'],
+        where: {
+          name: GLOBAL_ROLES.PROJECT_USER,
+        },
+      });
+      reqBody.password = await passwordHelper.generatePasswordHash(reqBody.password);
+      reqBody.globalRoleId = projectUserRole.id;
+      reqBody.companyId = auth.user.company.id;
+      reqBody.isActive = true;
+      const user = await db.User.create(reqBody, { transaction: t });
+      projectAdminId = user.id;
+      
+    }else{
+      projectAdminId = parseInt(reqBody.projectAdminId);
     }
+    const projectMembership = await db.ProjectMember.create({
+      userId: projectAdminId,
+      projectId: project.id,
+      roleId: projectAdminRole.id,
+      jobTitleId: jobTitle.id
+    }, { transaction: t });
 
     await t.commit();
-    return project;
+    return { project, projectMembership };
   } catch (error) {
     await t.rollback();
     throw error;
