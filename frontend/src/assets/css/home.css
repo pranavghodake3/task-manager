@@ -1,0 +1,200 @@
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Inter, Arial, sans-serif;
+  background-color: #f5f7fb;
+  color: #1f2937;
+}
+
+/* Navbar */
+
+.navbar {
+  height: 70px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 0 60px;
+
+  background: white;
+
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.navbar h2 {
+  color: #2563eb;
+  font-size: 28px;
+}
+
+.navbar div {
+  display: flex;
+  gap: 15px;
+}
+
+/* Buttons */
+
+.btn {
+  text-decoration: none;
+
+  padding: 10px 20px;
+
+  border-radius: 6px;
+
+  font-weight: 600;
+
+  transition: all 0.3s ease;
+}
+
+.login-btn {
+  border: 1px solid #2563eb;
+  color: #2563eb;
+}
+
+.login-btn:hover {
+  background: #2563eb;
+  color: white;
+}
+
+.signup-btn {
+  background: #2563eb;
+  color: white;
+}
+
+.signup-btn:hover {
+  background: #1d4ed8;
+}
+
+.hero-btn {
+  background: #10b981;
+  color: white;
+
+  display: inline-block;
+
+  margin-top: 25px;
+}
+
+.hero-btn:hover {
+  background: #059669;
+}
+
+/* Hero Section */
+
+.hero {
+  min-height: 500px;
+
+  display: flex;
+  flex-direction: column;
+
+  justify-content: center;
+  align-items: center;
+
+  text-align: center;
+
+  padding: 50px 20px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #2563eb,
+      #1e40af
+    );
+
+  color: white;
+}
+
+.hero h1 {
+  font-size: 52px;
+  margin-bottom: 20px;
+}
+
+.hero p {
+  max-width: 700px;
+
+  font-size: 20px;
+
+  line-height: 1.8;
+}
+
+/* Features */
+
+.features {
+  max-width: 1200px;
+
+  margin: 60px auto;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(auto-fit, minmax(300px, 1fr));
+
+  gap: 25px;
+
+  padding: 0 20px;
+}
+
+.feature-card {
+  background: white;
+
+  padding: 30px;
+
+  border-radius: 12px;
+
+  box-shadow:
+    0 5px 15px rgba(0, 0, 0, 0.08);
+
+  transition: all 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+}
+
+.feature-card h3 {
+  color: #2563eb;
+
+  margin-bottom: 15px;
+}
+
+.feature-card p {
+  color: #6b7280;
+
+  line-height: 1.7;
+}
+
+/* Footer */
+
+.footer {
+  background: #111827;
+
+  color: white;
+
+  text-align: center;
+
+  padding: 20px;
+
+  margin-top: 50px;
+}
+
+/* Responsive */
+
+@media (max-width: 768px) {
+
+  .navbar {
+    padding: 0 20px;
+  }
+
+  .hero h1 {
+    font-size: 36px;
+  }
+
+  .hero p {
+    font-size: 18px;
+  }
+
+}

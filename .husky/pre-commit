@@ -1,1 +1,16 @@
-npx lint-staged
+# npm test
+
+# echo "Running backend lint..."
+# cd backend
+# npm run lint
+
+# echo "Running frontend lint..."
+# cd..
+# cd frontend
+# npm run lint
+
+echo "Running backend lint..."
+npm --prefix backend run lint
+
+echo "Running frontend lint..."
+npm --prefix frontend run lint
