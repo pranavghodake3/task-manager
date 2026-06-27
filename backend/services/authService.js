@@ -57,6 +57,12 @@ authServiceObj.login = async (reqBody) => {
     userId: user.id,
     expiresAt: refreshTokenExpiresIn,
   });
+  // const permissions = [];
+  // for (const entity in permissionUtil[user.globalRole.name]) {
+  //   permissionUtil[user.globalRole.name][entity].forEach(action => {
+  //     permissions.push(`${entity}:${action}`);
+  //   });
+  // } 
 
   return {
     user: {
@@ -67,7 +73,7 @@ authServiceObj.login = async (reqBody) => {
       roles: user.roles,
       company: user.company,
       globalRole: user.globalRole,
-      permissions: permissionUtil[user.globalRole.name] || {}
+      permissions: permissionUtil[user.globalRole.name] || {}, 
     },
     accessToken,
     refreshToken,

@@ -6,10 +6,13 @@ import api from "../services/api";
 import { AuthContext } from "../context/AuthContext";
 import { NavLink, useNavigate } from "react-router-dom";
 import Header from "../compoenets/Header";
+import usePermission from "../hooks/usePermission";
+import { ACTION_TYPES, ENTITIES } from "../constants";
 
 
 export default function ProjectList() {
   const AuthContextData = useContext(AuthContext);
+  const { can } = usePermission();
 const [projects, setProjects] = useState([]);
 const navigate = useNavigate();
 
@@ -53,7 +56,7 @@ const navigate = useNavigate();
       <main className="main-content">
         {/* Header */}
         <Header title='Projects' description='Manage and view all your projects' button={
-            <button className="create-btn" onClick={()=> navigate('/projects/create')}>+ New Project</button>
+            can(ENTITIES.PROJECT, ACTION_TYPES.CREATE) && <button className="create-btn" onClick={()=> navigate('/projects/create')}>+ New Project</button>
         } />
 
         {/* Projects Table */}
@@ -82,17 +85,21 @@ const navigate = useNavigate();
                       <NavLink to={`/projects/${project.id}`} className="action-link">
                         View
                       </NavLink>
-                      <NavLink to={`/projects/${project.id}/edit`} className='action-link action-btn'>Edit</NavLink>
-                      {/* <button className="action-link action-btn">Edit</button> */}
-                      <button
-                        type="button"
-                        className="action-link delete-link"
-                        onClick={handleDeleteProject}
-                        data-project-index={index}
-                        data-project-id={project.id}
-                      >
-                        Delete
-                      </button>
+                      { can(ENTITIES.PROJECT, ACTION_TYPES.UPDATE) &&
+                        <NavLink to={`/projects/${project.id}/edit`} className='action-link action-btn'>Edit</NavLink>
+                      }
+                      
+                      { can(ENTITIES.PROJECT, ACTION_TYPES.DELETE) &&
+                        <button
+                          type="button"
+                          className="action-link delete-link"
+                          onClick={handleDeleteProject}
+                          data-project-index={index}
+                          data-project-id={project.id}
+                        >
+                          Delete
+                        </button>
+                      }
                     </td>
                   </tr>
                 ))}

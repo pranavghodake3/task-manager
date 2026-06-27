@@ -6,9 +6,12 @@ import api from "../services/api";
 import { AuthContext } from "../context/AuthContext";
 import { NavLink, useNavigate } from "react-router-dom";
 import Header from "../compoenets/Header";
+import usePermission from "../hooks/usePermission";
+import { ACTION_TYPES, ENTITIES } from "../constants";
 
 export default function UserList() {
   const AuthContextData = useContext(AuthContext);
+  const { can } = usePermission();
   const [users, setUsers] = useState([]);
   const navigate = useNavigate();
 
@@ -23,7 +26,7 @@ export default function UserList() {
   }, [AuthContextData.accessToken]);
 
   function handleAddUser() {
-    navigate('/users/add');
+    navigate('/users/create');
   }
   async function handleDeleteUser(e) {
       const userIndex = parseInt(e.currentTarget.dataset.userIndex, 10);
@@ -48,7 +51,7 @@ export default function UserList() {
       <main className="main-content">
         {/* Header */}
         <Header title='Users' description='Manage and view all your users' button={
-            <button className="create-btn" onClick={handleAddUser}>+ New User</button>
+          can(ENTITIES.USER, ACTION_TYPES.CREATE) && <button className="create-btn" onClick={handleAddUser}>+ New User</button>
         } />
 
         {/* Users Table */}
@@ -81,10 +84,16 @@ export default function UserList() {
                       <NavLink to={`/users/${user.id}`} className="action-link">
                         View
                       </NavLink>
-                      <NavLink to={`/users/${user.id}/edit`} className="action-link">
-                        Edit
-                      </NavLink>
-                      <button className="action-link delete-link" onClick={handleDeleteUser} data-user-index={index} data-user-id={user.id}>Delete</button>
+                      {
+                        can(ENTITIES.USER, ACTION_TYPES.UPDATE) &&
+                        <NavLink to={`/users/${user.id}/edit`} className="action-link">
+                          Edit
+                        </NavLink>
+                      }
+                      {
+                        can(ENTITIES.USER, ACTION_TYPES.DELETE) &&
+                        <button className="action-link delete-link" onClick={handleDeleteUser} data-user-index={index} data-user-id={user.id}>Delete</button>
+                      }
                     </td>
                   </tr>
                 ))}

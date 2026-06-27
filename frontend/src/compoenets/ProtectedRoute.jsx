@@ -1,13 +1,12 @@
 import { Navigate } from "react-router-dom";
-import { getRole, isLoggedIn } from "../util/auth";
+import { isLoggedIn } from "../util/auth";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 
-export default function ProtectedRoute({ allowedRoles, children }) {
+export default function ProtectedRoute({ entity, action, children }) {
     const AuthContextData = useContext(AuthContext);
-    const role = getRole();
-    const myRole = role?.name;
-    // console.log('Protected Route AuthContextData: ',AuthContextData);
+    const permissions = AuthContextData.user.permissions;
+    console.log('Protected AuthContextData: ',AuthContextData);
     if(AuthContextData.authLoading){
         return null;
     }
@@ -15,7 +14,7 @@ export default function ProtectedRoute({ allowedRoles, children }) {
         return <Navigate to="/login" />
     }
 
-    if(allowedRoles && allowedRoles.length > 0 && !allowedRoles.includes(myRole)){
+    if(entity && action && (!permissions[entity] || !permissions[entity].includes(action))){
         return <Navigate to='/unathorized' />
     }
 
