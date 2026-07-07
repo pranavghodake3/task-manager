@@ -1,26 +1,26 @@
-import { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../context/AuthContext";
+import { useEffect, useState } from "react";
 import api from "../services/api";
 import Header from "../compoenets/Header";
 import NavBar from "../compoenets/NavBar";
 import { NavLink, useParams } from "react-router-dom";
 import { formatDate } from "../util";
+import { useAuthStore } from "../store/authStore";
 
 export default function TaskView() {
-    const AuthContextData = useContext(AuthContext);
+    const accessToken = useAuthStore((state) => state.accessToken);
     const { id } = useParams();
     const [task, setTask] = useState({});
     useEffect(() => {
         async function loadTask() {
             const response = await api.get('/tasks/'+id, {
                 headers: {
-                    Authorization: `Bearer ${AuthContextData.accessToken}`
+                    Authorization: `Bearer ${accessToken}`
                 }
             });
             setTask(response.data.data);
         }
         loadTask();
-    }, [AuthContextData.accessToken, id]);
+    }, [accessToken, id]);
     return (
         <div className="dashboard">
             {/* Sidebar */}

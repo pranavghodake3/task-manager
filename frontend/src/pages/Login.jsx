@@ -1,34 +1,39 @@
-import { useContext, useState } from "react";
-
+import { useState } from "react";
 import "../assets/css/auth.css";
 import api from "../services/api";
 import { useNavigate, NavLink } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext";
+import { useAuthStore } from "../store/authStore";
 
 export default function Login() {
-  const AuthContextData = useContext(AuthContext);
+  const setUserData = useAuthStore((state) => state.setUserData);
+  const setAccessToken = useAuthStore((state) => state.setAccessToken);
+  const setAccessTokenExpiry = useAuthStore((state) => state.setAccessTokenExpiry);
+  const setIsLoggedIn = useAuthStore((state) => state.setIsLoggedIn);
+
+
+  // const accessToken = useAuthStore((state) => state.accessToken);
   const navigate = useNavigate();
   const [apiError, setApiError] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [isLoginSuccess, setIsLoginSuccess] = useState(true);
 
-    function setLoginData(data, AuthContextData) {
-      AuthContextData.setUser(data.user);
-      AuthContextData.setAccessToken(data.accessToken);
+    function setLoginData(data) {
+      setUserData(data.user);
+      setAccessToken(data.accessToken);
       const expireMinutes = parseInt(data.accessTokenExpiresIn, 10);
       const expiryMs = Date.now() + expireMinutes * 60 * 1000;
-      AuthContextData.setAccessTokenExpiry(expiryMs.toString());
-      AuthContextData.setIsLoggedIn(true);
-      localStorage.setItem('user', JSON.stringify(data.user));
+      setAccessTokenExpiry(expiryMs.toString());
+      setIsLoggedIn(true);
     }
 
     async function handleSubmit(e){
         e.preventDefault();
         try {
           const response = await api.post("/auth/login", {email, password});
+          setUserData(response.data.data.user);
           setIsLoginSuccess(response.data.status);
-          setLoginData(response.data.data, AuthContextData);
+          setLoginData(response.data.data);
           
           if(response.data.status){
             navigate('/dashboard');

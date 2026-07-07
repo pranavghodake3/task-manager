@@ -1,19 +1,17 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import { destroyToken, getRole } from "../util/auth";
-import { useContext } from "react";
-import { AuthContext } from "../context/AuthContext";
-import { GLOBAL_ROLES } from "../constants";
+import { destroyToken } from "../util/auth";
+import { ACTION_TYPES, ENTITIES } from "../constants";
+import usePermission from "../hooks/usePermission";
+import { useAuthStore } from "../store/authStore";
 
 export default function NavBar() {
-    const AuthContextData = useContext(AuthContext);
+    const setIsLoggedIn = useAuthStore((state) => state.setIsLoggedIn);
+    const setAccessToken = useAuthStore((state) => state.setAccessToken);
+    const { can } = usePermission();
     const navigate = useNavigate();
-    const role = getRole();
-    const myRole = role?.name;
-    console.log('NavBar AuthContextData: ',AuthContextData);
-    console.log('NavBar myRole: ',myRole);
     function handleLogout() {
-        AuthContextData.setIsLoggedIn(false);
-        AuthContextData.setAccessToken(null);
+        setIsLoggedIn(false);
+        setAccessToken(null);
         destroyToken();
         navigate("/login");
     }
@@ -24,13 +22,12 @@ export default function NavBar() {
         <nav className="menu">
           <NavLink to="/dashboard">Dashboard</NavLink>
 
-          { [GLOBAL_ROLES.COMPANY_ADMIN, GLOBAL_ROLES.SUPER_ADMIN].includes(myRole) && <NavLink to="/projects">Projects</NavLink> }
+          <NavLink to="/projects">Projects</NavLink>
 
-          { [GLOBAL_ROLES.COMPANY_ADMIN, GLOBAL_ROLES.SUPER_ADMIN].includes(myRole) && <NavLink to="/users">Users</NavLink> }
+          { can(ENTITIES.USER, ACTION_TYPES.READ) && <NavLink to="/users">Users</NavLink> }
 
           <NavLink to="/tasks">Tasks</NavLink>
           
-          {/* <NavLink to="/">Boards</NavLink> */}
           {/* <NavLink to="/">Reports</NavLink> */}
           {/* <NavLink to="/">Settings</NavLink> */}
             <button onClick={handleLogout}>Logout</button>

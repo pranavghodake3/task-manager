@@ -1,12 +1,13 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
-import { AuthContext } from "../context/AuthContext";
+import { useAuthStore } from "../store/authStore";
 
 export default function UserCreateEditForm({ mode, user }) {
-    const AuthContextData = useContext(AuthContext);
+    const accessToken = useAuthStore((state) => state.accessToken);
     const [userRoles, setUserRoles] = useState([]);
     const [projects, setProjects] = useState([]);
+    const [jobTitles, setJobTitles] = useState([]);
     const [firstName, selectFirstName] = useState(() => user?.firstName ?? '');
     const [lastName, selectLastName] = useState(() => user?.lastName ?? '');
     const [email, selectEmail] = useState(() => user?.email ?? '');
@@ -14,29 +15,33 @@ export default function UserCreateEditForm({ mode, user }) {
     const [confirmPassword, selectConfirmPassword] = useState('');
     const [roleId, selectRoleId] = useState(() => user?.role ?? '');
     const [projectId, selectProjectId] = useState(() => user?.projectId ?? '');
+    const [jobTitleId, selectJobTitleId] = useState(() => user?.jobTitleId ?? '');
     // const [formErrorMessage, setFormErrorMessage] = useState('');
     const navigate = useNavigate();
 
     useEffect(() => {
         async function loadRoles() {
             try {
-                const [userRoleResponse, projectResponse] = await Promise.all([
+                const [userRoleResponse, projectResponse, jobTitleResponse] = await Promise.all([
                     api.get('/users/roles', { headers: {
-                        Authorization: `Bearer ${AuthContextData.accessToken}`
+                        Authorization: `Bearer ${accessToken}`
                     }}),
                     api.get('/projects?isDropdown=true', { headers: {
-                            Authorization: `Bearer ${AuthContextData.accessToken}`
-                        }
-                    })
+                            Authorization: `Bearer ${accessToken}`
+                    }}),
+                    api.get('/job-titles?isDropdown=true', { headers: {
+                            Authorization: `Bearer ${accessToken}`
+                    }}),
                 ]);
                 setUserRoles(userRoleResponse.data.data);
                 setProjects(projectResponse.data.data);
+                setJobTitles(jobTitleResponse.data.data);
             } catch (error) {
                 console.log(error);
             }
         }
         loadRoles();
-    }, [AuthContextData.accessToken])
+    }, [accessToken])
     async function handleSubmit(e) {
         e.preventDefault();
         try {
@@ -50,7 +55,7 @@ export default function UserCreateEditForm({ mode, user }) {
                     projectId
                 }, {
                     headers: {
-                    Authorization: `Bearer ${AuthContextData.accessToken}`
+                    Authorization: `Bearer ${accessToken}`
                 }
                 });
                 if (response.data.status) {
@@ -66,7 +71,7 @@ export default function UserCreateEditForm({ mode, user }) {
                     projectId
                 }, {
                     headers: {
-                    Authorization: `Bearer ${AuthContextData.accessToken}`
+                    Authorization: `Bearer ${accessToken}`
                 }
                 });
                 if (response.data.status) {
@@ -123,6 +128,16 @@ export default function UserCreateEditForm({ mode, user }) {
                     <option value="">Select Role</option>
                     {userRoles.map((userRole) => (
                         <option key={userRole.id} value={userRole.id}>{userRole.name}</option>
+                    ))}
+                </select>
+            </div>
+
+            <div className="form-group">
+                <label htmlFor="jobTitleId">Select Job Title</label>
+                <select name="jobTitleId" id="jobTitleId" value={jobTitleId ?? user?.jobTitleId} onChange={(e) => selectJobTitleId(e.target.value)}>
+                    <option value="">Select Role</option>
+                    {jobTitles.map((jobTitle) => (
+                        <option key={jobTitle.id} value={jobTitle.id}>{jobTitle.name}</option>
                     ))}
                 </select>
             </div>

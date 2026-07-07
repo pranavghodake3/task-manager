@@ -5,10 +5,10 @@ import ProjectList from "../pages/ProjectList";
 import Login from "../pages/Login";
 import Signup from "../pages/Signup";
 import ProtectedRoute from "../compoenets/ProtectedRoute";
-import { AuthContextProvider } from "../context/AuthContextProvider";
+// import { AuthContextProvider } from "../context/AuthContextProvider";
 import UserList from "../pages/UserList";
 import UserAdd from "../pages/UserAdd";
-import { GLOBAL_ROLES } from "../constants";
+import { ENTITIES, ACTION_TYPES } from "../constants";
 import Unathorized from "../pages/Unathorized";
 import ProjectView from "../pages/ProjectView";
 import ProjectCreate from "../pages/ProjectCreate";
@@ -23,7 +23,7 @@ import TaskCreate from "../pages/TaskCreate";
 export default function AppRoute() {
     return (
         <BrowserRouter>
-            <AuthContextProvider>
+            {/* <AuthContextProvider> */}
                 <Routes>
                     <Route path="/" element={<Home />} />
 
@@ -34,73 +34,73 @@ export default function AppRoute() {
                     } />
 
                     <Route path="/projects" element={
-                        <ProtectedRoute allowedRoles={[
-                            GLOBAL_ROLES.COMPANY_ADMIN,
-                            GLOBAL_ROLES.SUPER_ADMIN
-                        ]}>
+                        <ProtectedRoute
+                        entity={ENTITIES.PROJECT}
+                        action={ACTION_TYPES.READ}
+                        >
                             <ProjectList />
                         </ProtectedRoute>
                     } />
 
                     <Route path="/projects/create" element={
-                        <ProtectedRoute allowedRoles={[
-                            GLOBAL_ROLES.COMPANY_ADMIN,
-                            GLOBAL_ROLES.SUPER_ADMIN
-                        ]}>
+                        <ProtectedRoute
+                        entity={ENTITIES.PROJECT}
+                        action={ACTION_TYPES.CREATE}
+                        >
                            <ProjectCreate />
                         </ProtectedRoute>
                     } />
 
                     <Route path="/projects/:id" element={
-                        <ProtectedRoute allowedRoles={[
-                            GLOBAL_ROLES.COMPANY_ADMIN,
-                            GLOBAL_ROLES.SUPER_ADMIN
-                        ]}>
+                        <ProtectedRoute
+                        entity={ENTITIES.PROJECT}
+                        action={ACTION_TYPES.READ}
+                        >
                            <ProjectView />
                         </ProtectedRoute>
                     } />
 
                     <Route path="/projects/:id/edit" element={
-                        <ProtectedRoute allowedRoles={[
-                            GLOBAL_ROLES.COMPANY_ADMIN,
-                            GLOBAL_ROLES.SUPER_ADMIN
-                        ]}>
+                        <ProtectedRoute
+                        entity={ENTITIES.PROJECT}
+                        action={ACTION_TYPES.UPDATE}
+                        >
                            <ProjectEdit />
                         </ProtectedRoute>
                     } />
 
                     <Route path="/users" element={
-                        <ProtectedRoute allowedRoles={[
-                            GLOBAL_ROLES.COMPANY_ADMIN,
-                            GLOBAL_ROLES.SUPER_ADMIN
-                        ]}>
+                        <ProtectedRoute
+                        entity={ENTITIES.USER}
+                        action={ACTION_TYPES.READ}
+                        >
                             <UserList />
                         </ProtectedRoute>
                     } />
 
                     <Route path="/users/:id/edit" element={
-                        <ProtectedRoute allowedRoles={[
-                            GLOBAL_ROLES.COMPANY_ADMIN,
-                            GLOBAL_ROLES.SUPER_ADMIN
-                        ]}>
+                        <ProtectedRoute
+                        entity={ENTITIES.USER}
+                        action={ACTION_TYPES.UPDATE}
+                        >
                             <UserEdit />
                         </ProtectedRoute>
                     } />
 
                     <Route path="/users/:id" element={
-                        <ProtectedRoute allowedRoles={[
-                            GLOBAL_ROLES.COMPANY_ADMIN,
-                            GLOBAL_ROLES.SUPER_ADMIN
-                        ]}>
+                        <ProtectedRoute
+                        entity={ENTITIES.USER}
+                        action={ACTION_TYPES.READ}
+                        >
                             <UserView />
                         </ProtectedRoute>
                     } />
 
-                    <Route path="/users/add" element={
-                        <ProtectedRoute allowedRoles={[
-                            GLOBAL_ROLES.COMPANY_ADMIN,
-                            GLOBAL_ROLES.SUPER_ADMIN
-                        ]}>
+                    <Route path="/users/create" element={
+                        <ProtectedRoute
+                        entity={ENTITIES.USER}
+                        action={ACTION_TYPES.CREATE}
+                        >
                             <UserAdd />
                         </ProtectedRoute>
                     } />
@@ -112,28 +112,19 @@ export default function AppRoute() {
                     } />
 
                     <Route path="/tasks/create" element={
-                        <ProtectedRoute allowedRoles={[
-                            // GLOBAL_ROLES.COMPANY_ADMIN,
-                            // GLOBAL_ROLES.SUPER_ADMIN
-                        ]}>
+                        <ProtectedRoute>
                            <TaskCreate />
                         </ProtectedRoute>
                     } />
 
                     <Route path="/tasks/:id" element={
-                        <ProtectedRoute allowedRoles={[
-                            // GLOBAL_ROLES.COMPANY_ADMIN,
-                            // GLOBAL_ROLES.SUPER_ADMIN
-                        ]}>
+                        <ProtectedRoute>
                            <TaskView />
                         </ProtectedRoute>
                     } />
 
                     <Route path="/tasks/:id/edit" element={
-                        <ProtectedRoute allowedRoles={[
-                            // GLOBAL_ROLES.COMPANY_ADMIN,
-                            // GLOBAL_ROLES.SUPER_ADMIN
-                        ]}>
+                        <ProtectedRoute>
                            <TaskEdit />
                         </ProtectedRoute>
                     } />
@@ -144,7 +135,7 @@ export default function AppRoute() {
 
                     <Route path="/unathorized" element={<Unathorized />} />
                 </Routes>
-            </AuthContextProvider>
+            {/* </AuthContextProvider> */}
         </BrowserRouter>
     );
 };

@@ -1,15 +1,18 @@
 
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "../assets/css/dashboard.css";
 import NavBar from "../compoenets/NavBar";
 import api from "../services/api";
-import { AuthContext } from "../context/AuthContext";
 import { NavLink, useNavigate } from "react-router-dom";
 import Header from "../compoenets/Header";
+import usePermission from "../hooks/usePermission";
+import { ACTION_TYPES, ENTITIES } from "../constants";
+import { useAuthStore } from "../store/authStore";
 
 
 export default function ProjectList() {
-  const AuthContextData = useContext(AuthContext);
+  const accessToken = useAuthStore((state) => state.accessToken);
+  const { can } = usePermission();
 const [projects, setProjects] = useState([]);
 const navigate = useNavigate();
 
@@ -18,7 +21,7 @@ const navigate = useNavigate();
       try {
           const response = await api.get(`/projects`, {
           headers: {
-            Authorization: `Bearer ${AuthContextData.accessToken}`
+            Authorization: `Bearer ${accessToken}`
           }
         });
         setProjects(response.data.data);
@@ -29,7 +32,7 @@ const navigate = useNavigate();
       
     }
     loadProjects();
-  }, [AuthContextData.accessToken]);
+  }, [accessToken]);
   async function handleDeleteProject(e) {
     const projectIndex = parseInt(e.currentTarget.dataset.projectIndex, 10);
     const projectId = e.currentTarget.dataset.projectId;
@@ -37,7 +40,7 @@ const navigate = useNavigate();
     if (conf) {
       await api.delete(`/projects/${projectId}`, {
         headers: {
-          Authorization: `Bearer ${AuthContextData.accessToken}`
+          Authorization: `Bearer ${accessToken}`
         }
       });
       setProjects((currentProjects) => currentProjects.filter((_, idx) => idx !== projectIndex));
@@ -53,7 +56,7 @@ const navigate = useNavigate();
       <main className="main-content">
         {/* Header */}
         <Header title='Projects' description='Manage and view all your projects' button={
-            <button className="create-btn" onClick={()=> navigate('/projects/create')}>+ New Project</button>
+            can(ENTITIES.PROJECT, ACTION_TYPES.CREATE) && <button className="create-btn" onClick={()=> navigate('/projects/create')}>+ New Project</button>
         } />
 
         {/* Projects Table */}
@@ -82,17 +85,21 @@ const navigate = useNavigate();
                       <NavLink to={`/projects/${project.id}`} className="action-link">
                         View
                       </NavLink>
-                      <NavLink to={`/projects/${project.id}/edit`} className='action-link action-btn'>Edit</NavLink>
-                      {/* <button className="action-link action-btn">Edit</button> */}
-                      <button
-                        type="button"
-                        className="action-link delete-link"
-                        onClick={handleDeleteProject}
-                        data-project-index={index}
-                        data-project-id={project.id}
-                      >
-                        Delete
-                      </button>
+                      { can(ENTITIES.PROJECT, ACTION_TYPES.UPDATE) &&
+                        <NavLink to={`/projects/${project.id}/edit`} className='action-link action-btn'>Edit</NavLink>
+                      }
+                      
+                      { can(ENTITIES.PROJECT, ACTION_TYPES.DELETE) &&
+                        <button
+                          type="button"
+                          className="action-link delete-link"
+                          onClick={handleDeleteProject}
+                          data-project-index={index}
+                          data-project-id={project.id}
+                        >
+                          Delete
+                        </button>
+                      }
                     </td>
                   </tr>
                 ))}

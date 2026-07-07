@@ -254,6 +254,7 @@ authMiddleware.hasAccess = (entity, action) => {
     try {
       const user = req.auth.user;
       const hasPermission = permissionUtil[user.globalRole.name]?.[entity]?.includes(action);
+      console.log(`hasAccess ${entity}, ${action}, user.globalRole.name: ${user.globalRole.name}, hasPermission:${hasPermission}`);
       if (!hasPermission) {
         throw new CustomError('Insufficient permissions', 403);
       }

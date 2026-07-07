@@ -1,29 +1,32 @@
 
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "../assets/css/dashboard.css";
 import NavBar from "../compoenets/NavBar";
 import api from "../services/api";
-import { AuthContext } from "../context/AuthContext";
 import { NavLink, useNavigate } from "react-router-dom";
 import Header from "../compoenets/Header";
+import usePermission from "../hooks/usePermission";
+import { ACTION_TYPES, ENTITIES } from "../constants";
+import { useAuthStore } from "../store/authStore";
 
 export default function UserList() {
-  const AuthContextData = useContext(AuthContext);
+  const accessToken = useAuthStore((state) => state.accessToken);
+  const { can } = usePermission();
   const [users, setUsers] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
     async function loadUsers() {
         const response = await api.get(`/users`, {
-            headers: { Authorization: 'Bearer ' + AuthContextData.accessToken },
+            headers: { Authorization: 'Bearer ' + accessToken },
         });
         setUsers(response.data.data);
     }
     loadUsers();
-  }, [AuthContextData.accessToken]);
+  }, [accessToken]);
 
   function handleAddUser() {
-    navigate('/users/add');
+    navigate('/users/create');
   }
   async function handleDeleteUser(e) {
       const userIndex = parseInt(e.currentTarget.dataset.userIndex, 10);
@@ -32,7 +35,7 @@ export default function UserList() {
       if (conf) {
         await api.delete(`/users/${userId}`, {
           headers: {
-            Authorization: `Bearer ${AuthContextData.accessToken}`
+            Authorization: `Bearer ${accessToken}`
           }
         });
         setUsers((currentUsers) => currentUsers.filter((_, idx) => idx !== userIndex));
@@ -48,7 +51,7 @@ export default function UserList() {
       <main className="main-content">
         {/* Header */}
         <Header title='Users' description='Manage and view all your users' button={
-            <button className="create-btn" onClick={handleAddUser}>+ New User</button>
+          can(ENTITIES.USER, ACTION_TYPES.CREATE) && <button className="create-btn" onClick={handleAddUser}>+ New User</button>
         } />
 
         {/* Users Table */}
@@ -81,10 +84,16 @@ export default function UserList() {
                       <NavLink to={`/users/${user.id}`} className="action-link">
                         View
                       </NavLink>
-                      <NavLink to={`/users/${user.id}/edit`} className="action-link">
-                        Edit
-                      </NavLink>
-                      <button className="action-link delete-link" onClick={handleDeleteUser} data-user-index={index} data-user-id={user.id}>Delete</button>
+                      {
+                        can(ENTITIES.USER, ACTION_TYPES.UPDATE) &&
+                        <NavLink to={`/users/${user.id}/edit`} className="action-link">
+                          Edit
+                        </NavLink>
+                      }
+                      {
+                        can(ENTITIES.USER, ACTION_TYPES.DELETE) &&
+                        <button className="action-link delete-link" onClick={handleDeleteUser} data-user-index={index} data-user-id={user.id}>Delete</button>
+                      }
                     </td>
                   </tr>
                 ))}
