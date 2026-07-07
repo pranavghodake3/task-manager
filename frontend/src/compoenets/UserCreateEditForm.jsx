@@ -1,10 +1,10 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
-import { AuthContext } from "../context/AuthContext";
+import { useAuthStore } from "../store/authStore";
 
 export default function UserCreateEditForm({ mode, user }) {
-    const AuthContextData = useContext(AuthContext);
+    const accessToken = useAuthStore((state) => state.accessToken);
     const [userRoles, setUserRoles] = useState([]);
     const [projects, setProjects] = useState([]);
     const [jobTitles, setJobTitles] = useState([]);
@@ -24,13 +24,13 @@ export default function UserCreateEditForm({ mode, user }) {
             try {
                 const [userRoleResponse, projectResponse, jobTitleResponse] = await Promise.all([
                     api.get('/users/roles', { headers: {
-                        Authorization: `Bearer ${AuthContextData.accessToken}`
+                        Authorization: `Bearer ${accessToken}`
                     }}),
                     api.get('/projects?isDropdown=true', { headers: {
-                            Authorization: `Bearer ${AuthContextData.accessToken}`
+                            Authorization: `Bearer ${accessToken}`
                     }}),
                     api.get('/job-titles?isDropdown=true', { headers: {
-                            Authorization: `Bearer ${AuthContextData.accessToken}`
+                            Authorization: `Bearer ${accessToken}`
                     }}),
                 ]);
                 setUserRoles(userRoleResponse.data.data);
@@ -41,7 +41,7 @@ export default function UserCreateEditForm({ mode, user }) {
             }
         }
         loadRoles();
-    }, [AuthContextData.accessToken])
+    }, [accessToken])
     async function handleSubmit(e) {
         e.preventDefault();
         try {
@@ -55,7 +55,7 @@ export default function UserCreateEditForm({ mode, user }) {
                     projectId
                 }, {
                     headers: {
-                    Authorization: `Bearer ${AuthContextData.accessToken}`
+                    Authorization: `Bearer ${accessToken}`
                 }
                 });
                 if (response.data.status) {
@@ -71,7 +71,7 @@ export default function UserCreateEditForm({ mode, user }) {
                     projectId
                 }, {
                     headers: {
-                    Authorization: `Bearer ${AuthContextData.accessToken}`
+                    Authorization: `Bearer ${accessToken}`
                 }
                 });
                 if (response.data.status) {

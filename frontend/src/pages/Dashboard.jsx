@@ -4,8 +4,7 @@
 // import "../assets/css/dashboard.css";
 import NavBar from "../compoenets/NavBar";
 // import { ROLES } from "../constants"
-import { useContext } from "react";
-import { AuthContext } from "../context/AuthContext";
+import { useAuthStore } from "../store/authStore";
 
 const projects = [
   {
@@ -36,8 +35,8 @@ const activities = [
 ];
 
 export default function Dashboard() {
-  const AuthContextData = useContext(AuthContext);
-  const user = AuthContextData.user;
+  const userData = useAuthStore((state) => state.user);
+  console.log('Dashboard authStore userData: ',userData);
   return (
     <div className="dashboard">
       {/* Sidebar */}
@@ -49,7 +48,7 @@ export default function Dashboard() {
         <header className="topbar">
           <div>
             <h1>Dashboard</h1>
-            <p>Welcome back, { `${user.firstName} ${user.lastName} (${AuthContextData.user?.globalRole?.name ?? ''})` } 👋</p>
+            <p>Welcome back, { `${userData.firstName} ${userData.lastName} (${userData?.globalRole?.name ?? ''})` } 👋</p>
           </div>
 
           <button className="create-btn">+ Create Issue</button>

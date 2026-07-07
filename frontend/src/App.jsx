@@ -10,6 +10,7 @@
 // import Login from './pages/Login'
 // import Signup from './pages/Signup'
 // import Home from './pages/Home'
+import AuthInitializer from './compoenets/AuthInitializer'
 import AppRoute from './routes/AppRoute'
 
 // const router = createBrowserRouter([
@@ -23,7 +24,9 @@ function App() {
 
   return (
     // <RouterProvider router={router} />/
-    <AppRoute />
+    <AuthInitializer>
+      <AppRoute />
+    </AuthInitializer>
   )
 }
 

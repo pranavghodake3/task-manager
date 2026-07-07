@@ -1,13 +1,12 @@
-import { useContext } from "react";
-import { AuthContext } from "../context/AuthContext";
+import { useAuthStore } from "../store/authStore";
 
 export default function usePermission() {
-    const { user } = useContext(AuthContext);
-    const permissions = user.permissions;
+    const user = useAuthStore((state) => state.user);
+    const permissions = user?.permissions;
 
     const can = (entity, action) => {
         // if(entity && action && !permissions.includes(`${entity}:${action}`)){
-        if(entity && action && (!permissions[entity] || !permissions[entity].includes(action))){
+        if(entity && action && permissions && (!permissions[entity] || !permissions[entity].includes(action))){
             return false;
         }
         return true;

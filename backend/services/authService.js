@@ -225,9 +225,42 @@ authServiceObj.getRefreshToken = async (req) => {
 
 authServiceObj.getRefreshAccessToken = async (req) => {
   const userId = Number(req.auth.user.userId);
+  const user = await UserModel.findOne({
+    attributes: ['id', 'firstName', 'lastName', 'email', 'password'],
+    where: {
+      id: userId,
+    },
+    include: [
+      {
+        model: RoleModel,
+        as: 'roles'
+      },
+      {
+        model: CompanyModel,
+        as: 'company'
+      },
+      {
+        model: db.GlobalRole,
+        as: 'globalRole'
+      }
+    ]
+  });
+
+ 
+
   const { accessToken, accessTokenExpiresIn } = jwtUtil.getToken({ userId });
 
   return {
+    user: {
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      roles: user.roles,
+      company: user.company,
+      globalRole: user.globalRole,
+      permissions: permissionUtil[user.globalRole.name] || {}, 
+    },
     accessToken,
     accessTokenExpiresIn,
   };

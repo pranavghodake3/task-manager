@@ -1,10 +1,10 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
-import { AuthContext } from "../context/AuthContext";
+import { useAuthStore } from "../store/authStore";
 
 export default function UserCreateEditForm({ mode, task }) {
-    const AuthContextData = useContext(AuthContext);
+    const accessToken = useAuthStore((state) => state.accessToken);
     const [projects, setProjects] = useState([]);
     const [users, setUsers] = useState([]);
     const [statuses, setStatuses] = useState([]);
@@ -23,16 +23,16 @@ export default function UserCreateEditForm({ mode, task }) {
             try {
                 const [projectResponse, userResponse, statusResponse, priorityResponse] = await Promise.all([
                     api.get('/projects?isDropdown=true', { headers: {
-                        Authorization: `Bearer ${AuthContextData.accessToken}`
+                        Authorization: `Bearer ${accessToken}`
                     }}),
                     api.get('/users?isDropdown=true', { headers: {
-                        Authorization: `Bearer ${AuthContextData.accessToken}`
+                        Authorization: `Bearer ${accessToken}`
                     }}),
                     api.get('/statuses?isDropdown=true', { headers: {
-                        Authorization: `Bearer ${AuthContextData.accessToken}`
+                        Authorization: `Bearer ${accessToken}`
                     }}),
                     api.get('/priorities?isDropdown=true', { headers: {
-                        Authorization: `Bearer ${AuthContextData.accessToken}`
+                        Authorization: `Bearer ${accessToken}`
                     }}),
 
                 ]);
@@ -45,7 +45,7 @@ export default function UserCreateEditForm({ mode, task }) {
             }
         }
         loadDropDownsData();
-    }, [AuthContextData.accessToken])
+    }, [accessToken])
     async function handleSubmit(e) {
         e.preventDefault();
         try {
@@ -59,7 +59,7 @@ export default function UserCreateEditForm({ mode, task }) {
                     priorityId
                 }, {
                     headers: {
-                    Authorization: `Bearer ${AuthContextData.accessToken}`
+                    Authorization: `Bearer ${accessToken}`
                 }
                 });
                 if (response.data.status) {
@@ -75,7 +75,7 @@ export default function UserCreateEditForm({ mode, task }) {
                     priorityId
                 }, {
                     headers: {
-                    Authorization: `Bearer ${AuthContextData.accessToken}`
+                    Authorization: `Bearer ${accessToken}`
                 }
                 });
                 if (response.data.status) {

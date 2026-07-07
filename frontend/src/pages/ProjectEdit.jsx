@@ -1,20 +1,20 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Header from "../compoenets/Header";
 import NavBar from "../compoenets/NavBar";
 import ProjectCreateEditForm from "../compoenets/ProjectCreateEditForm";
-import { AuthContext } from "../context/AuthContext";
 import { NavLink, useParams } from "react-router-dom";
 import api from "../services/api";
+import { useAuthStore } from "../store/authStore";
 
 export default function ProjectEdit() {
-    const AuthContextData = useContext(AuthContext);
+    const accessToken = useAuthStore((state) => state.accessToken);
     const [project, setProject] = useState({});
     const { id } = useParams();
     useEffect(() => {
         async function getProject() {
             try {
                 const response = await api.get(`/projects/${id}`, { headers: {
-                    Authorization: `Bearer ${AuthContextData.accessToken}`
+                    Authorization: `Bearer ${accessToken}`
                 }});
                 setProject(response.data.data);
             } catch (error) {
@@ -22,7 +22,7 @@ export default function ProjectEdit() {
             }
         }
         getProject();
-    }, [AuthContextData.accessToken, id]);
+    }, [accessToken, id]);
     return (
                 <div className="dashboard">
                     {/* Sidebar */}

@@ -1,15 +1,14 @@
 
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "../assets/css/dashboard.css";
 import NavBar from "../compoenets/NavBar";
 import api from "../services/api";
-import { AuthContext } from "../context/AuthContext";
 import { NavLink, useNavigate } from "react-router-dom";
 import Header from "../compoenets/Header";
-
+import { useAuthStore } from "../store/authStore";
 
 export default function TaskList() {
-  const AuthContextData = useContext(AuthContext);
+  const accessToken = useAuthStore((state) => state.accessToken);
   const [tasks, setTasks] = useState([]);
   const navigate = useNavigate();
 
@@ -18,7 +17,7 @@ export default function TaskList() {
       try {
           const response = await api.get(`/tasks`, {
           headers: {
-            Authorization: `Bearer ${AuthContextData.accessToken}`
+            Authorization: `Bearer ${accessToken}`
           }
         });
         setTasks(response.data.data);
@@ -29,7 +28,7 @@ export default function TaskList() {
       
     }
     loadTasks();
-  }, [AuthContextData.accessToken]);
+  }, [accessToken]);
   async function handleDeleteTask(e) {
     const taskIndex = parseInt(e.currentTarget.dataset.taskIndex, 10);
     const taskId = e.currentTarget.dataset.taskId;
@@ -37,7 +36,7 @@ export default function TaskList() {
     if (conf) {
       await api.delete(`/tasks/${taskId}`, {
         headers: {
-          Authorization: `Bearer ${AuthContextData.accessToken}`
+          Authorization: `Bearer ${accessToken}`
         }
       });
       setTasks((currentTasks) => currentTasks.filter((_, idx) => idx !== taskIndex));

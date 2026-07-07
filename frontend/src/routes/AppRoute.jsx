@@ -5,7 +5,7 @@ import ProjectList from "../pages/ProjectList";
 import Login from "../pages/Login";
 import Signup from "../pages/Signup";
 import ProtectedRoute from "../compoenets/ProtectedRoute";
-import { AuthContextProvider } from "../context/AuthContextProvider";
+// import { AuthContextProvider } from "../context/AuthContextProvider";
 import UserList from "../pages/UserList";
 import UserAdd from "../pages/UserAdd";
 import { ENTITIES, ACTION_TYPES } from "../constants";
@@ -23,7 +23,7 @@ import TaskCreate from "../pages/TaskCreate";
 export default function AppRoute() {
     return (
         <BrowserRouter>
-            <AuthContextProvider>
+            {/* <AuthContextProvider> */}
                 <Routes>
                     <Route path="/" element={<Home />} />
 
@@ -135,7 +135,7 @@ export default function AppRoute() {
 
                     <Route path="/unathorized" element={<Unathorized />} />
                 </Routes>
-            </AuthContextProvider>
+            {/* </AuthContextProvider> */}
         </BrowserRouter>
     );
 };

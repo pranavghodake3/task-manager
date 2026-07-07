@@ -1,11 +1,11 @@
-import { useContext, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
-import { AuthContext } from "../context/AuthContext";
 import { ROLES } from "../constants";
+import { useAuthStore } from "../store/authStore";
 
 export default function ProjectCreateEditForm({ mode, project }) {
-    const AuthContextData = useContext(AuthContext);
+    const accessToken = useAuthStore((state) => state.accessToken);
     const [createNew, selectCreateNew] = useState("0");
     const [users, setUsers] = useState([]);
     const [name, setProjectName] = useState(() => project?.name ?? '');
@@ -27,7 +27,7 @@ export default function ProjectCreateEditForm({ mode, project }) {
             try {
                 const [userResponse] = await Promise.all([
                     api.get('/users?isDropdown=true', { headers: {
-                        Authorization: `Bearer ${AuthContextData.accessToken}`
+                        Authorization: `Bearer ${accessToken}`
                     }}),
 
                 ]);
@@ -37,7 +37,7 @@ export default function ProjectCreateEditForm({ mode, project }) {
             }
         }
         loadDropDownsData();
-    }, [AuthContextData.accessToken])
+    }, [accessToken])
 
     function handleCreateNew(e) {
         selectCreateNew(e.target.value);
@@ -58,7 +58,7 @@ export default function ProjectCreateEditForm({ mode, project }) {
                     password
                 }, {
                     headers: {
-                        Authorization: `Bearer ${AuthContextData.accessToken}`
+                        Authorization: `Bearer ${accessToken}`
                     }
                 });
                 if (response.data.status) {
@@ -73,7 +73,7 @@ export default function ProjectCreateEditForm({ mode, project }) {
                     existingProjectMemberUserId: existingUsers?.[0]?.userId
                 }, {
                     headers: {
-                        Authorization: `Bearer ${AuthContextData.accessToken}`
+                        Authorization: `Bearer ${accessToken}`
                     }
                 });
                 if (response.data.status) {
