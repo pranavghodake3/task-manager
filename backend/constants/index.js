@@ -1,6 +1,6 @@
 const obj = {
-  TOKEN_EXPIRY: '5m',
-  REFRESH_TOKEN_EXPIRY: '1h',
+  TOKEN_EXPIRY: 60 * 5, // 5 minutes
+  REFRESH_TOKEN_EXPIRY: 60 * 60, // 1 hour
   GLOBAL_ROLES: {
     SUPER_ADMIN: 'Super Admin',
     COMPANY_ADMIN: 'Company Admin',
@@ -41,7 +41,8 @@ const obj = {
   },
   STATUSES: {
     
-  }
+  },
+  X_DEVICE: 'BROWSER'
 };
 
 module.exports = obj;

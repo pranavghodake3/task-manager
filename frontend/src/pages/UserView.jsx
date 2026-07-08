@@ -54,7 +54,7 @@ export default function UserView() {
                             </tr>
                             <tr>
                                 <td><b>Role: </b></td>
-                                <td>{user.roleInfo?.name}</td>
+                                <td>{user.globalRole?.name}</td>
                             </tr>
                             <tr>
                                 <td><b>Created At:</b></td>

@@ -246,8 +246,6 @@ authServiceObj.getRefreshAccessToken = async (req) => {
     ]
   });
 
- 
-
   const { accessToken, accessTokenExpiresIn } = jwtUtil.getToken({ userId });
 
   return {

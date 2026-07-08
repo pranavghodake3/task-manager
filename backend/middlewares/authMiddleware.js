@@ -9,6 +9,7 @@ const { getUserByIdWithRole } = require('../services/userService');
 const CustomError = require('../utils/CustomError');
 const jwtUtil = require('../utils/jwtUtil');
 const permissionUtil = require('../utils/permission');
+const { X_DEVICE } = require('../constants');
 
 const authMiddleware = {};
 
@@ -161,18 +162,22 @@ authMiddleware.registerCompanyProjectUser = async (req, res, next) => {
 
 authMiddleware.isAuthentic = async (req, res, next) => {
   try {
+    const xDeviceInfo = req.headers['x-device'];
+    if(xDeviceInfo === X_DEVICE && !req.cookies.refreshToken){
+      throw new CustomError('Missing Refresh Token in Cookie', 401);
+    }
     let bearerToken = req.headers.authorization?.split('Bearer ')[1];
 
     if (!bearerToken) {
       throw new CustomError('Missing Bearer Token or it is Undefined', 401);
     }
     const data = jwtUtil.verifyToken(bearerToken);
-    const user = await getUserByIdWithRole(data.userId);
-    req.auth = {
-      user,
-    };
-    console.log("req.auth: ",req.auth);
     if (data) {
+      const user = await getUserByIdWithRole(data.userId);
+      req.auth = {
+        user,
+      };
+      console.log("req.auth: ",req.auth);
       next();
     } else {
       throw new CustomError('Invalid Bearer Token or it has expired', 401);
@@ -220,7 +225,7 @@ authMiddleware.isRefreshTokenCookieAuthentic = async (req, res, next) => {
     console.log('Cookies: ', req.cookies.refreshToken);
     let bearerToken = req.cookies.refreshToken;
     if (!bearerToken) {
-      throw new CustomError('Missing Refresh Token', 401);
+      throw new CustomError('Missing Refresh Token in Cookie', 401);
     }
     const validToken = jwtUtil.verifyRefreshToken(bearerToken);
     const refreshToken = await RefreshTokenModel.findOne({

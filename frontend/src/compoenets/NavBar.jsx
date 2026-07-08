@@ -7,20 +7,25 @@ import { useAuthStore } from "../store/authStore";
 export default function NavBar() {
     const setIsLoggedIn = useAuthStore((state) => state.setIsLoggedIn);
     const setAccessToken = useAuthStore((state) => state.setAccessToken);
+    const user = useAuthStore((state) => state.user);
     const { can } = usePermission();
     const navigate = useNavigate();
-    function handleLogout() {
-        setIsLoggedIn(false);
-        setAccessToken(null);
-        destroyToken();
-        navigate("/login");
+    async function handleLogout() {
+      try {
+        await destroyToken();
+          setIsLoggedIn(false);
+          setAccessToken(null);
+          navigate("/login");
+      } catch (error) {
+        console.log('Error in logout: ',error);
+      }
     }
   return (
     <aside className="sidebar">
         <div className="logo"><NavLink to="/">Home</NavLink></div>
 
         <nav className="menu">
-          <NavLink to="/dashboard">Dashboard</NavLink>
+          <NavLink to="/dashboard">Dashboard({ user.company?.name })</NavLink>
 
           <NavLink to="/projects">Projects</NavLink>
 

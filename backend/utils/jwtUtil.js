@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const { TOKEN_EXPIRY } = require('../constants/index');
+const { TOKEN_EXPIRY, REFRESH_TOKEN_EXPIRY } = require('../constants/index');
 
 const jwtUtilObj = {};
 
@@ -21,9 +21,9 @@ jwtUtilObj.verifyToken = (bearerToken) => {
 };
 
 jwtUtilObj.getRefreshToken = (data) => {
-  const oneDayInMilliseconds = 1000 * 60 * 60 * 24;
+  // const oneDayInMilliseconds = 1000 * 60 * 60 * 24;
   const nowTimestamp = Date.now();
-  const oneDayFromNowTimestamp = nowTimestamp + oneDayInMilliseconds;
+  const oneDayFromNowTimestamp = nowTimestamp + REFRESH_TOKEN_EXPIRY * 1000;
   const refreshToken = jwt.sign(data, process.env.JWT_REFRESH_SECRET, {
     expiresIn: oneDayFromNowTimestamp,
   });

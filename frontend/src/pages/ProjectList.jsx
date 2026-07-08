@@ -13,8 +13,8 @@ import { useAuthStore } from "../store/authStore";
 export default function ProjectList() {
   const accessToken = useAuthStore((state) => state.accessToken);
   const { can } = usePermission();
-const [projects, setProjects] = useState([]);
-const navigate = useNavigate();
+  const [projects, setProjects] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function loadProjects() {

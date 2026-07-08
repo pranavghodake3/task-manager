@@ -41,3 +41,5 @@ export const  ACTION_TYPES = {
     UPDATE: 'UPDATE',
     DELETE: 'DELETE',
 };
+
+export const X_DEVICE = 'BROWSER';
