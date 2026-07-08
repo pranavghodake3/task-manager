@@ -5,7 +5,7 @@ const projectController = {};
 
 projectController.getProjects = async (req) => {
   const { auth } = req;
-  const companyId = req.query.companyId ?? auth.user.company.id;
+  const companyId = req.query.companyId ?? auth.user.company?.id;
   let { isDropdown } = req.query;
   isDropdown = makeBoolean(isDropdown);
   console.log('companyId', companyId);

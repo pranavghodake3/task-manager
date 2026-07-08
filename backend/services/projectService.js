@@ -7,10 +7,13 @@ const passwordHelper = require('../utils/passwordHelper');
 
 const projectService = {};
 
-projectService.getProjects = async ({ companyId, isDropdown = false }) => {
+projectService.getProjects = async ({ auth, companyId, isDropdown = false }) => {
   const where = {
     ...(companyId && { companyId })
   };
+  if(![GLOBAL_ROLES.SUPER_ADMIN, GLOBAL_ROLES.COMPANY_ADMIN].includes(auth.user.globalRole.name)){
+    where.id = await projectService.getMyProjectIds(auth);
+  }
   let attributes = [];
   let include = [];
   if(isDropdown){
@@ -31,6 +34,17 @@ projectService.getProjects = async ({ companyId, isDropdown = false }) => {
     ...(include.length > 0 && { include }),
   });
 };
+
+projectService.getMyProjectIds = async (auth) => {
+  const projects = await db.ProjectMember.findAll({
+    attributes: ['projectId'],
+    where: {
+      userId: auth.user.id,
+    },
+    raw: true,
+  });
+  return projects.map(projectMember => projectMember.projectId);
+}
 
 projectService.getProjectById = async (id) => {
   return await ProjectModel.findByPk(id, {
