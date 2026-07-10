@@ -22,7 +22,7 @@ export default function NavBar() {
     }
   return (
     <aside className="sidebar">
-        <div className="logo"><NavLink to="/">Home</NavLink></div>
+        <div className="logo"><NavLink to="/">Home</NavLink> { `${user.firstName} ${user.lastName} (${user?.globalRole?.name ?? ''})` } </div>
 
         <nav className="menu">
           <NavLink to="/dashboard">Dashboard({ user.company?.name })</NavLink>

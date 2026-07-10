@@ -21,17 +21,32 @@ authServiceObj.login = async (reqBody) => {
     },
     include: [
       {
-        model: RoleModel,
-        as: 'roles'
+        model: db.ProjectMember,
+        as: 'projectMembership',
+        include: [
+          {
+            model: db.Project,
+            as: 'project'
+          },
+          {
+            model: db.Role,
+            as: 'role'
+          },
+          {
+            model: db.JobTitle,
+            as: 'jobTitle'
+          }
+        ]
       },
       {
         model: CompanyModel,
-        as: 'company'
+        as: 'company',
+        attributes: ['id', 'name']
       },
       {
         model: db.GlobalRole,
         as: 'globalRole'
-      }
+      },
     ]
   });
 
@@ -70,10 +85,11 @@ authServiceObj.login = async (reqBody) => {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
-      roles: user.roles,
+      projectMembership: user.projectMembership,
       company: user.company,
       globalRole: user.globalRole,
-      permissions: permissionUtil[user.globalRole.name] || {}, 
+      permissions: permissionUtil[user.globalRole.name] || {},
+      projects: user.projects,
     },
     accessToken,
     refreshToken,

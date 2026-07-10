@@ -19,6 +19,7 @@ import TaskList from "../pages/TaskList";
 import TaskEdit from "../pages/TaskEdit";
 import TaskView from "../pages/TaskView";
 import TaskCreate from "../pages/TaskCreate";
+import ProjectAddMember from "../pages/ProjectAddMember";
 
 export default function AppRoute() {
     return (
@@ -66,6 +67,15 @@ export default function AppRoute() {
                         action={ACTION_TYPES.UPDATE}
                         >
                            <ProjectEdit />
+                        </ProtectedRoute>
+                    } />
+
+                    <Route path="/projects/:id/add-member" element={
+                        <ProtectedRoute
+                        entity={ENTITIES.PROJECT}
+                        action={ACTION_TYPES.UPDATE}
+                        >
+                           <ProjectAddMember />
                         </ProtectedRoute>
                     } />
 

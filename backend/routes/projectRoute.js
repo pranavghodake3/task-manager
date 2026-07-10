@@ -21,6 +21,20 @@ router.get(
 );
 
 router.post(
+  '/:id/add-member',
+  hasAccess(ENTITIES.PROJECT, ACTION_TYPES.UPDATE),
+  // projectMiddleware.isCompanyProjectValid,
+  handleAsyncFunction(projectController.addMemberToProject),
+);
+
+router.delete(
+  '/:id/users/:userId/remove',
+  hasAccess(ENTITIES.PROJECT, ACTION_TYPES.UPDATE),
+  // projectMiddleware.isCompanyProjectValid,
+  handleAsyncFunction(projectController.removeMemberFromProject),
+);
+
+router.post(
   '/',
   hasAccess(ENTITIES.PROJECT, ACTION_TYPES.CREATE),
   // projectMiddleware.isCompanyProjectValid,

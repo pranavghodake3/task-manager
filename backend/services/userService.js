@@ -54,12 +54,7 @@ userService.createUser = async (auth, reqBody) => {
   reqBody.isActive = true;
   const result = db.sequelize.transaction(async (t) => {
     const user = await UserModel.create(reqBody, { transaction: t });
-    const projectMembership = await db.ProjectMember.create({
-      userId: user.id,
-      projectId: parseInt(reqBody.projectId),
-      roleId: parseInt(reqBody.roleId),
-    }, { transaction: t });
-    return { user, projectMembership };
+    return user;
   });
   return result;
 };

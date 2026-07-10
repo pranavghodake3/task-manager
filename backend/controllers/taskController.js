@@ -17,8 +17,7 @@ taskController.getTaskById = async (req) => {
 };
 
 taskController.createTask = async (req) => {
-  const role = req.auth.user.roleInfo.name;
-  const task = await taskService.createTask(req.auth.user.id, role, req.body);
+  const task = await taskService.createTask(req.auth, req.body);
   return { data: task, statusCode: 201 };
 };
 

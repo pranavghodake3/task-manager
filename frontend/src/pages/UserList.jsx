@@ -78,7 +78,7 @@ export default function UserList() {
                       {user.email}
                     </td>
                     <td className="">
-                      {user?.roleInfo?.name}
+                      {user?.globalRole?.name}
                     </td>
                     <td className="actions">
                       <NavLink to={`/users/${user.id}`} className="action-link">

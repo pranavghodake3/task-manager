@@ -5,7 +5,6 @@ const StatusModel = db.Status;
 const PriorityModel = db.Priority;
 const ProjectModel = db.Project;
 const UserModel = db.User;
-const { getMyCompany } = require('./companyService');
 
 const taskService = {};
 
@@ -70,12 +69,16 @@ taskService.getTaskById = async (id) => {
   });
 };
 
-taskService.createTask = async (loggedInUserId, role, reqBody) => {
-    reqBody.creatorId = loggedInUserId;
-    if(role === GLOBAL_ROLES.COMPANY_ADMIN){
-        reqBody.companyId = (await getMyCompany(loggedInUserId)).id;
-    }
+taskService.createTask = async (auth, reqBody) => {
+  reqBody.creatorId = auth.user.id;
+  reqBody.companyId = auth.user.company.id;
+  for (const key in reqBody) {
+    reqBody[key] = reqBody[key] ? reqBody[key] : null;
+  }
+  console.log('reqBody: ',reqBody);
+
   const task = await TaskModel.create(reqBody);
+
   return task;
 };
 

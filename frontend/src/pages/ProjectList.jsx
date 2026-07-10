@@ -100,6 +100,10 @@ export default function ProjectList() {
                           Delete
                         </button>
                       }
+
+                      { can(ENTITIES.PROJECT, ACTION_TYPES.UPDATE) &&
+                        <NavLink to={`/projects/${project.id}/add-member`} className='action-link action-btn'>Add Member</NavLink>
+                      }
                     </td>
                   </tr>
                 ))}
