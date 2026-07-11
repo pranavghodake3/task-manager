@@ -108,7 +108,25 @@ userService.getUserByIdWithRole = async (userId) => {
               model: db.Company,
               as: 'company',
               attributes: ['id', 'name'],
-            }
+            },
+            {
+              model: db.ProjectMember,
+              as: 'projectMembership',
+              include: [
+                {
+                  model: db.Project,
+                  as: 'project'
+                },
+                {
+                  model: db.Role,
+                  as: 'role'
+                },
+                {
+                  model: db.JobTitle,
+                  as: 'jobTitle'
+                }
+              ]
+            },
         ]
     });
     return user.get({

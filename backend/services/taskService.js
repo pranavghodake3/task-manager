@@ -12,8 +12,9 @@ taskService.getTasks = async ({ auth, companyId }) => {
     const where = {
         companyId: companyId || auth.user?.company?.id,
   };
+  const projectIds = auth.user.projectMembership.map(pm => pm.projectId);
   if(![GLOBAL_ROLES.SUPER_ADMIN, GLOBAL_ROLES.COMPANY_ADMIN].includes(auth.user.globalRole.name)){
-    where.userId = auth.user.id;
+    where.projectId = projectIds;
   }
   return await TaskModel.findAll({
     ...(where && { where }),

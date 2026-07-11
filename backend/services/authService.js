@@ -4,7 +4,6 @@ const RefreshTokenModel = db.RefreshToken;
 const UserProjectModel = db.UserProject;
 // const ProjectModel = db.Project;
 const CompanyModel = db.Company;
-const RoleModel = db.Role;
 const passwordHelper = require('../utils/passwordHelper');
 const CustomError = require('../utils/CustomError');
 const jwtUtil = require('../utils/jwtUtil');
@@ -248,8 +247,22 @@ authServiceObj.getRefreshAccessToken = async (req) => {
     },
     include: [
       {
-        model: RoleModel,
-        as: 'roles'
+        model: db.ProjectMember,
+        as: 'projectMembership',
+        include: [
+          {
+            model: db.Project,
+            as: 'project'
+          },
+          {
+            model: db.Role,
+            as: 'role'
+          },
+          {
+            model: db.JobTitle,
+            as: 'jobTitle'
+          }
+        ]
       },
       {
         model: CompanyModel,
@@ -273,7 +286,8 @@ authServiceObj.getRefreshAccessToken = async (req) => {
       roles: user.roles,
       company: user.company,
       globalRole: user.globalRole,
-      permissions: permissionUtil[user.globalRole.name] || {}, 
+      permissions: permissionUtil[user.globalRole.name] || {},
+      projectMembership: user.projectMembership,
     },
     accessToken,
     accessTokenExpiresIn,

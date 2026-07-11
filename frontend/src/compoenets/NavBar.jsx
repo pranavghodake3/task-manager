@@ -25,6 +25,13 @@ export default function NavBar() {
         <div className="logo"><NavLink to="/">Home</NavLink> { `${user.firstName} ${user.lastName} (${user?.globalRole?.name ?? ''})` } </div>
 
         <nav className="menu">
+          <div>
+            <select name="projects" id="projects">
+              {user?.projectMembership?.map(pm => 
+                <option key={pm.projectId} value={pm.project.id}>{pm.project.name}</option>
+              )}
+            </select>
+          </div>
           <NavLink to="/dashboard">Dashboard({ user.company?.name })</NavLink>
 
           <NavLink to="/projects">Projects</NavLink>
