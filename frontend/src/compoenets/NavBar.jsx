@@ -40,6 +40,7 @@ export default function NavBar() {
         <nav className="menu">
           {![GLOBAL_ROLES.SUPER_ADMIN, GLOBAL_ROLES.COMPANY_ADMIN].includes(user?.globalRole?.name) &&
           <div>
+            <label htmlFor="projects">Set Project</label>
             <select className="project-select" name="projects" id="projects" value={globalProjectId} onChange={handleGlobalProjectChange}>
               {user?.projectMembership?.map(pm => 
                 <option key={pm.projectId} value={pm.project.id}>{pm.project.name}</option>

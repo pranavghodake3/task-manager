@@ -59,7 +59,8 @@ body {
 .menu a:focus,
 .menu button:hover,
 .menu button:focus {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.22);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
 }
 
 /* Project select styling */
@@ -88,7 +89,30 @@ body {
 
 /* Light fallback for options on hover/focus */
 .project-select option {
+  background: #0747a6;
+  color: white;
+}
+
+.project-select option:checked {
+  background: rgba(255, 255, 255, 0.12);
+  color: white;
+}
+
+.project-select option:hover,
+.project-select option:focus {
+  background: rgba(255, 255, 255, 0.14);
   color: #172b4d;
+}
+
+.sidebar .menu > div {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sidebar label {
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 0.92rem;
 }
 
 @media (max-width: 768px) {
