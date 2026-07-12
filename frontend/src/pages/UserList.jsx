@@ -8,22 +8,29 @@ import Header from "../compoenets/Header";
 import usePermission from "../hooks/usePermission";
 import { ACTION_TYPES, ENTITIES } from "../constants";
 import { useAuthStore } from "../store/authStore";
+import { getGlobalProjectId } from "../util";
 
 export default function UserList() {
   const accessToken = useAuthStore((state) => state.accessToken);
   const { can } = usePermission();
   const [users, setUsers] = useState([]);
   const navigate = useNavigate();
+  const globalProjectId = getGlobalProjectId();
 
   useEffect(() => {
     async function loadUsers() {
-        const response = await api.get(`/users`, {
+        let url = `/users`;
+        console.log('globalProjectId: ',globalProjectId);
+        if(globalProjectId){
+          url += `?projectId=${globalProjectId}`;
+        }
+        const response = await api.get(url, {
             headers: { Authorization: 'Bearer ' + accessToken },
         });
         setUsers(response.data.data);
     }
     loadUsers();
-  }, [accessToken]);
+  }, [globalProjectId, accessToken]);
 
   function handleAddUser() {
     navigate('/users/create');

@@ -5,17 +5,18 @@ const userController = {};
 
 userController.getUsers = async (req) => {
   const { auth } = req;
-    const { companyId } = req.query;
-    let { isDropdown } = req.query;
-    isDropdown = makeBoolean(isDropdown);
-    const role = req.auth.user.globalRole.name;
-    const users = await userService.getUsers({
-      auth,
-      role,
-      companyId,
-      isDropdown,
-    });
-    return { data: users };
+  const { companyId, projectId } = req.query;
+  let { isDropdown } = req.query;
+  isDropdown = makeBoolean(isDropdown);
+  const role = req.auth.user.globalRole.name;
+  const users = await userService.getUsers({
+    auth,
+    role,
+    companyId,
+    projectId,
+    isDropdown,
+  });
+  return { data: users };
 };
 
 userController.getUserRoles = async () => {

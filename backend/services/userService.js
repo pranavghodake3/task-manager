@@ -7,13 +7,25 @@ const passwordHelper = require('../utils/passwordHelper');
 
 const userService = {};
 
-userService.getUsers = async ({ auth, companyId, isDropdown = false }) => {
+userService.getUsers = async ({ auth, companyId, projectId, isDropdown = false }) => {
   const role = auth.user.globalRole.name;
   companyId = companyId || auth.user?.company?.id;
   const where = {
     ...(companyId && { companyId }),
   };
-
+  if(projectId){
+    let projectMembers = await db.ProjectMember.findAll({
+      attributes: ['userId'],
+      where: {
+        projectId
+      },
+      raw: true,
+    });
+    const projectMemberIds = projectMembers.map(pm => pm.userId);
+    if(projectMemberIds.length > 0){
+      where.id = projectMemberIds;
+    }
+  }
   if(role === GLOBAL_ROLES.SUPER_ADMIN){
     where.globalRoleId = {[db.Sequelize.Op.ne]: 1 }
   }else if(role === GLOBAL_ROLES.COMPANY_ADMIN){

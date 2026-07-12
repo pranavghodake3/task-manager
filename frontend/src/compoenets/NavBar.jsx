@@ -3,29 +3,34 @@ import { destroyToken } from "../util/auth";
 import { ACTION_TYPES, ENTITIES, GLOBAL_ROLES } from "../constants";
 import usePermission from "../hooks/usePermission";
 import { useAuthStore } from "../store/authStore";
-import { useState } from "react";
-import Cookies from "js-cookie";
+import { useContext } from "react";
+import { GlobalProjectContext } from "../context/GlobalProjectContext";
+import { setGlobalProjectId } from "../util";
 
 export default function NavBar() {
+  const {
+    globalProjectId, setGlobalProjectId: setGlobalProjectIdContext
+  } = useContext(GlobalProjectContext);
     const setIsLoggedIn = useAuthStore((state) => state.setIsLoggedIn);
     const setAccessToken = useAuthStore((state) => state.setAccessToken);
-    const [globalProjectId, setGlobalProjectId] = useState(Cookies.get('globalProjectId') ?? '');
+    // const [globalProjectId, setGlobalProjectId] = useState(Cookies.get('globalProjectId') ?? '');
     const user = useAuthStore((state) => state.user);
     const { can } = usePermission();
     const navigate = useNavigate();
     async function handleLogout() {
       try {
         await destroyToken();
-          setIsLoggedIn(false);
-          setAccessToken(null);
-          navigate("/login");
+        setIsLoggedIn(false);
+        setAccessToken(null);
+        navigate("/login");
       } catch (error) {
         console.log('Error in logout: ',error);
       }
     }
     function handleGlobalProjectChange(e) {
-      Cookies.set('globalProjectId', e.target.value);
+      setGlobalProjectIdContext(e.target.value);
       setGlobalProjectId(e.target.value);
+      window.location.reload();
     }
 
   return (

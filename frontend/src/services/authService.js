@@ -2,6 +2,7 @@ import axios from "axios";
 import { useAuthStore } from "../store/authStore";
 import Cookies from "js-cookie";
 import { GLOBAL_ROLES } from "../constants";
+import { getGlobalProjectId, setGlobalProjectId } from "../util";
 
 const authApi = axios.create({
   baseURL: "http://localhost:5000/api",
@@ -14,8 +15,8 @@ export function setLoginStore(data) {
   setUserData(data.user);
   setAccessToken(data.accessToken);
   if (![GLOBAL_ROLES.SUPER_ADMIN, GLOBAL_ROLES.COMPANY_ADMIN].includes(data.user.globalRole.name)) {
-   const globalProjectId = Cookies.get('globalProjectId');
-    Cookies.set('globalProjectId', globalProjectId ? globalProjectId : (data.user?.projectMembership[0]?.projectId ?? 0));
+   const globalProjectId = getGlobalProjectId();
+   setGlobalProjectId(globalProjectId ? globalProjectId : (data.user?.projectMembership[0]?.projectId ?? 0));
   }
 
   const expireMinutes = parseInt(data.accessTokenExpiresIn, 10);
