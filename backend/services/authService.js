@@ -76,7 +76,8 @@ authServiceObj.login = async (reqBody) => {
   //   permissionUtil[user.globalRole.name][entity].forEach(action => {
   //     permissions.push(`${entity}:${action}`);
   //   });
-  // } 
+  // }
+  const projectMembership = authServiceObj.setProjectLevelPermissions(permissionUtil[user.globalRole.name] || {}, user.projectMembership);
 
   return {
     user: {
@@ -84,7 +85,7 @@ authServiceObj.login = async (reqBody) => {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
-      projectMembership: user.projectMembership,
+      projectMembership,
       company: user.company,
       globalRole: user.globalRole,
       permissions: permissionUtil[user.globalRole.name] || {},
@@ -96,6 +97,23 @@ authServiceObj.login = async (reqBody) => {
     refreshTokenExpiresIn,
   };
 };
+
+authServiceObj.setProjectLevelPermissions = (globalPermissions, projectMembership) => {
+  return projectMembership.map(pm => {
+    pm = pm.toJSON();
+    pm.permissions = permissionUtil[pm.role.name] || {};
+    if(permissionUtil[pm.role.name]){
+      for (const key in pm.permissions) {
+        pm.permissions[key] = [...globalPermissions[key], ...pm.permissions[key]].filter((v, i, arr) => arr.indexOf(v) == i);
+      }
+    }else{
+      pm.permissions = globalPermissions;
+    }
+    
+    console.log('PM: ',pm);
+    return pm;
+  })
+}
 
 authServiceObj.registerSuperAdmin = async (reqBody) => {
   reqBody.password = await passwordHelper.generatePasswordHash(reqBody.password);
@@ -276,6 +294,7 @@ authServiceObj.getRefreshAccessToken = async (req) => {
   });
 
   const { accessToken, accessTokenExpiresIn } = jwtUtil.getToken({ userId });
+  const projectMembership = authServiceObj.setProjectLevelPermissions(permissionUtil[user.globalRole.name] || {}, user.projectMembership);
 
   return {
     user: {
@@ -287,7 +306,7 @@ authServiceObj.getRefreshAccessToken = async (req) => {
       company: user.company,
       globalRole: user.globalRole,
       permissions: permissionUtil[user.globalRole.name] || {},
-      projectMembership: user.projectMembership,
+      projectMembership,
     },
     accessToken,
     accessTokenExpiresIn,

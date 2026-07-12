@@ -20,7 +20,6 @@ export default function UserList() {
   useEffect(() => {
     async function loadUsers() {
         let url = `/users`;
-        console.log('globalProjectId: ',globalProjectId);
         if(globalProjectId){
           url += `?projectId=${globalProjectId}`;
         }

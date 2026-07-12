@@ -38,7 +38,7 @@ export default function NavBar() {
         <div className="logo"><NavLink to="/">Home</NavLink> { `${user.firstName} ${user.lastName} (${user?.globalRole?.name ?? ''})` } </div>
 
         <nav className="menu">
-          {![GLOBAL_ROLES.SUPER_ADMIN, GLOBAL_ROLES.COMPANY_ADMIN].includes(user.globalRole.name) &&
+          {![GLOBAL_ROLES.SUPER_ADMIN, GLOBAL_ROLES.COMPANY_ADMIN].includes(user?.globalRole?.name) &&
           <div>
             <select className="project-select" name="projects" id="projects" value={globalProjectId} onChange={handleGlobalProjectChange}>
               {user?.projectMembership?.map(pm => 
