@@ -33,5 +33,5 @@ export const useAuthStore = create(immer((set) => ({
         return set((state) => {
             state.authLoading = authLoading;
         });
-    }
+    },
 })));

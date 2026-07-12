@@ -5,6 +5,7 @@
 import NavBar from "../compoenets/NavBar";
 // import { ROLES } from "../constants"
 import { useAuthStore } from "../store/authStore";
+import Cookies from "js-cookie";
 
 const projects = [
   {
@@ -36,7 +37,9 @@ const activities = [
 
 export default function Dashboard() {
   const userData = useAuthStore((state) => state.user);
+  const globalProjectId = Cookies.get('globalProjectId');
   console.log('Dashboard authStore userData: ',userData);
+  console.log('Dashboard authStore globalProjectId: ',globalProjectId);
   return (
     <div className="dashboard">
       {/* Sidebar */}
