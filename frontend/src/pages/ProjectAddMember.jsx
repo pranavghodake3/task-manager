@@ -22,7 +22,7 @@ export default function ProjectAddMember() {
         async function getProject() {
             try {
                 const [usersResponse, userRoleResponse, jobTitleResponse] = await Promise.all([
-                    api.get('/users?isDropdown=true'),
+                    api.get('/users/get-unassigned-users'),
                     api.get('/users/roles'),
                     api.get('/job-titles?isDropdown=true'),
                 ]);

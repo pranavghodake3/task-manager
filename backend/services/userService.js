@@ -1,3 +1,4 @@
+const { Op } = require('sequelize');
 const { GLOBAL_ROLES } = require('../constants');
 const db = require('../models/index');
 const { getUserRoles } = require('../utils/commonHelper');
@@ -44,12 +45,60 @@ userService.getUsers = async ({ auth, companyId, projectId, isDropdown = false }
       model: db.Role,
       as: 'roles'
     });
+    include.push({
+      model: db.ProjectMember,
+      as: 'projectMembership',
+      where: {
+        projectId: projectId,
+      },
+      include: [
+        {
+          model: db.Project,
+          as: 'project'
+        },
+        {
+          model: db.Role,
+          as: 'role'
+        },
+        {
+          model: db.JobTitle,
+          as: 'jobTitle'
+        }
+      ]
+    });
   }
 
   return await UserModel.findAll({
     ...(where && { where }),
     ...(attributes.length > 0 && { attributes }),
     ...(include.length > 0 && { include })
+  });
+};
+
+userService.getUnAssignedUsers = async ({ auth }) => {
+  let projectIds = await db.Project.findAll({
+    attributes: ['id'],
+    where: {
+      companyId: auth.user.company.id
+    }
+  });
+  projectIds = projectIds.map(p => p.id);
+  let projectMemberIds = await db.ProjectMember.findAll({
+      attributes: ['userId'],
+      where: {
+        projectId: projectIds
+      },
+    });
+  projectMemberIds = projectMemberIds.map(pm => pm.userId);
+
+  return await UserModel.findAll({
+    attributes: ['id', 'firstName', 'lastName', 'email'],
+    where: {
+      id: {
+        [Op.notIn]: projectMemberIds
+      },
+      globalRoleId: 3
+    }
   });
 };
 

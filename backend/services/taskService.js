@@ -8,13 +8,13 @@ const UserModel = db.User;
 
 const taskService = {};
 
-taskService.getTasks = async ({ auth, companyId }) => {
+taskService.getTasks = async ({ auth, companyId, globalProjectId }) => {
     const where = {
         companyId: companyId || auth.user?.company?.id,
   };
-  const projectIds = Object.keys(auth.user.userProjects);
+  // const projectIds = Object.keys(auth.user.userProjects);
   if(![GLOBAL_ROLES.SUPER_ADMIN, GLOBAL_ROLES.COMPANY_ADMIN].includes(auth.user.globalRole.name)){
-    where.projectId = projectIds;
+    where.projectId = globalProjectId;
   }
   return await TaskModel.findAll({
     ...(where && { where }),
@@ -70,9 +70,10 @@ taskService.getTaskById = async (id) => {
   });
 };
 
-taskService.createTask = async (auth, reqBody) => {
+taskService.createTask = async (globalProjectId, auth, reqBody) => {
   reqBody.creatorId = auth.user.id;
   reqBody.companyId = auth.user.company.id;
+  reqBody.projectId = globalProjectId;
   for (const key in reqBody) {
     reqBody[key] = reqBody[key] ? reqBody[key] : null;
   }

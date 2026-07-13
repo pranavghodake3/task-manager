@@ -19,11 +19,7 @@ export default function UserList() {
 
   useEffect(() => {
     async function loadUsers() {
-        let url = `/users`;
-        if(globalProjectId){
-          url += `?projectId=${globalProjectId}`;
-        }
-        const response = await api.get(url, {
+        const response = await api.get(`/users`, {
             headers: { Authorization: 'Bearer ' + accessToken },
         });
         setUsers(response.data.data);
@@ -70,6 +66,7 @@ export default function UserList() {
                   <th>Name</th>
                   <th>Email</th>
                   <th>Role</th>
+                  <th>Job Title</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -84,7 +81,10 @@ export default function UserList() {
                       {user.email}
                     </td>
                     <td className="">
-                      {user?.globalRole?.name}
+                      {user?.projectMembership[0].role.name}
+                    </td>
+                    <td className="">
+                      {user?.projectMembership[0].jobTitle.name}
                     </td>
                     <td className="actions">
                       <NavLink to={`/users/${user.id}`} className="action-link">

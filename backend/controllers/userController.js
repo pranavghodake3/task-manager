@@ -5,7 +5,8 @@ const userController = {};
 
 userController.getUsers = async (req) => {
   const { auth } = req;
-  const { companyId, projectId } = req.query;
+  const { companyId } = req.query;
+  const globalProjectId = req.cookies.globalProjectId;
   let { isDropdown } = req.query;
   isDropdown = makeBoolean(isDropdown);
   const role = req.auth.user.globalRole.name;
@@ -13,7 +14,24 @@ userController.getUsers = async (req) => {
     auth,
     role,
     companyId,
-    projectId,
+    projectId: globalProjectId,
+    isDropdown,
+  });
+  return { data: users };
+};
+
+userController.getUnAssignedUsers = async (req) => {
+  const { auth } = req;
+  const { companyId } = req.query;
+  const globalProjectId = req.cookies.globalProjectId;
+  let { isDropdown } = req.query;
+  isDropdown = makeBoolean(isDropdown);
+  const role = req.auth.user.globalRole.name;
+  const users = await userService.getUnAssignedUsers({
+    auth,
+    role,
+    companyId,
+    projectId: globalProjectId,
     isDropdown,
   });
   return { data: users };
