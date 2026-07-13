@@ -5,13 +5,11 @@ import { useAuthStore } from "../store/authStore";
 
 export default function UserCreateEditForm({ mode, task }) {
     const accessToken = useAuthStore((state) => state.accessToken);
-    const [projects, setProjects] = useState([]);
     const [users, setUsers] = useState([]);
     const [statuses, setStatuses] = useState([]);
     const [priorities, setPriorities] = useState([]);
     const [title, selectTitle] = useState(() => task?.title ?? '');
     const [description, selectDescription] = useState(() => task?.description ?? '');
-    const [projectId, selectProjectId] = useState(() => task?.projectId ?? '');
     const [userId, selectUserId] = useState(() => task?.userId ?? '');
     const [statusId, selectStatusId] = useState(() => task?.statusId ?? '');
     const [priorityId, selectPriorityId] = useState(() => task?.priorityId ?? '');
@@ -21,10 +19,7 @@ export default function UserCreateEditForm({ mode, task }) {
     useEffect(() => {
         async function loadDropDownsData() {
             try {
-                const [projectResponse, userResponse, statusResponse, priorityResponse] = await Promise.all([
-                    api.get('/projects?isDropdown=true', { headers: {
-                        Authorization: `Bearer ${accessToken}`
-                    }}),
+                const [userResponse, statusResponse, priorityResponse] = await Promise.all([
                     api.get('/users?isDropdown=true', { headers: {
                         Authorization: `Bearer ${accessToken}`
                     }}),
@@ -36,7 +31,6 @@ export default function UserCreateEditForm({ mode, task }) {
                     }}),
 
                 ]);
-                setProjects(projectResponse.data.data);
                 setUsers(userResponse.data.data);
                 setStatuses(statusResponse.data.data);
                 setPriorities(priorityResponse.data.data);
@@ -53,7 +47,6 @@ export default function UserCreateEditForm({ mode, task }) {
                 const response = await api.post(`/tasks`, {
                     title,
                     description,
-                    projectId,
                     userId,
                     statusId,
                     priorityId
@@ -69,7 +62,6 @@ export default function UserCreateEditForm({ mode, task }) {
                 const response = await api.put(`/tasks/${task.id}`, {
                     title,
                     description,
-                    projectId,
                     userId,
                     statusId,
                     priorityId
@@ -92,16 +84,6 @@ export default function UserCreateEditForm({ mode, task }) {
         <form className="auth-form" onSubmit={handleSubmit}>
             
             <div className="form-group">
-                <label htmlFor="projectId">Select Project</label>
-                <select name="projectId" id="projectId" value={projectId ?? task?.projectId} onChange={(e) => selectProjectId(e.target.value)}>
-                    <option value="">Select Project</option>
-                    {projects.map((project) => (
-                        <option key={project.id} value={project.id}>{project.name}</option>
-                    ))}
-                </select>
-            </div>
-
-            <div className="form-group">
                 <label>Title</label>
                 <input type="text" placeholder="Enter title" value={title} onChange={(e) => selectTitle(e.target.value)} />
             </div>
@@ -114,7 +96,7 @@ export default function UserCreateEditForm({ mode, task }) {
             <div className="form-group">
                 <label htmlFor="userId">Select User</label>
                 <select name="userId" id="userId" value={userId ?? task?.userId} onChange={(e) => selectUserId(e.target.value)}>
-                    <option value="">Select User</option>
+                    <option value="">UnAssigned</option>
                     {users.map((user) => (
                         <option key={user.id} value={user.id}>{user.firstName} {user.lastName}</option>
                     ))}

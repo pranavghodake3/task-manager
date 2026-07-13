@@ -8,12 +8,14 @@ import Header from "../compoenets/Header";
 import usePermission from "../hooks/usePermission";
 import { ACTION_TYPES, ENTITIES } from "../constants";
 import { useAuthStore } from "../store/authStore";
+import { getGlobalProjectId } from "../util";
 
 export default function UserList() {
   const accessToken = useAuthStore((state) => state.accessToken);
   const { can } = usePermission();
   const [users, setUsers] = useState([]);
   const navigate = useNavigate();
+  const globalProjectId = getGlobalProjectId();
 
   useEffect(() => {
     async function loadUsers() {
@@ -23,7 +25,7 @@ export default function UserList() {
         setUsers(response.data.data);
     }
     loadUsers();
-  }, [accessToken]);
+  }, [globalProjectId, accessToken]);
 
   function handleAddUser() {
     navigate('/users/create');
@@ -64,6 +66,7 @@ export default function UserList() {
                   <th>Name</th>
                   <th>Email</th>
                   <th>Role</th>
+                  <th>Job Title</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -78,7 +81,10 @@ export default function UserList() {
                       {user.email}
                     </td>
                     <td className="">
-                      {user?.roleInfo?.name}
+                      {user?.projectMembership[0].role.name}
+                    </td>
+                    <td className="">
+                      {user?.projectMembership[0].jobTitle.name}
                     </td>
                     <td className="actions">
                       <NavLink to={`/users/${user.id}`} className="action-link">

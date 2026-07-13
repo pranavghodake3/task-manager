@@ -3,9 +3,11 @@ const taskService = require('../services/taskService');
 const taskController = {};
 
 taskController.getTasks = async (req) => {
+  const globalProjectId = req.cookies.globalProjectId;
   const tasks = await taskService.getTasks({
     auth: req.auth,
-    companyId: req.query.companyId
+    companyId: req.query.companyId,
+    globalProjectId,
   });
   return { data: tasks };
 };
@@ -17,8 +19,8 @@ taskController.getTaskById = async (req) => {
 };
 
 taskController.createTask = async (req) => {
-  const role = req.auth.user.roleInfo.name;
-  const task = await taskService.createTask(req.auth.user.id, role, req.body);
+  const globalProjectId = req.cookies.globalProjectId;
+  const task = await taskService.createTask(globalProjectId, req.auth, req.body);
   return { data: task, statusCode: 201 };
 };
 

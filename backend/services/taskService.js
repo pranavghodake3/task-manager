@@ -5,16 +5,16 @@ const StatusModel = db.Status;
 const PriorityModel = db.Priority;
 const ProjectModel = db.Project;
 const UserModel = db.User;
-const { getMyCompany } = require('./companyService');
 
 const taskService = {};
 
-taskService.getTasks = async ({ auth, companyId }) => {
+taskService.getTasks = async ({ auth, companyId, globalProjectId }) => {
     const where = {
         companyId: companyId || auth.user?.company?.id,
   };
+  // const projectIds = Object.keys(auth.user.userProjects);
   if(![GLOBAL_ROLES.SUPER_ADMIN, GLOBAL_ROLES.COMPANY_ADMIN].includes(auth.user.globalRole.name)){
-    where.userId = auth.user.id;
+    where.projectId = globalProjectId;
   }
   return await TaskModel.findAll({
     ...(where && { where }),
@@ -70,12 +70,17 @@ taskService.getTaskById = async (id) => {
   });
 };
 
-taskService.createTask = async (loggedInUserId, role, reqBody) => {
-    reqBody.creatorId = loggedInUserId;
-    if(role === GLOBAL_ROLES.COMPANY_ADMIN){
-        reqBody.companyId = (await getMyCompany(loggedInUserId)).id;
-    }
+taskService.createTask = async (globalProjectId, auth, reqBody) => {
+  reqBody.creatorId = auth.user.id;
+  reqBody.companyId = auth.user.company.id;
+  reqBody.projectId = globalProjectId;
+  for (const key in reqBody) {
+    reqBody[key] = reqBody[key] ? reqBody[key] : null;
+  }
+  console.log('reqBody: ',reqBody);
+
   const task = await TaskModel.create(reqBody);
+
   return task;
 };
 

@@ -24,6 +24,18 @@ projectController.getProjectById = async (req) => {
   return { data: project };
 };
 
+projectController.addMemberToProject = async (req) => {
+  const { id } = req.params;
+  const projectMemberShip = await projectService.addMemberToProject(id, req.body);
+  return { data: projectMemberShip };
+}
+
+projectController.removeMemberFromProject = async (req) => {
+  const { id, userId } = req.params;
+  await projectService.removeMemberFromProject(id, userId);
+  return { statusCode: 204 };
+}
+
 projectController.createProject = async (req) => {
   const { auth } = req;
   const project = await projectService.createProject(auth, req.body);

@@ -19,10 +19,13 @@ import TaskList from "../pages/TaskList";
 import TaskEdit from "../pages/TaskEdit";
 import TaskView from "../pages/TaskView";
 import TaskCreate from "../pages/TaskCreate";
+import ProjectAddMember from "../pages/ProjectAddMember";
+import GlobalProjectContextProvider from "../context/GlobalProjectContextProvider";
 
 export default function AppRoute() {
     return (
         <BrowserRouter>
+            <GlobalProjectContextProvider>
             {/* <AuthContextProvider> */}
                 <Routes>
                     <Route path="/" element={<Home />} />
@@ -66,6 +69,15 @@ export default function AppRoute() {
                         action={ACTION_TYPES.UPDATE}
                         >
                            <ProjectEdit />
+                        </ProtectedRoute>
+                    } />
+
+                    <Route path="/projects/:id/add-member" element={
+                        <ProtectedRoute
+                        entity={ENTITIES.PROJECT}
+                        action={ACTION_TYPES.UPDATE}
+                        >
+                           <ProjectAddMember />
                         </ProtectedRoute>
                     } />
 
@@ -136,6 +148,7 @@ export default function AppRoute() {
                     <Route path="/unathorized" element={<Unathorized />} />
                 </Routes>
             {/* </AuthContextProvider> */}
+            </GlobalProjectContextProvider>
         </BrowserRouter>
     );
 };

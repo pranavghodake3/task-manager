@@ -1,6 +1,7 @@
 import { Navigate } from "react-router-dom";
 import { isLoggedIn } from "../util/auth";
 import { useAuthStore } from "../store/authStore";
+import { getGlobalProjectId } from "../util";
 
 export default function ProtectedRoute({ entity, action, children }) {
     const userData = useAuthStore((state) => state.user);
@@ -8,8 +9,18 @@ export default function ProtectedRoute({ entity, action, children }) {
     const accessToken = useAuthStore((state) => state.accessToken);
     const isUserLoggedIn = useAuthStore((state) => state.isLoggedIn);
     // const accessToken = useAuthStore((state) => state.accessToken);
-    const permissions = userData?.permissions;
+    let permissions = {};
     console.log('Protected userData: ',userData);
+    const currentGlobalProjectId = getGlobalProjectId();
+    if(userData?.projectMembership){
+        userData?.projectMembership.forEach(pm => {
+            if(pm.projectId == currentGlobalProjectId){
+                permissions = pm.permissions;
+            }
+        });
+    }
+    console.log('Protected permissions: ',permissions);
+    
     if(authLoading){
         return null;
     }

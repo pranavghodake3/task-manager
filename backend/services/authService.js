@@ -4,7 +4,6 @@ const RefreshTokenModel = db.RefreshToken;
 const UserProjectModel = db.UserProject;
 // const ProjectModel = db.Project;
 const CompanyModel = db.Company;
-const RoleModel = db.Role;
 const passwordHelper = require('../utils/passwordHelper');
 const CustomError = require('../utils/CustomError');
 const jwtUtil = require('../utils/jwtUtil');
@@ -21,17 +20,32 @@ authServiceObj.login = async (reqBody) => {
     },
     include: [
       {
-        model: RoleModel,
-        as: 'roles'
+        model: db.ProjectMember,
+        as: 'projectMembership',
+        include: [
+          {
+            model: db.Project,
+            as: 'project'
+          },
+          {
+            model: db.Role,
+            as: 'role'
+          },
+          {
+            model: db.JobTitle,
+            as: 'jobTitle'
+          }
+        ]
       },
       {
         model: CompanyModel,
-        as: 'company'
+        as: 'company',
+        attributes: ['id', 'name']
       },
       {
         model: db.GlobalRole,
         as: 'globalRole'
-      }
+      },
     ]
   });
 
@@ -57,12 +71,7 @@ authServiceObj.login = async (reqBody) => {
     userId: user.id,
     expiresAt: refreshTokenExpiresIn,
   });
-  // const permissions = [];
-  // for (const entity in permissionUtil[user.globalRole.name]) {
-  //   permissionUtil[user.globalRole.name][entity].forEach(action => {
-  //     permissions.push(`${entity}:${action}`);
-  //   });
-  // } 
+  const projectMembership = authServiceObj.setProjectLevelPermissions(permissionUtil[user.globalRole.name] || {}, user.projectMembership);
 
   return {
     user: {
@@ -70,16 +79,48 @@ authServiceObj.login = async (reqBody) => {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
-      roles: user.roles,
+      projectMembership,
       company: user.company,
       globalRole: user.globalRole,
-      permissions: permissionUtil[user.globalRole.name] || {}, 
+      permissions: permissionUtil[user.globalRole.name] || {},
+      projects: user.projects,
     },
     accessToken,
     refreshToken,
     accessTokenExpiresIn,
     refreshTokenExpiresIn,
   };
+};
+
+authServiceObj.setProjectLevelPermissions = (globalPermissions = {}, projectMembership) => {
+  if (!projectMembership) {
+    return [];
+  }
+
+  const membershipList = Array.isArray(projectMembership) ? projectMembership : [projectMembership];
+
+  return membershipList.map((pm) => {
+    const normalizedPm = pm && typeof pm.toJSON === 'function' ? pm.toJSON() : pm || {};
+    const rolePermissions = permissionUtil[normalizedPm.role?.name] || {};
+    const mergedPermissions = {};
+
+    for (const key in rolePermissions) {
+      const globalPermissionList = Array.isArray(globalPermissions[key]) ? globalPermissions[key] : [];
+      const rolePermissionList = Array.isArray(rolePermissions[key]) ? rolePermissions[key] : [];
+      mergedPermissions[key] = [...globalPermissionList, ...rolePermissionList].filter((value, index, arr) => arr.indexOf(value) === index);
+    }
+
+    for (const key in globalPermissions) {
+      if (!Object.prototype.hasOwnProperty.call(mergedPermissions, key)) {
+        mergedPermissions[key] = Array.isArray(globalPermissions[key]) ? [...globalPermissions[key]] : [];
+      }
+    }
+
+    return {
+      ...normalizedPm,
+      permissions: mergedPermissions,
+    };
+  });
 };
 
 authServiceObj.registerSuperAdmin = async (reqBody) => {
@@ -232,8 +273,22 @@ authServiceObj.getRefreshAccessToken = async (req) => {
     },
     include: [
       {
-        model: RoleModel,
-        as: 'roles'
+        model: db.ProjectMember,
+        as: 'projectMembership',
+        include: [
+          {
+            model: db.Project,
+            as: 'project'
+          },
+          {
+            model: db.Role,
+            as: 'role'
+          },
+          {
+            model: db.JobTitle,
+            as: 'jobTitle'
+          }
+        ]
       },
       {
         model: CompanyModel,
@@ -247,6 +302,7 @@ authServiceObj.getRefreshAccessToken = async (req) => {
   });
 
   const { accessToken, accessTokenExpiresIn } = jwtUtil.getToken({ userId });
+  const projectMembership = authServiceObj.setProjectLevelPermissions(permissionUtil[user.globalRole.name] || {}, user.projectMembership);
 
   return {
     user: {
@@ -257,7 +313,9 @@ authServiceObj.getRefreshAccessToken = async (req) => {
       roles: user.roles,
       company: user.company,
       globalRole: user.globalRole,
-      permissions: permissionUtil[user.globalRole.name] || {}, 
+      permissions: permissionUtil[user.globalRole.name] || {},
+      projectMembership,
+      fff: 1
     },
     accessToken,
     accessTokenExpiresIn,
