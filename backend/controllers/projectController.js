@@ -8,8 +8,6 @@ projectController.getProjects = async (req) => {
   const companyId = req.query.companyId ?? auth.user.company?.id;
   let { isDropdown } = req.query;
   isDropdown = makeBoolean(isDropdown);
-  console.log('companyId', companyId);
-  console.log('isDropdown', isDropdown);
   const projects = await projectService.getProjects({
     auth,
     companyId,

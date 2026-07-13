@@ -118,25 +118,37 @@ export default function AppRoute() {
                     } />
 
                     <Route path="/tasks" element={
-                        <ProtectedRoute>
+                        <ProtectedRoute
+                        entity={ENTITIES.TASK}
+                        action={ACTION_TYPES.READ}
+                        >
                             <TaskList />
                         </ProtectedRoute>
                     } />
 
                     <Route path="/tasks/create" element={
-                        <ProtectedRoute>
+                        <ProtectedRoute
+                        entity={ENTITIES.TASK}
+                        action={ACTION_TYPES.CREATE}
+                        >
                            <TaskCreate />
                         </ProtectedRoute>
                     } />
 
                     <Route path="/tasks/:id" element={
-                        <ProtectedRoute>
+                        <ProtectedRoute
+                        entity={ENTITIES.TASK}
+                        action={ACTION_TYPES.READ}
+                        >
                            <TaskView />
                         </ProtectedRoute>
                     } />
 
                     <Route path="/tasks/:id/edit" element={
-                        <ProtectedRoute>
+                        <ProtectedRoute
+                        entity={ENTITIES.TASK}
+                        action={ACTION_TYPES.UPDATE}
+                        >
                            <TaskEdit />
                         </ProtectedRoute>
                     } />

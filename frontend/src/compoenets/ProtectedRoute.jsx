@@ -9,7 +9,7 @@ export default function ProtectedRoute({ entity, action, children }) {
     const accessToken = useAuthStore((state) => state.accessToken);
     const isUserLoggedIn = useAuthStore((state) => state.isLoggedIn);
     // const accessToken = useAuthStore((state) => state.accessToken);
-    let permissions = {};
+    let permissions = userData.permissions;
     console.log('Protected userData: ',userData);
     const currentGlobalProjectId = getGlobalProjectId();
     if(userData?.projectMembership){

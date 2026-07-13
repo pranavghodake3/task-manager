@@ -81,10 +81,10 @@ export default function UserList() {
                       {user.email}
                     </td>
                     <td className="">
-                      {user?.projectMembership[0].role.name}
+                      {user?.projectMembership[0]?.role.name}
                     </td>
                     <td className="">
-                      {user?.projectMembership[0].jobTitle.name}
+                      {user?.projectMembership[0]?.jobTitle.name}
                     </td>
                     <td className="actions">
                       <NavLink to={`/users/${user.id}`} className="action-link">

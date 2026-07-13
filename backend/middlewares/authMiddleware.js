@@ -11,6 +11,7 @@ const jwtUtil = require('../utils/jwtUtil');
 const permissionUtil = require('../utils/permission');
 const { X_DEVICE } = require('../constants');
 const { setProjectLevelPermissions } = require('../services/authService');
+const { isSuperOrCompanyAdmin } = require('../utils/commonHelper');
 
 const authMiddleware = {};
 
@@ -265,7 +266,7 @@ authMiddleware.hasAccess = (entity, action) => {
     const globalProjectId = req.cookies.globalProjectId;
     try {
       const user = req.auth.user;
-      const permissions = user.userProjects[globalProjectId].permissions;
+      const permissions = isSuperOrCompanyAdmin(user) ?permissionUtil[user.globalRole.name] :  user.userProjects[globalProjectId].permissions;
 
       const hasPermission = permissions[entity]?.includes(action);
       console.log(`hasAccess ${entity}, ${action}, user.globalRole.name: ${user.globalRole.name}, hasPermission:${hasPermission}`);

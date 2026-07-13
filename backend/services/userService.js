@@ -45,12 +45,9 @@ userService.getUsers = async ({ auth, companyId, projectId, isDropdown = false }
       model: db.Role,
       as: 'roles'
     });
-    include.push({
+    const includePM = {
       model: db.ProjectMember,
       as: 'projectMembership',
-      where: {
-        projectId: projectId,
-      },
       include: [
         {
           model: db.Project,
@@ -65,9 +62,14 @@ userService.getUsers = async ({ auth, companyId, projectId, isDropdown = false }
           as: 'jobTitle'
         }
       ]
-    });
+    };
+    if(projectId){
+      includePM.where = {
+        ...(projectId && { projectId }),
+      }
+    }
+    include.push(includePM);
   }
-
   return await UserModel.findAll({
     ...(where && { where }),
     ...(attributes.length > 0 && { attributes }),
@@ -97,7 +99,8 @@ userService.getUnAssignedUsers = async ({ auth }) => {
       id: {
         [Op.notIn]: projectMemberIds
       },
-      globalRoleId: 3
+      globalRoleId: 3,
+      ...(auth.user.company?.id && { companyId: auth.user.company?.id}),
     }
   });
 };
@@ -141,6 +144,7 @@ userService.getUserById = async (id) => {
 };
 
 userService.updateUser = async (id, reqBody) => {
+  reqBody.password = await passwordHelper.generatePasswordHash(reqBody.password);
   await UserModel.update(reqBody, {
     where: { id },
   });

@@ -5,7 +5,7 @@ export default function usePermission() {
     const user = useAuthStore((state) => state.user);
     // const permissions = user?.permissions;
 
-    let permissions = {};
+    let permissions = user.permissions;
     const currentGlobalProjectId = getGlobalProjectId();
     if(user?.projectMembership){
         user?.projectMembership.forEach(pm => {
