@@ -21,7 +21,7 @@ const permissionUtil = {
         [ENTITIES.ROLE]: [READ],
     },
     [ROLES.PROJECT_ADMIN]: {
-        [ENTITIES.USER]: [CREATE, READ, UPDATE],
+        [ENTITIES.USER]: [CREATE, READ, UPDATE, DELETE],
         [ENTITIES.COMPANY]: [READ],
         [ENTITIES.PROJECT]: [READ, UPDATE],
         [ENTITIES.TASK]: [CREATE, READ, UPDATE, DELETE],

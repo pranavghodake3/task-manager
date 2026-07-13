@@ -71,12 +71,6 @@ authServiceObj.login = async (reqBody) => {
     userId: user.id,
     expiresAt: refreshTokenExpiresIn,
   });
-  // const permissions = [];
-  // for (const entity in permissionUtil[user.globalRole.name]) {
-  //   permissionUtil[user.globalRole.name][entity].forEach(action => {
-  //     permissions.push(`${entity}:${action}`);
-  //   });
-  // }
   const projectMembership = authServiceObj.setProjectLevelPermissions(permissionUtil[user.globalRole.name] || {}, user.projectMembership);
 
   return {
@@ -98,22 +92,36 @@ authServiceObj.login = async (reqBody) => {
   };
 };
 
-authServiceObj.setProjectLevelPermissions = (globalPermissions, projectMembership) => {
-  return projectMembership.map(pm => {
-    pm = pm.toJSON();
-    pm.permissions = permissionUtil[pm.role.name] || {};
-    if(permissionUtil[pm.role.name]){
-      for (const key in pm.permissions) {
-        pm.permissions[key] = [...globalPermissions[key], ...pm.permissions[key]].filter((v, i, arr) => arr.indexOf(v) == i);
-      }
-    }else{
-      pm.permissions = globalPermissions;
+authServiceObj.setProjectLevelPermissions = (globalPermissions = {}, projectMembership) => {
+  if (!projectMembership) {
+    return [];
+  }
+
+  const membershipList = Array.isArray(projectMembership) ? projectMembership : [projectMembership];
+
+  return membershipList.map((pm) => {
+    const normalizedPm = pm && typeof pm.toJSON === 'function' ? pm.toJSON() : pm || {};
+    const rolePermissions = permissionUtil[normalizedPm.role?.name] || {};
+    const mergedPermissions = {};
+
+    for (const key in rolePermissions) {
+      const globalPermissionList = Array.isArray(globalPermissions[key]) ? globalPermissions[key] : [];
+      const rolePermissionList = Array.isArray(rolePermissions[key]) ? rolePermissions[key] : [];
+      mergedPermissions[key] = [...globalPermissionList, ...rolePermissionList].filter((value, index, arr) => arr.indexOf(value) === index);
     }
-    
-    console.log('PM: ',pm);
-    return pm;
-  })
-}
+
+    for (const key in globalPermissions) {
+      if (!Object.prototype.hasOwnProperty.call(mergedPermissions, key)) {
+        mergedPermissions[key] = Array.isArray(globalPermissions[key]) ? [...globalPermissions[key]] : [];
+      }
+    }
+
+    return {
+      ...normalizedPm,
+      permissions: mergedPermissions,
+    };
+  });
+};
 
 authServiceObj.registerSuperAdmin = async (reqBody) => {
   reqBody.password = await passwordHelper.generatePasswordHash(reqBody.password);
@@ -307,6 +315,7 @@ authServiceObj.getRefreshAccessToken = async (req) => {
       globalRole: user.globalRole,
       permissions: permissionUtil[user.globalRole.name] || {},
       projectMembership,
+      fff: 1
     },
     accessToken,
     accessTokenExpiresIn,

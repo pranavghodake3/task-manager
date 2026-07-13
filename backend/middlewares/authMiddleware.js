@@ -10,6 +10,7 @@ const CustomError = require('../utils/CustomError');
 const jwtUtil = require('../utils/jwtUtil');
 const permissionUtil = require('../utils/permission');
 const { X_DEVICE } = require('../constants');
+const { setProjectLevelPermissions } = require('../services/authService');
 
 const authMiddleware = {};
 
@@ -174,6 +175,12 @@ authMiddleware.isAuthentic = async (req, res, next) => {
     const data = jwtUtil.verifyToken(bearerToken);
     if (data) {
       const user = await getUserByIdWithRole(data.userId);
+      const projectMembership = setProjectLevelPermissions(permissionUtil[user.globalRole.name] || {}, user.projectMembership);
+      const userProjects = projectMembership.reduce((acc, pm) => {
+        acc[pm.projectId] = pm;
+        return acc;
+      }, {});
+      user.userProjects = userProjects;
       req.auth = {
         user,
       };
@@ -222,7 +229,6 @@ authMiddleware.isRefreshTokenAuthentic = async (req, res, next) => {
 
 authMiddleware.isRefreshTokenCookieAuthentic = async (req, res, next) => {
   try {
-    console.log('Cookies: ', req.cookies.refreshToken);
     let bearerToken = req.cookies.refreshToken;
     if (!bearerToken) {
       throw new CustomError('Missing Refresh Token in Cookie', 401);
@@ -256,9 +262,12 @@ authMiddleware.isRefreshTokenCookieAuthentic = async (req, res, next) => {
 
 authMiddleware.hasAccess = (entity, action) => {
   return (req, res, next) => {
+    const globalProjectId = req.cookies.globalProjectId;
     try {
       const user = req.auth.user;
-      const hasPermission = permissionUtil[user.globalRole.name]?.[entity]?.includes(action);
+      const permissions = user.userProjects[globalProjectId].permissions;
+
+      const hasPermission = permissions[entity]?.includes(action);
       console.log(`hasAccess ${entity}, ${action}, user.globalRole.name: ${user.globalRole.name}, hasPermission:${hasPermission}`);
       if (!hasPermission) {
         throw new CustomError('Insufficient permissions', 403);
