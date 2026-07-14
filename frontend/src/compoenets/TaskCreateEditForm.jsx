@@ -33,7 +33,9 @@ export default function UserCreateEditForm({ mode, task }) {
                 ]);
                 setUsers(userResponse.data.data);
                 setStatuses(statusResponse.data.data);
+                selectStatusId(statusResponse.data.data[0]?.id);
                 setPriorities(priorityResponse.data.data);
+                selectPriorityId(priorityResponse.data.data[0]?.id);
             } catch (error) {
                 console.log(error);
             }
@@ -106,7 +108,6 @@ export default function UserCreateEditForm({ mode, task }) {
             <div className="form-group">
                 <label htmlFor="statusId">Select Status</label>
                 <select name="statusId" id="statusId" onChange={(e) => selectStatusId(e.target.value)} value={statusId ?? task?.statusId}>
-                    <option value="">Select Status</option>
                     {statuses.map((status) => (
                         <option key={status.id} value={status.id}>{status.name}</option>
                     ))}
@@ -116,7 +117,6 @@ export default function UserCreateEditForm({ mode, task }) {
             <div className="form-group">
                 <label htmlFor="priorityId">Select Priority</label>
                 <select name="priorityId" id="priorityId" value={priorityId ?? task?.priorityId} onChange={(e) => selectPriorityId(e.target.value)}>
-                    <option value="">Select Priority</option>
                     {priorities.map((priority) => (
                         <option key={priority.id} value={priority.id}>{priority.name}</option>
                     ))}

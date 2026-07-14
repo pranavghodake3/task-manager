@@ -6,11 +6,14 @@ import api from "../services/api";
 import { NavLink, useNavigate } from "react-router-dom";
 import Header from "../compoenets/Header";
 import { useAuthStore } from "../store/authStore";
+import usePermission from "../hooks/usePermission";
+import { ACTION_TYPES, ENTITIES } from "../constants";
 
 export default function TaskList() {
   const accessToken = useAuthStore((state) => state.accessToken);
   const [tasks, setTasks] = useState([]);
   const navigate = useNavigate();
+  const { can } = usePermission();
 
   useEffect(() => {
     async function loadTasks() {
@@ -102,20 +105,30 @@ export default function TaskList() {
                       </div>
                     </td>
                     <td className="actions">
-                      <NavLink to={`/tasks/${task.id}`} className="action-link">
-                        View
-                      </NavLink>
-                      <NavLink to={`/tasks/${task.id}/edit`} className='action-link action-btn'>Edit</NavLink>
-                      {/* <button className="action-link action-btn">Edit</button> */}
-                      <button
-                        type="button"
-                        className="action-link delete-link"
-                        onClick={handleDeleteTask}
-                        data-task-index={index}
-                        data-task-id={task.id}
-                      >
-                        Delete
-                      </button>
+                      {
+                        can(ENTITIES.TASK, ACTION_TYPES.READ) &&
+                        <NavLink to={`/tasks/${task.id}`} className="action-link">
+                          View
+                        </NavLink>
+                      }
+
+                      {
+                        can(ENTITIES.TASK, ACTION_TYPES.UPDATE) &&
+                        <NavLink to={`/tasks/${task.id}/edit`} className='action-link action-btn'>Edit</NavLink>
+                      }
+
+                      {
+                        can(ENTITIES.TASK, ACTION_TYPES.DELETE) &&
+                        <button
+                          type="button"
+                          className="action-link delete-link"
+                          onClick={handleDeleteTask}
+                          data-task-index={index}
+                          data-task-id={task.id}
+                        >
+                          Delete
+                        </button>
+                      }
                     </td>
                   </tr>
                 ))}

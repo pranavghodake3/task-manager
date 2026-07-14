@@ -2,15 +2,17 @@ const express = require('express');
 const router = express.Router();
 const taskController = require('../controllers/taskController');
 const { handleAsyncFunction } = require('../utils/commonHelper');
+const { hasAccess } = require('../middlewares/authMiddleware');
+const { ENTITIES, ACTION_TYPES } = require('../constants');
 
-router.get('/', handleAsyncFunction(taskController.getTasks));
+router.get('/', hasAccess(ENTITIES.TASK, ACTION_TYPES.READ),handleAsyncFunction(taskController.getTasks));
 
-router.get('/:id', handleAsyncFunction(taskController.getTaskById));
+router.get('/:id', hasAccess(ENTITIES.TASK, ACTION_TYPES.READ), handleAsyncFunction(taskController.getTaskById));
 
-router.post('/', handleAsyncFunction(taskController.createTask));
+router.post('/', hasAccess(ENTITIES.TASK, ACTION_TYPES.CREATE), handleAsyncFunction(taskController.createTask));
 
-router.put('/:id', handleAsyncFunction(taskController.updateTask));
+router.put('/:id', hasAccess(ENTITIES.TASK, ACTION_TYPES.UPDATE), handleAsyncFunction(taskController.updateTask));
 
-router.delete('/:id', handleAsyncFunction(taskController.deleteTask));
+router.delete('/:id', hasAccess(ENTITIES.TASK, ACTION_TYPES.DELETE), handleAsyncFunction(taskController.deleteTask));
 
 module.exports = router;
