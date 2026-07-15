@@ -3,34 +3,39 @@ import "../assets/css/auth.css";
 import api from "../services/api";
 import { NavLink } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { signupSchema } from "../../formSchemas/signup-form";
 
 export default function Signup() {
-  const navigate = useNavigate();
   const [isCompany, selectIsCompany] = useState("0");
-  const [companyName, selectCompanyName] = useState("");
-  const [firstName, selectFirstName] = useState("");
-  const [lastName, selectLastName] = useState("");
-  const [email, selectEmail] = useState("");
-  const [password, selectPassword] = useState("");
-  const [selectConfirmPassword] = useState("");
+  const [formError, setFormError] =useState("");
+  const navigate = useNavigate();
 
-  function handleIsCompany(e) {
-    selectIsCompany(e.target.value);
-  }
-  async function handleSubmit(e) {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    resolver: zodResolver(signupSchema),
+    mode: 'onChange',
+  });
+
+  const onSubmit = async (formData) => {
     try {
       await api.post(isCompany == 1 ? "/auth/register/company" : "auth/register", {
-        ...(isCompany == 1 ? {name: companyName} : null),
-        firstName,
-        lastName,
-        email,
-        password
+        ...(isCompany == 1 ? {name: formData.name} : null),
+        ...formData
       });
       navigate("/login");
     } catch (error) {
+      setFormError(error.response.data.error.message);
       console.error("Error occurred while signing up:", error);
     }
+  };
+
+  function handleIsCompany(e) {
+    selectIsCompany(e.target.value);
   }
   return (
     <div className="auth-page">
@@ -43,8 +48,7 @@ export default function Signup() {
               Start building and managing your tasks today
             </p>
 
-            <form className="auth-form" onSubmit={handleSubmit}>
-             
+            <form className="auth-form" onSubmit={handleSubmit(onSubmit)}>
               <div className="form-group">
                 <label>Is Company ?</label>
                 <div className="radio-group">
@@ -61,36 +65,44 @@ export default function Signup() {
 
               <div className={`form-group ${ isCompany == '0' ? 'hide' : 'show' }`}>
                 <label>Company Name</label>
-                <input type="text" placeholder="Enter your company name" onChange={(e) => selectCompanyName(e.target.value)} />
+                <input type="text" name="name" placeholder="Enter your company name" {...register('name')} />
+                {errors.name && <p className="error-text">{errors.name.message}</p>}
               </div>
       
               <div className="form-group">
                 <label>First Name</label>
-                <input type="text" placeholder="Enter your first name" onChange={(e) => selectFirstName(e.target.value)} />
+                <input type="text" name="firstName" placeholder="Enter your first name" {...register('firstName')} />
+                {errors.firstName && <p className="error-text">{errors.firstName.message}</p>}
               </div>
 
               <div className="form-group">
                 <label>Last Name</label>
-                <input type="text" placeholder="Enter your last name" onChange={(e) => selectLastName(e.target.value)} />
+                <input type="text" name="lastName" placeholder="Enter your last name" {...register('lastName')} />
+                {errors.lastName && <p className="error-text">{errors.lastName.message}</p>}
               </div>
 
               <div className="form-group">
                 <label>Email</label>
-                <input type="email" placeholder="Enter your email" onChange={(e) => selectEmail(e.target.value)} />
+                <input type="text" placeholder="Enter your email" {...register('email')} />
+                {errors.email && <p className="error-text">{errors.email.message}</p>}
               </div>
 
               <div className="form-group">
                 <label>Password</label>
-                <input type="password" placeholder="Create password" onChange={(e) => selectPassword(e.target.value)} />
+                <input type="password" placeholder="Create password" {...register('password')} />
+                {errors.password && <p className="error-text">{errors.password.message}</p>}
               </div>
 
               <div className="form-group">
                 <label>Confirm Password</label>
-                <input type="password" placeholder="Confirm password" onChange={(e) => selectConfirmPassword(e.target.value)} />
+                <input type="password" name="confirm_password" placeholder="Confirm password" {...register('confirm_password')} />
+                {errors.confirm_password && <p className="error-text">{errors.confirm_password.message}</p>}
               </div>
 
-              <button type="submit" className="auth-btn">
-                Create Account
+              <p className="error-text">{formError}</p>
+
+              <button type="submit" className="auth-btn" disabled={isSubmitting}>
+                {isSubmitting ? 'Submitting...' : 'Create Account'}
               </button>
             </form>
 

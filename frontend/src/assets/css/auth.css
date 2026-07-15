@@ -216,6 +216,9 @@ body {
 .form-group.invalid-credentials label{
   color: red;
 }
+label.error, p.error-text{
+  color: red;
+}
 
 /* RESPONSIVE */
 
