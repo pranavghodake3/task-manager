@@ -9,6 +9,7 @@ const CustomError = require('../utils/CustomError');
 const jwtUtil = require('../utils/jwtUtil');
 const roleService = require('../services/roleService');
 const permissionUtil = require('../utils/permission');
+const { GLOBAL_ROLES } = require('../constants');
 
 const authServiceObj = {};
 
@@ -152,17 +153,16 @@ authServiceObj.registerSuperAdmin = async (reqBody) => {
 
 authServiceObj.registerUser = async (reqBody) => {
   reqBody.password = await passwordHelper.generatePasswordHash(reqBody.password);
-  if (reqBody.roleId) {
-    const role = await roleService.getRole(reqBody.roleId);
-
-    if (!role) {
-      throw new CustomError('Role is not configured', 404);
-    }
-  }
+  const projectUserRole = await db.GlobalRole.findOne({
+    attributes: ['id'],
+    where: {
+      name: GLOBAL_ROLES.PROJECT_USER,
+    },
+  });
 
   const user = await UserModel.create({
     ...reqBody,
-    globalRoleId: reqBody.roleId ?? null,
+    globalRoleId: projectUserRole.id,
     isActive: true,
   });
 
@@ -187,7 +187,7 @@ authServiceObj.registerCompany = async (reqBody) => {
     isActive: true,
   });
 
-  return user;
+  return { company, user };
 };
 
 authServiceObj.registerCompanyProjectManager = async (req) => {

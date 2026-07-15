@@ -48,7 +48,9 @@ authMiddleware.register = async (req, res, next) => {
       repeat_password: Joi.ref('password'),
     });
 
-    await schema.validateAsync(req.body || {});
+    await schema.validateAsync(req.body || {}, {
+      abortEarly: false
+    });
     const count = await UserModel.count({
       where: {
         email: req.body.email,
@@ -72,9 +74,11 @@ authMiddleware.registerCompany = async (req, res, next) => {
       lastName: Joi.string().pattern(new RegExp('^[a-zA-Z]')).max(255).required(),
       email: Joi.string().min(3).max(255).email().required(),
       password: Joi.string().min(6).max(255).required(),
-      repeat_password: Joi.ref('password'),
+      confirm_password: Joi.ref('password'),
     });
-    await schema.validateAsync(req.body || {});
+    await schema.validateAsync(req.body || {}, {
+      abortEarly: false
+    });
 
     const companyCount = await CompanyModel.count({
       where: {
@@ -96,7 +100,11 @@ authMiddleware.registerCompany = async (req, res, next) => {
 
     next();
   } catch (error) {
-    return errorResponse(res, error, 400);
+    if(error.details){
+      return errorResponse(res, new CustomError('Validation Error', 400, error.details));
+    }else{
+      return errorResponse(res, error, 400);
+    }
   }
 };
 
