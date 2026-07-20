@@ -5,7 +5,7 @@ import { NavLink } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signupSchema } from "../../formSchemas/signup-form";
+import { signupSchema } from "../formSchemas/signup-form";
 
 export default function Signup() {
   const [isCompany, selectIsCompany] = useState("0");

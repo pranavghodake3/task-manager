@@ -4,6 +4,9 @@ import NavBar from "../compoenets/NavBar";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
 import api from "../services/api";
 import { useAuthStore } from "../store/authStore";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { inviteUserToProjectSchema } from "../formSchemas/invite-user-to-project";
 
 export default function ProjectAddMember() {
     const accessToken = useAuthStore((state) => state.accessToken);
@@ -11,11 +14,17 @@ export default function ProjectAddMember() {
     const [roles, setUserRoles] = useState([]);
     const [jobTitles, setJobTitles] = useState([]);
 
-    const [userId, setUserId] = useState();
-    const [roleId, setRoleId] = useState();
-    const [jobTitleId, setJobTitleId] = useState();
     const [formErrorMessage, setFormErrorMessage] = useState('');
     const navigate = useNavigate();
+
+    const {
+        register,
+        handleSubmit,
+        formState: { errors, isSubmitting },
+    } = useForm({
+        resolver: zodResolver(inviteUserToProjectSchema),
+        mode: 'onChange',
+    });
 
     const { id } = useParams();
     useEffect(() => {
@@ -35,14 +44,9 @@ export default function ProjectAddMember() {
         }
         getProject();
     }, [accessToken, id]);
-    async function handleSubmit(e) {
-        e.preventDefault();
+    async function onSubmit(data) {
         try {
-            const response = await api.post(`/projects/${id}/add-member`, {
-                userId,
-                roleId,
-                jobTitleId,
-            });
+            const response = await api.post(`/projects/${id}/add-member`, data);
             if (response.data.status) {
                 navigate('/projects');
             }
@@ -65,37 +69,40 @@ export default function ProjectAddMember() {
         
                         {/* Projects Table */}
                         <section className="projects-table-section">
-                            <form className="auth-form project-form" onSubmit={handleSubmit}>
+                            <form className="auth-form project-form" onSubmit={handleSubmit(onSubmit)}>
               
               
               <div className="form-group">
                 <label htmlFor="userId">Select User</label>
-                <select name="userId" id="userId" onChange={(e) => setUserId(e.target.value)}>
+                <select {...register('userId')}>
                     <option value="">Select User</option>
                     {users.map((user) => (
                         <option key={user.id} value={user.id}>{user.firstName} {user.lastName}</option>
                     ))}
                 </select>
+                {errors.userId && <p className="error-text">{errors.userId.message}</p>}
             </div>
 
             <div className="form-group">
                 <label htmlFor="roleId">Select Role</label>
-                <select name="roleId" id="roleId" onChange={(e) => setRoleId(e.target.value)}>
+                <select {...register('roleId')}>
                     <option value="">Select Role</option>
                     {roles.map((role) => (
                         <option key={role.id} value={role.id}>{role.name}</option>
                     ))}
                 </select>
+                {errors.roleId && <p className="error-text">{errors.roleId.message}</p>}
             </div>
 
             <div className="form-group">
-                <label htmlFor="userId">Select Job Title</label>
-                <select name="userId" id="userId" onChange={(e) => setJobTitleId(e.target.value)}>
+                <label htmlFor="jobTitleId">Select Job Title</label>
+                <select {...register('jobTitleId')}>
                     <option value="">Select Job Title</option>
                     {jobTitles.map((jobTitle) => (
                         <option key={jobTitle.id} value={jobTitle.id}>{jobTitle.name}</option>
                     ))}
                 </select>
+                {errors.jobTitleId && <p className="error-text">{errors.jobTitleId.message}</p>}
             </div>
 
 
@@ -103,9 +110,9 @@ export default function ProjectAddMember() {
                                         <label>{formErrorMessage}</label>
                                     </div>
 
-                                    <button type="submit" className="auth-btn">
-                                        Add
-                                    </button>
+                                    <button type="submit" className="auth-btn" disabled={isSubmitting}>
+                {isSubmitting ? 'Adding...' : 'Add'}
+              </button>
                                     <button type="button" className="auth-btn" onClick={() => navigate('/projects')}>
                                         Cancel
                                     </button>
