@@ -50,9 +50,9 @@ export default function NavBar() {
           }
           <NavLink to="/dashboard">Dashboard({ user.company?.name })</NavLink>
 
-          <NavLink to="/projects">Projects</NavLink>
+          { can(ENTITIES.PROJECT, ACTION_TYPES.READ_ALL) && <NavLink to="/projects">Projects</NavLink> }
 
-          { can(ENTITIES.USER, ACTION_TYPES.READ) && <NavLink to="/users">Users</NavLink> }
+          { can(ENTITIES.USER, ACTION_TYPES.READ_ALL) && <NavLink to="/users">Users</NavLink> }
 
           <NavLink to="/tasks">Tasks</NavLink>
           

@@ -39,7 +39,7 @@ export default function AppRoute() {
                     <Route path="/projects" element={
                         <ProtectedRoute
                         entity={ENTITIES.PROJECT}
-                        action={ACTION_TYPES.READ}
+                        action={ACTION_TYPES.READ_ALL}
                         >
                             <ProjectList />
                         </ProtectedRoute>
@@ -84,7 +84,7 @@ export default function AppRoute() {
                     <Route path="/users" element={
                         <ProtectedRoute
                         entity={ENTITIES.USER}
-                        action={ACTION_TYPES.READ}
+                        action={ACTION_TYPES.READ_ALL}
                         >
                             <UserList />
                         </ProtectedRoute>
@@ -120,7 +120,7 @@ export default function AppRoute() {
                     <Route path="/tasks" element={
                         <ProtectedRoute
                         entity={ENTITIES.TASK}
-                        action={ACTION_TYPES.READ}
+                        action={ACTION_TYPES.READ_ALL}
                         >
                             <TaskList />
                         </ProtectedRoute>

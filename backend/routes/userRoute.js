@@ -5,9 +5,9 @@ const { handleAsyncFunction } = require('../utils/commonHelper');
 const { hasAccess } = require('../middlewares/authMiddleware');
 const { ENTITIES, ACTION_TYPES } = require('../constants');
 
-router.get('/', hasAccess(ENTITIES.USER, ACTION_TYPES.READ), handleAsyncFunction(userController.getUsers));
+router.get('/', hasAccess(ENTITIES.USER, ACTION_TYPES.READ_ALL), handleAsyncFunction(userController.getUsers));
 
-router.get('/get-unassigned-users', hasAccess(ENTITIES.USER, ACTION_TYPES.READ), handleAsyncFunction(userController.getUnAssignedUsers));
+router.get('/get-unassigned-users', hasAccess(ENTITIES.USER, ACTION_TYPES.READ_ALL), handleAsyncFunction(userController.getUnAssignedUsers));
 
 router.post('/', hasAccess(ENTITIES.USER, ACTION_TYPES.CREATE), handleAsyncFunction(userController.createUser));
 

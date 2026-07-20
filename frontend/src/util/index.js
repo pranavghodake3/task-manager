@@ -37,3 +37,7 @@ export function getGlobalProjectId() {
 export function setGlobalProjectId(globalProjectId) {
   return Cookies.set('globalProjectId', globalProjectId);
 };
+
+export const isSuperOrCompanyAdmin = (user) => {
+  return [GLOBAL_ROLES.SUPER_ADMIN, GLOBAL_ROLES.COMPANY_ADMIN].includes(user.globalRole.name);
+}

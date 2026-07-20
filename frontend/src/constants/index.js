@@ -38,6 +38,7 @@ export const ENTITIES = {
 export const  ACTION_TYPES = {
     CREATE: 'CREATE',
     READ: 'READ',
+    READ_ALL: 'READ_ALL',
     UPDATE: 'UPDATE',
     DELETE: 'DELETE',
 };
