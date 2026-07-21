@@ -73,7 +73,7 @@ export default function UserCreateEditForm({ mode, task }) {
     }, [accessToken, task?.statusId, task?.priorityId, task?.userId, setValue])
     async function onSubmit(data) {
         // convert string select values to numbers (or null) before sending
-        data.userId = data.userId === '' || data.userId == null ? null : Number(data.userId);
+        data.userId = data.userId == 0 || data.userId === '' || data.userId == null ? null : Number(data.userId);
 
         if (!data.statusId || data.statusId === '') {
             data.statusId = statuses[0]?.id ?? null;

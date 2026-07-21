@@ -82,7 +82,11 @@ export default function TaskView() {
                             </tr>
                             <tr>
                                 <td><b>Created At:</b></td>
-                                <td>{formatDate(task.createdAt, 'DD-MMM-YYYY')}</td>
+                                <td>{formatDate(task.createdAt, 'DD-MMM-YYYY HH:MM:SS')}</td>
+                            </tr>
+                            <tr>
+                                <td><b>Updated At:</b></td>
+                                <td>{formatDate(task.updatedAt, 'DD-MMM-YYYY HH:MM:SS')}</td>
                             </tr>
                         </tbody>
                     </table>
