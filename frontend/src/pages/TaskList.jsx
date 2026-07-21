@@ -55,7 +55,7 @@ export default function TaskList() {
       <main className="main-content">
         {/* Header */}
         <Header title='Tasks' description='Manage and view all your tasks' button={
-            <button className="create-btn" onClick={()=> navigate('/tasks/create')}>+ New Task</button>
+          can(ENTITIES.TASK, ACTION_TYPES.CREATE) && <button className="create-btn" onClick={()=> navigate('/tasks/create')}>+ New Task</button>
         } />
 
         {/* Tasks Table */}

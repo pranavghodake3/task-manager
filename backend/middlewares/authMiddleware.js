@@ -271,6 +271,9 @@ authMiddleware.isRefreshTokenCookieAuthentic = async (req, res, next) => {
 
 authMiddleware.hasAccess = (entity, action) => {
   return (req, res, next) => {
+    if(req.query.isDropdown){
+      return next();
+    }
     const globalProjectId = req.cookies.globalProjectId;
     try {
       const user = req.auth.user;

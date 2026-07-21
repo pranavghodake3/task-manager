@@ -43,7 +43,7 @@ export default function NavBar() {
             <label htmlFor="projects">Set Project</label>
             <select className="project-select" name="projects" id="projects" value={globalProjectId} onChange={handleGlobalProjectChange}>
               {user?.projectMembership?.map(pm => 
-                <option key={pm.projectId} value={pm.project.id}>{pm.project.name}</option>
+                <option key={pm.projectId} value={pm.project.id}>{pm.project.name}({pm.role.name})</option>
               )}
             </select>
           </div>
