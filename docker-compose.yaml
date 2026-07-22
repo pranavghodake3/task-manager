@@ -25,6 +25,7 @@ services:
       - backend
     env_file:
       - path: ./frontend/.env
+      - path: ./frontend/.env
     environment:
       - CHOKIDAR_USEPOLLING=true
     volumes:

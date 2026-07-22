@@ -2,9 +2,12 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { useAuthStore } from "../store/authStore";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createOrEditTaskSchema } from "../formSchemas/createOrEditTask";
+import {GoogleGenAI} from '@google/genai';
+const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+const AI = new GoogleGenAI({apiKey: GEMINI_API_KEY});
 
 export default function UserCreateEditForm({ mode, task }) {
     const accessToken = useAuthStore((state) => state.accessToken);
@@ -13,11 +16,16 @@ export default function UserCreateEditForm({ mode, task }) {
     const [priorities, setPriorities] = useState([]);
     const [formErrorMessage, setFormErrorMessage] = useState('');
     const navigate = useNavigate();
+    const [disableDescription, setDescriptionDisabled] = useState(false);
+    const [titleEmptyError, settitleEmptyError] = useState('');
+    const [AIError, setAIError] = useState('');
+
     const {
         register,
         handleSubmit,
         formState: { errors, isSubmitting },
         setValue,
+        control,
     } = useForm({
         resolver: zodResolver(createOrEditTaskSchema),
         mode: 'onChange',
@@ -29,6 +37,7 @@ export default function UserCreateEditForm({ mode, task }) {
             priorityId: task?.priorityId ? String(task.priorityId) : '',
         },
     });
+    const taskTitle = useWatch({ control, name: 'title' });
 
     useEffect(() => {
         async function loadDropDownsData() {
@@ -48,6 +57,8 @@ export default function UserCreateEditForm({ mode, task }) {
                 setUsers(userResponse.data.data);
                 setStatuses(statusResponse.data.data);
                 setPriorities(priorityResponse.data.data);
+
+                
 
                 // set form values after dropdown options are loaded (use strings)
                 if (task?.statusId) {
@@ -113,18 +124,53 @@ export default function UserCreateEditForm({ mode, task }) {
             setFormErrorMessage(error.response.data.error.message);
         }
     }
+    async function handleAIGeneratedDescr(e) {
+        if (!taskTitle) {
+            settitleEmptyError('Enter Title first');
+            e.target.checked = false;
+            return false;
+        }
+        if(e.target.checked){
+            setDescriptionDisabled(true);
+            setValue('description', 'Please wait for AI generated Description...', { shouldDirty: true, shouldValidate: true });
+            try {
+                const descResponse = await AI.models.generateContent({
+                    model: 'gemini-3.5-flash',
+                    contents: 'Give me two lines description of this Task title: '+taskTitle,
+                });
+                setValue('description', descResponse.text, { shouldDirty: true, shouldValidate: true });
+                setDescriptionDisabled(false);
+            } catch (error) {
+                console.log(error)
+                setValue('description', '', { shouldDirty: true, shouldValidate: true });
+                setDescriptionDisabled(false);
+                setAIError('Something went wrong, you need to enter description manually.');
+            }
+        }else{
+            setValue('description', '', { shouldDirty: true, shouldValidate: true });
+        }
+    }
     return (
         <form className="auth-form" onSubmit={handleSubmit(onSubmit)}>
             
             <div className="form-group">
                 <label>Title</label>
-                <input type="text" placeholder="Enter title" {...register('title')} />
+                <input type="text" placeholder="Enter title"
+                {...register('title')}
+                />
                 {errors.title && <p className="error-text">{errors.title.message}</p>}
             </div>
 
             <div className="form-group">
+                <label>Add AI Generated Description ?</label>
+                <input type="checkbox" name="AIGeneratedDescr" id="AIGeneratedDescr" onChange={handleAIGeneratedDescr} />
+                <p className="error-text">{!taskTitle && titleEmptyError}</p>
+            </div>
+            <p className="error-text">{AIError}</p>
+
+            <div className="form-group">
                 <label>Description</label>
-                <textarea name="description" id="description" placeholder="Enter description" {...register('description')} />
+                <textarea name="description" id="description" placeholder='Enter description' {...register('description')} disabled={disableDescription} />
                 {errors.description && <p className="error-text">{errors.description.message}</p>}
             </div>
 
