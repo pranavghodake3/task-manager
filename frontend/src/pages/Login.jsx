@@ -22,7 +22,7 @@ export default function Login() {
         navigate('/dashboard');
       }
     } catch (error) {
-      console.log("Login Error: ", error);
+      console.log("Login Error: ", error.response?.data?.error?.message);
       setApiError(error.response?.data?.error?.message ?? "Login failed");
       setIsLoginSuccess(error.response?.data?.status ?? false);
     }

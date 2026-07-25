@@ -2,9 +2,11 @@
 
 // import { Link } from "react-router-dom";
 // import "../assets/css/dashboard.css";
+import { useContext, useEffect } from "react";
 import NavBar from "../compoenets/NavBar";
 // import { ROLES } from "../constants"
 import { useAuthStore } from "../store/authStore";
+import { SocketContext } from "../socket/SocketContext";
 
 const projects = [
   {
@@ -37,6 +39,14 @@ const activities = [
 export default function Dashboard() {
   const userData = useAuthStore((state) => state.user);
   console.log('Dashboard authStore userData: ',userData);
+  const socket = useContext(SocketContext);
+
+  useEffect(() => {
+    socket.on('notification', (data) => {
+      console.log("Socket Notifications data: ", data);
+    })
+  }, [socket]);
+
   return (
     <div className="dashboard">
       {/* Sidebar */}

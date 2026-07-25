@@ -1,14 +1,20 @@
 const taskService = require('../services/taskService');
+const { getIo } = require('../sockets/socket');
+
 
 const taskController = {};
 
 taskController.getTasks = async (req) => {
   const globalProjectId = req.cookies.globalProjectId;
+  const io = getIo();
   const tasks = await taskService.getTasks({
     auth: req.auth,
     companyId: req.query.companyId,
     globalProjectId,
   });
+  io.emit('notification', {
+    message: 'TASK 1'
+  })
   return { data: tasks };
 };
 
