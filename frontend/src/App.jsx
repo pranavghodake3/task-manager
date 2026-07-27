@@ -12,6 +12,7 @@
 // import Home from './pages/Home'
 import AuthInitializer from './compoenets/AuthInitializer'
 import AppRoute from './routes/AppRoute'
+import SocketProvider from './socket/SocketProvider'
 
 // const router = createBrowserRouter([
 //   { path: '/', Component: Home },
@@ -24,9 +25,11 @@ function App() {
 
   return (
     // <RouterProvider router={router} />/
-    <AuthInitializer>
-      <AppRoute />
-    </AuthInitializer>
+    <SocketProvider>
+      <AuthInitializer>
+        <AppRoute />
+      </AuthInitializer>
+    </SocketProvider>
   )
 }
 

@@ -15,8 +15,9 @@ export function setLoginStore(data) {
   setUserData(data.user);
   setAccessToken(data.accessToken);
   if (![GLOBAL_ROLES.SUPER_ADMIN, GLOBAL_ROLES.COMPANY_ADMIN].includes(data.user.globalRole.name)) {
-   const globalProjectId = getGlobalProjectId();
-   setGlobalProjectId(globalProjectId ? globalProjectId : (data.user?.projectMembership[0]?.projectId ?? 0));
+   let globalProjectId = getGlobalProjectId();
+   globalProjectId = globalProjectId ? globalProjectId : (data.user?.projectMembership[0]?.projectId ?? 0);
+   setGlobalProjectId(globalProjectId);
   }
 
   const expireMinutes = parseInt(data.accessTokenExpiresIn, 10);

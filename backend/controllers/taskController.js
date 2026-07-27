@@ -6,15 +6,11 @@ const taskController = {};
 
 taskController.getTasks = async (req) => {
   const globalProjectId = req.cookies.globalProjectId;
-  const io = getIo();
   const tasks = await taskService.getTasks({
     auth: req.auth,
     companyId: req.query.companyId,
     globalProjectId,
   });
-  io.emit('notification', {
-    message: 'TASK 1'
-  })
   return { data: tasks };
 };
 
@@ -27,6 +23,18 @@ taskController.getTaskById = async (req) => {
 taskController.createTask = async (req) => {
   const globalProjectId = req.cookies.globalProjectId;
   const task = await taskService.createTask(globalProjectId, req.auth, req.body);
+  const io = getIo();
+  const projectRoom = `project:${globalProjectId}`;
+  // const sockets = await io.in(projectRoom).fetchSockets();
+  // console.log("SOCKETS to PROJECTROOM: ",sockets);
+  // sockets.forEach(socket => {
+  //     console.log(socket.id); 
+  //     console.log(socket.handshake); // Access handshake data
+  //     console.log(socket.data);      // Access custom data attached to the socket
+  // });
+  const taskWithData = await taskService.getTaskById(task.id);
+  io.to(projectRoom).emit('task_created', taskWithData);
+
   return { data: task, statusCode: 201 };
 };
 
@@ -37,8 +45,13 @@ taskController.updateTask = async (req) => {
 };
 
 taskController.deleteTask = async (req) => {
+  const globalProjectId = req.cookies.globalProjectId;
   const { id } = req.params;
+  const io = getIo();
   await taskService.deleteTask(id);
+  const projectRoom = `project:${globalProjectId}`;
+  io.to(projectRoom).emit('task_deleted', { taskId: id });
+
   return { statusCode: 204 };
 };
 

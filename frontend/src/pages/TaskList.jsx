@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import "../assets/css/dashboard.css";
 import NavBar from "../compoenets/NavBar";
 import api from "../services/api";
@@ -8,12 +8,37 @@ import Header from "../compoenets/Header";
 import { useAuthStore } from "../store/authStore";
 import usePermission from "../hooks/usePermission";
 import { ACTION_TYPES, ENTITIES } from "../constants";
+import { SocketContext } from "../socket/SocketContext";
 
 export default function TaskList() {
   const accessToken = useAuthStore((state) => state.accessToken);
   const [tasks, setTasks] = useState([]);
   const navigate = useNavigate();
   const { can } = usePermission();
+  const { socket } = useContext(SocketContext);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleTaskCreated = (task) => {
+      console.log('Task created Notification: ', task);
+      setTasks((oldTasks) => [task, ...oldTasks]);
+    };
+
+    socket.on('task_created', handleTaskCreated);
+
+    const handleTaskDeleted = (deletedTask) => {
+      console.log('Task deleted Notification: ', deletedTask);
+      setTasks((currentTasks) => currentTasks.filter((t) => parseInt(t.id) != parseInt(deletedTask.taskId)));
+    };
+
+    socket.on('task_deleted', handleTaskDeleted);
+
+    return () => {
+      socket.off('task_created', handleTaskCreated);
+      socket.off('task_deleted', handleTaskDeleted);
+    };
+  }, [socket]);
 
   useEffect(() => {
     async function loadTasks() {

@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import "../assets/css/auth.css";
 import api from "../services/api";
 import { useNavigate, NavLink } from "react-router-dom";
 import { setLoginStore } from "../services/authService";
+import { SocketContext } from "../socket/SocketContext";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -10,6 +11,7 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoginSuccess, setIsLoginSuccess] = useState(true);
+  const SocketContextData = useContext(SocketContext);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -17,12 +19,22 @@ export default function Login() {
       const response = await api.post("/auth/login", { email, password });
       setLoginStore(response.data.data);
       setIsLoginSuccess(response.data.status);
+      // let SocketProvider handle the socket connection when auth state changes
+      // optionally trigger an immediate connect
+      const globalProjectId = response.data.data.user?.projectMembership[0]?.projectId ?? 0;
+      console.log('AFTER LOGIN globalProjectId: ',globalProjectId);
+      if (SocketContextData?.connect) {
+        SocketContextData.connect(globalProjectId);
+        
+        // SocketContextData.socket.emit('join-project', { projectId: globalProjectId });
+      }
+      console.log('Login SocketContextData: ', SocketContextData);
 
       if (response.data.status) {
         navigate('/dashboard');
       }
     } catch (error) {
-      console.log("Login Error: ", error.response?.data?.error?.message);
+      console.log("Login Error: ", error);
       setApiError(error.response?.data?.error?.message ?? "Login failed");
       setIsLoginSuccess(error.response?.data?.status ?? false);
     }

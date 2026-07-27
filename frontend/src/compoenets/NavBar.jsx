@@ -6,6 +6,7 @@ import { useAuthStore } from "../store/authStore";
 import { useContext } from "react";
 import { GlobalProjectContext } from "../context/GlobalProjectContext";
 import { setGlobalProjectId } from "../util";
+import { SocketContext } from "../socket/SocketContext";
 
 export default function NavBar() {
   const {
@@ -13,6 +14,7 @@ export default function NavBar() {
   } = useContext(GlobalProjectContext);
     const setIsLoggedIn = useAuthStore((state) => state.setIsLoggedIn);
     const setAccessToken = useAuthStore((state) => state.setAccessToken);
+    const { socket } = useContext(SocketContext);
     // const [globalProjectId, setGlobalProjectId] = useState(Cookies.get('globalProjectId') ?? '');
     const user = useAuthStore((state) => state.user);
     const { can } = usePermission();
@@ -29,6 +31,9 @@ export default function NavBar() {
     }
     function handleGlobalProjectChange(e) {
       setGlobalProjectIdContext(e.target.value);
+      socket.emit('join-project', {
+        projectId: e.target.value
+      });
       setGlobalProjectId(e.target.value);
       window.location.reload();
     }

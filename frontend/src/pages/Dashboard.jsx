@@ -39,12 +39,21 @@ const activities = [
 export default function Dashboard() {
   const userData = useAuthStore((state) => state.user);
   console.log('Dashboard authStore userData: ',userData);
-  const socket = useContext(SocketContext);
+  const { socket } = useContext(SocketContext);
+  console.log('Dashboard SocketContextData socket: ', socket);
 
   useEffect(() => {
-    socket.on('notification', (data) => {
-      console.log("Socket Notifications data: ", data);
-    })
+    if (!socket) return;
+
+    const handleNotification = (data) => {
+      console.log('Socket Notifications data: ', data);
+    };
+
+    socket.on('notification', handleNotification);
+
+    return () => {
+      socket.off('notification', handleNotification);
+    };
   }, [socket]);
 
   return (

@@ -21,13 +21,11 @@ import TaskView from "../pages/TaskView";
 import TaskCreate from "../pages/TaskCreate";
 import ProjectAddMember from "../pages/ProjectAddMember";
 import GlobalProjectContextProvider from "../context/GlobalProjectContextProvider";
-import SocketProvider from "../socket/SocketProvider";
 
 export default function AppRoute() {
     return (
         <BrowserRouter>
             <GlobalProjectContextProvider>
-                <SocketProvider>
             {/* <AuthContextProvider> */}
                 <Routes>
                     <Route path="/" element={<Home />} />
@@ -162,7 +160,6 @@ export default function AppRoute() {
                     <Route path="/unathorized" element={<Unathorized />} />
                 </Routes>
             {/* </AuthContextProvider> */}
-            </SocketProvider>
             </GlobalProjectContextProvider>
         </BrowserRouter>
     );
