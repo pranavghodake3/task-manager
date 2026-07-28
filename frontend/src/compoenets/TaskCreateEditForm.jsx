@@ -94,7 +94,14 @@ export default function UserCreateEditForm({ mode, task }) {
       }
     }
     loadDropDownsData();
-  }, [accessToken, task?.statusId, task?.priorityId, task?.userId, setValue]);
+  }, [
+    accessToken,
+    task?.statusId,
+    task?.priorityId,
+    task?.userId,
+    setValue,
+    loggedInUser,
+  ]);
   async function onSubmit(data) {
     // convert string select values to numbers (or null) before sending
     data.userId =
