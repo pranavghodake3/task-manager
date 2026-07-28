@@ -21,22 +21,28 @@ export default function TaskList() {
     if (!socket) return;
 
     const handleTaskCreated = (task) => {
-      console.log('Task created Notification: ', task);
       setTasks((oldTasks) => [task, ...oldTasks]);
     };
-
     socket.on('task_created', handleTaskCreated);
 
     const handleTaskDeleted = (deletedTask) => {
-      console.log('Task deleted Notification: ', deletedTask);
       setTasks((currentTasks) => currentTasks.filter((t) => parseInt(t.id) != parseInt(deletedTask.taskId)));
     };
-
     socket.on('task_deleted', handleTaskDeleted);
+
+    const handleTaskUpdated = (updatedTask) => {
+      setTasks((oldTasks) =>
+        oldTasks.map((task) =>
+          String(task.id) === String(updatedTask.id) ? updatedTask : task
+        )
+      );
+    };
+    socket.on('task_updated', handleTaskUpdated);
 
     return () => {
       socket.off('task_created', handleTaskCreated);
       socket.off('task_deleted', handleTaskDeleted);
+      socket.off('task_updated', handleTaskUpdated);
     };
   }, [socket]);
 

@@ -40,7 +40,13 @@ taskController.createTask = async (req) => {
 
 taskController.updateTask = async (req) => {
   const { id } = req.params;
+  const globalProjectId = req.cookies.globalProjectId;
   const task = await taskService.updateTask(id, req.body);
+  const taskWithData = await taskService.getTaskById(id);
+  const io = getIo();
+  const projectRoom = `project:${globalProjectId}`;
+  io.to(projectRoom).emit('task_updated', taskWithData);
+
   return { data: task };
 };
 
