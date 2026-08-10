@@ -1,3 +1,4 @@
+const { REFRESH_TOKEN_EXPIRY } = require('../constants');
 const authService = require('../services/authService');
 
 const authControllerObj = {};
@@ -5,7 +6,7 @@ const authControllerObj = {};
 authControllerObj.login = async (req, res) => {
   const data = await authService.login(req.body);
   res.cookie('refreshToken', data.refreshToken, {
-        maxAge: 900000, // Expires after 15 minutes (in milliseconds)
+        maxAge: REFRESH_TOKEN_EXPIRY * 1000, // Expires after 1 hour (in milliseconds)
         httpOnly: true, // Prevent client-side JS access for security
         secure: true,   // Only sent over HTTPS or secure localhost
         sameSite: 'None' // Protects against CSRF attacks

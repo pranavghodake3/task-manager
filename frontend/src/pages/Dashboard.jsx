@@ -2,10 +2,11 @@
 
 // import { Link } from "react-router-dom";
 // import "../assets/css/dashboard.css";
+import { useContext, useEffect } from "react";
 import NavBar from "../compoenets/NavBar";
 // import { ROLES } from "../constants"
-import { useContext } from "react";
-import { AuthContext } from "../context/AuthContext";
+import { useAuthStore } from "../store/authStore";
+import { SocketContext } from "../socket/SocketContext";
 
 const projects = [
   {
@@ -36,8 +37,25 @@ const activities = [
 ];
 
 export default function Dashboard() {
-  const AuthContextData = useContext(AuthContext);
-  const user = AuthContextData.user;
+  const userData = useAuthStore((state) => state.user);
+  console.log('Dashboard authStore userData: ',userData);
+  const { socket } = useContext(SocketContext);
+  console.log('Dashboard SocketContextData socket: ', socket);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleNotification = (data) => {
+      console.log('Socket Notifications data: ', data);
+    };
+
+    socket.on('notification', handleNotification);
+
+    return () => {
+      socket.off('notification', handleNotification);
+    };
+  }, [socket]);
+
   return (
     <div className="dashboard">
       {/* Sidebar */}
@@ -49,7 +67,7 @@ export default function Dashboard() {
         <header className="topbar">
           <div>
             <h1>Dashboard</h1>
-            <p>Welcome back, { `${user.firstName} ${user.lastName} (${AuthContextData.user?.globalRole?.name ?? ''})` } 👋</p>
+            <p>Welcome back, { `${userData.firstName} ${userData.lastName} (${userData?.globalRole?.name ?? ''})` } 👋</p>
           </div>
 
           <button className="create-btn">+ Create Issue</button>

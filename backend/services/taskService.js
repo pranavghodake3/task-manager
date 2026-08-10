@@ -5,77 +5,118 @@ const StatusModel = db.Status;
 const PriorityModel = db.Priority;
 const ProjectModel = db.Project;
 const UserModel = db.User;
-const { getMyCompany } = require('./companyService');
 
 const taskService = {};
 
-taskService.getTasks = async ({ auth, companyId }) => {
-    const where = {
-        companyId: companyId || auth.user?.company?.id,
+taskService.getTasks = async ({ auth, companyId, globalProjectId }) => {
+  companyId = companyId || auth.user?.company?.id;
+  const where = {
+    ...(companyId && { companyId }),
   };
-  if(![GLOBAL_ROLES.SUPER_ADMIN, GLOBAL_ROLES.COMPANY_ADMIN].includes(auth.user.globalRole.name)){
-    where.userId = auth.user.id;
+  // const projectIds = Object.keys(auth.user.userProjects);
+  if (![GLOBAL_ROLES.SUPER_ADMIN, GLOBAL_ROLES.COMPANY_ADMIN].includes(auth.user.globalRole.name)) {
+    where.projectId = globalProjectId;
   }
   return await TaskModel.findAll({
     ...(where && { where }),
+    order: [['id', 'DESC']],
     include: [
-        {
-            model: StatusModel,
-            as: 'status'
-        },
-        {
-          model: PriorityModel,
-          as: 'priority'
-        },
-        {
-          model: ProjectModel,
-          as: 'project'
-        },
-        {
-          model: UserModel,
-          as: 'user'
-        },
-        {
-            model: UserModel,
-            as: 'creator'
-        }
-    ]
+      {
+        model: StatusModel,
+        as: 'status',
+      },
+      {
+        model: PriorityModel,
+        as: 'priority',
+      },
+      {
+        model: ProjectModel,
+        as: 'project',
+      },
+      {
+        model: UserModel,
+        as: 'user',
+      },
+      {
+        model: UserModel,
+        as: 'creator',
+      },
+    ],
   });
 };
 
 taskService.getTaskById = async (id) => {
   return await TaskModel.findByPk(id, {
     include: [
-        {
-            model: StatusModel,
-            as: 'status'
-        },
-        {
-          model: PriorityModel,
-          as: 'priority'
-        },
-        {
-          model: ProjectModel,
-          as: 'project'
-        },
-        {
-          model: UserModel,
-          as: 'user'
-        },
-        {
-            model: UserModel,
-            as: 'creator'
-        }
-    ]
+      {
+        model: StatusModel,
+        as: 'status',
+      },
+      {
+        model: PriorityModel,
+        as: 'priority',
+      },
+      {
+        model: ProjectModel,
+        as: 'project',
+      },
+      {
+        model: UserModel,
+        as: 'user',
+      },
+      {
+        model: UserModel,
+        as: 'creator',
+      },
+    ],
   });
 };
 
-taskService.createTask = async (loggedInUserId, role, reqBody) => {
-    reqBody.creatorId = loggedInUserId;
-    if(role === GLOBAL_ROLES.COMPANY_ADMIN){
-        reqBody.companyId = (await getMyCompany(loggedInUserId)).id;
-    }
+taskService.getTaskComments = async (taskId) => {
+  return await db.TaskComment.findAll({
+    where: {
+      taskId,
+    },
+    include: [
+      {
+        model: db.User,
+        as: 'user',
+        attributes: ['id', 'email', 'firstName', 'lastName'],
+      },
+    ],
+  });
+};
+
+taskService.getTaskCommentById = async (id) => {
+  return await db.TaskComment.findByPk(id, {
+    include: [
+      {
+        model: db.User,
+        as: 'user',
+        attributes: ['id', 'email', 'firstName', 'lastName'],
+      },
+    ],
+  });
+};
+
+taskService.createTaskComment = async (taskId, auth, reqBody) => {
+  reqBody.taskId = taskId;
+  reqBody.userId = auth.user.id;
+  const comment = await db.TaskComment.create(reqBody);
+
+  return comment;
+};
+
+taskService.createTask = async (globalProjectId, auth, reqBody) => {
+  reqBody.creatorId = auth.user.id;
+  reqBody.companyId = auth.user.company.id;
+  reqBody.projectId = globalProjectId;
+  for (const key in reqBody) {
+    reqBody[key] = reqBody[key] ? reqBody[key] : null;
+  }
+
   const task = await TaskModel.create(reqBody);
+
   return task;
 };
 
@@ -83,7 +124,7 @@ taskService.updateTask = async (id, reqBody) => {
   await TaskModel.update(reqBody, {
     where: { id },
   });
-  return { id, ...reqBody};
+  return { id, ...reqBody };
 };
 
 taskService.deleteTask = async (id) => {

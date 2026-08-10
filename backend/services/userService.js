@@ -1,3 +1,4 @@
+const { Op } = require('sequelize');
 const { GLOBAL_ROLES } = require('../constants');
 const db = require('../models/index');
 const { getUserRoles } = require('../utils/commonHelper');
@@ -7,13 +8,25 @@ const passwordHelper = require('../utils/passwordHelper');
 
 const userService = {};
 
-userService.getUsers = async ({ auth, companyId, isDropdown = false }) => {
+userService.getUsers = async ({ auth, companyId, projectId, isDropdown = false }) => {
   const role = auth.user.globalRole.name;
   companyId = companyId || auth.user?.company?.id;
   const where = {
     ...(companyId && { companyId }),
   };
-
+  if(projectId){
+    let projectMembers = await db.ProjectMember.findAll({
+      attributes: ['userId'],
+      where: {
+        projectId
+      },
+      raw: true,
+    });
+    const projectMemberIds = projectMembers.map(pm => pm.userId);
+    if(projectMemberIds.length > 0){
+      where.id = projectMemberIds;
+    }
+  }
   if(role === GLOBAL_ROLES.SUPER_ADMIN){
     where.globalRoleId = {[db.Sequelize.Op.ne]: 1 }
   }else if(role === GLOBAL_ROLES.COMPANY_ADMIN){
@@ -32,12 +45,63 @@ userService.getUsers = async ({ auth, companyId, isDropdown = false }) => {
       model: db.Role,
       as: 'roles'
     });
+    const includePM = {
+      model: db.ProjectMember,
+      as: 'projectMembership',
+      include: [
+        {
+          model: db.Project,
+          as: 'project'
+        },
+        {
+          model: db.Role,
+          as: 'role'
+        },
+        {
+          model: db.JobTitle,
+          as: 'jobTitle'
+        }
+      ]
+    };
+    if(projectId){
+      includePM.where = {
+        ...(projectId && { projectId }),
+      }
+    }
+    include.push(includePM);
   }
-
   return await UserModel.findAll({
     ...(where && { where }),
     ...(attributes.length > 0 && { attributes }),
     ...(include.length > 0 && { include })
+  });
+};
+
+userService.getUnAssignedUsers = async ({ auth }) => {
+  let projectIds = await db.Project.findAll({
+    attributes: ['id'],
+    where: {
+      companyId: auth.user.company.id
+    }
+  });
+  projectIds = projectIds.map(p => p.id);
+  let projectMemberIds = await db.ProjectMember.findAll({
+      attributes: ['userId'],
+      where: {
+        projectId: projectIds
+      },
+    });
+  projectMemberIds = projectMemberIds.map(pm => pm.userId);
+
+  return await UserModel.findAll({
+    attributes: ['id', 'firstName', 'lastName', 'email'],
+    where: {
+      id: {
+        [Op.notIn]: projectMemberIds
+      },
+      globalRoleId: 3,
+      ...(auth.user.company?.id && { companyId: auth.user.company?.id}),
+    }
   });
 };
 
@@ -54,12 +118,7 @@ userService.createUser = async (auth, reqBody) => {
   reqBody.isActive = true;
   const result = db.sequelize.transaction(async (t) => {
     const user = await UserModel.create(reqBody, { transaction: t });
-    const projectMembership = await db.ProjectMember.create({
-      userId: user.id,
-      projectId: parseInt(reqBody.projectId),
-      roleId: parseInt(reqBody.roleId),
-    }, { transaction: t });
-    return { user, projectMembership };
+    return user;
   });
   return result;
 };
@@ -85,6 +144,7 @@ userService.getUserById = async (id) => {
 };
 
 userService.updateUser = async (id, reqBody) => {
+  reqBody.password = await passwordHelper.generatePasswordHash(reqBody.password);
   await UserModel.update(reqBody, {
     where: { id },
   });
@@ -113,7 +173,25 @@ userService.getUserByIdWithRole = async (userId) => {
               model: db.Company,
               as: 'company',
               attributes: ['id', 'name'],
-            }
+            },
+            {
+              model: db.ProjectMember,
+              as: 'projectMembership',
+              include: [
+                {
+                  model: db.Project,
+                  as: 'project'
+                },
+                {
+                  model: db.Role,
+                  as: 'role'
+                },
+                {
+                  model: db.JobTitle,
+                  as: 'jobTitle'
+                }
+              ]
+            },
         ]
     });
     return user.get({

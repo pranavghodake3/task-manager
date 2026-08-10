@@ -10,6 +10,29 @@ const { sequelize } = require('./models/sequelize');
 const logger = require('./config/logger.js');
 const { errorResponse, successResponse } = require('./utils/responseHelper.js');
 const cookieParser = require('cookie-parser');
+const http = require('http');
+const { initiateConnection } = require('./sockets/socket.js');
+// const { verifyToken } = require('./utils/jwtUtil.js');
+
+const httpServer = http.createServer(app);
+const io = initiateConnection(httpServer);
+
+io.on('connection', client => {
+  console.log("Client connected: ", client.id);
+  console.log("Client connected handshake: ", client.handshake);
+
+  client.on('join-project', ({projectId}) => {
+    const projectRoom = `project:${projectId}`;
+    client.join(projectRoom);
+    console.log(`Client ${client.id} joined projectRoom: ${projectRoom}`);
+  })
+  // const data = verifyToken(client.handshake.auth.token);
+  // console.log("APP.JS data: ",data);
+  // client.join(data?.userId?.toString());
+  client.on('disconnect', () => {
+    console.log("Client disconnected");
+  });
+});
 
 app.use(cookieParser());
 app.use(cors({
@@ -39,7 +62,7 @@ sequelize
   .authenticate()
   .then(() => {
     console.log('=========== Postgres SQL DB Connected Successfuly!!');
-    app.listen(PORT, () => {
+    httpServer.listen(PORT, () => {
       console.log(`=========== Server running on PORT ${PORT}`);
     });
   })
