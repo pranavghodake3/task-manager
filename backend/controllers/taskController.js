@@ -27,7 +27,12 @@ taskController.getTaskComments = async (req) => {
 
 taskController.createTaskComment = async (req) => {
   const { id } = req.params;
+  const globalProjectId = req.cookies.globalProjectId;
   const comment = await taskService.createTaskComment(id, req.auth, req.body);
+  const io = getIo();
+  const projectRoom = `project:${globalProjectId}`;
+  const commentWithData = await taskService.getTaskCommentById(comment.id);
+  io.to(projectRoom).emit('task_comment_added', commentWithData);
 
   return { data: comment, statusCode: 201 };
 };

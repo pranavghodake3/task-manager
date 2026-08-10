@@ -87,6 +87,18 @@ taskService.getTaskComments = async (taskId) => {
   });
 };
 
+taskService.getTaskCommentById = async (id) => {
+  return await db.TaskComment.findByPk(id, {
+    include: [
+      {
+        model: db.User,
+        as: 'user',
+        attributes: ['id', 'email', 'firstName', 'lastName'],
+      },
+    ],
+  });
+};
+
 taskService.createTaskComment = async (taskId, auth, reqBody) => {
   reqBody.taskId = taskId;
   reqBody.userId = auth.user.id;

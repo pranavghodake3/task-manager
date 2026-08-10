@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import api from "../services/api";
 import Header from "../compoenets/Header";
 import NavBar from "../compoenets/NavBar";
 import { NavLink, useParams } from "react-router-dom";
 import { formatDate } from "../util";
 import { useAuthStore } from "../store/authStore";
+import { SocketContext } from "../socket/SocketContext";
 
 function getDisplayName(user) {
   if (!user) return "Unknown user";
@@ -22,6 +23,36 @@ function getInitials(name) {
   return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
 }
 
+function getCommentIdentity(comment) {
+  const content =
+    comment?.comment || comment?.content || comment?.message || "";
+  const author =
+    comment?.user || comment?.creator || comment?.author || comment?.createdBy;
+  const authorName = getDisplayName(author);
+  const createdAt = comment?.createdAt || comment?.updatedAt || "";
+
+  return (
+    comment?.id ||
+    comment?._id ||
+    comment?.commentId ||
+    comment?.clientId ||
+    `${createdAt}-${authorName}-${content}`
+  );
+}
+
+function addUniqueComment(existingComments, incomingComment) {
+  const identity = getCommentIdentity(incomingComment);
+  if (!identity) return existingComments;
+
+  const alreadyExists = existingComments.some(
+    (comment) => getCommentIdentity(comment) === identity,
+  );
+
+  if (alreadyExists) return existingComments;
+
+  return [incomingComment, ...existingComments];
+}
+
 export default function TaskView() {
   const user = useAuthStore((state) => state.user);
   const accessToken = useAuthStore((state) => state.accessToken);
@@ -31,6 +62,7 @@ export default function TaskView() {
   const [commentText, setCommentText] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoadingComments, setIsLoadingComments] = useState(false);
+  const { socket } = useContext(SocketContext);
 
   useEffect(() => {
     async function loadTask() {
@@ -53,6 +85,18 @@ export default function TaskView() {
   }, [accessToken, id]);
 
   useEffect(() => {
+    if (!socket) return;
+    const handleCommentAdd = (comment) => {
+      setComments((oldComments) => addUniqueComment(oldComments, comment));
+    };
+    socket.on("task_comment_added", handleCommentAdd);
+
+    return () => {
+      socket.off("task_comment_added", handleCommentAdd);
+    };
+  }, [socket]);
+
+  useEffect(() => {
     async function loadComments() {
       if (!id) return;
 
@@ -62,19 +106,7 @@ export default function TaskView() {
         try {
           const response = await api.get(`/tasks/${id}/comments`);
 
-          const payload =
-            response?.data?.data ??
-            response?.data?.comments ??
-            response?.data ??
-            [];
-          const normalized = Array.isArray(payload)
-            ? payload
-            : (payload.comments ?? []);
-
-          if (Array.isArray(normalized)) {
-            setComments(normalized);
-            return;
-          }
+          setComments(response?.data?.data ?? []);
         } catch (error) {
           lastError = error;
           if (error?.response?.status !== 404) {
@@ -122,7 +154,13 @@ export default function TaskView() {
         throw new Error("Comment endpoint not available");
       }
 
-      setComments((oldComments) => [createdComment, ...oldComments]);
+      const localComment = {
+        ...createdComment,
+        user,
+        clientId: `local-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+      };
+
+      setComments((oldComments) => addUniqueComment(oldComments, localComment));
       setCommentText("");
     } catch (error) {
       console.error("Error adding comment: ", error);
@@ -275,17 +313,21 @@ export default function TaskView() {
                   No comments yet. Start the conversation.
                 </div>
               ) : (
-                comments.map((comment) => {
-                  const author = comment.user;
+                comments.map((comment, index) => {
+                  const author =
+                    comment.user ||
+                    comment.creator ||
+                    comment.author ||
+                    comment.createdBy;
                   const authorName = getDisplayName(author);
-                  const content = comment.comment || "";
+                  const content =
+                    comment.comment || comment.content || comment.message || "";
 
                   return (
                     <article
                       key={
-                        comment.id ||
-                        comment._id ||
-                        `${comment.createdAt}-${authorName}`
+                        getCommentIdentity(comment) ||
+                        `${index}-${comment.createdAt || "comment"}`
                       }
                       className="comment-item"
                     >
