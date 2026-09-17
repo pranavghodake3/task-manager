@@ -7,6 +7,12 @@ const process = require('process');
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/../config/config.json')[env];
+// Allow overriding DB config with environment variables (useful for Kubernetes)
+config.host = process.env.DB_HOST || process.env.POSTGRES_HOST || config.host;
+config.port = process.env.DB_PORT || process.env.POSTGRES_PORT || config.port;
+config.username = process.env.POSTGRES_USER || process.env.DB_USER || config.username;
+config.password = process.env.POSTGRES_PASSWORD || process.env.DB_PASSWORD || config.password;
+config.database = process.env.POSTGRES_DB || process.env.DB_NAME || config.database;
 const db = {};
 
 let sequelize;
