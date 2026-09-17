@@ -84,6 +84,7 @@ taskService.getTaskComments = async (taskId) => {
         attributes: ['id', 'email', 'firstName', 'lastName'],
       },
     ],
+    order: [['id', 'DESC']],
   });
 };
 

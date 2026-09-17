@@ -14,36 +14,36 @@ userService.getUsers = async ({ auth, companyId, projectId, isDropdown = false }
   const where = {
     ...(companyId && { companyId }),
   };
-  if(projectId){
+  if (projectId) {
     let projectMembers = await db.ProjectMember.findAll({
       attributes: ['userId'],
       where: {
-        projectId
+        projectId,
       },
       raw: true,
     });
-    const projectMemberIds = projectMembers.map(pm => pm.userId);
-    if(projectMemberIds.length > 0){
+    const projectMemberIds = projectMembers.map((pm) => pm.userId);
+    if (projectMemberIds.length > 0) {
       where.id = projectMemberIds;
     }
   }
-  if(role === GLOBAL_ROLES.SUPER_ADMIN){
-    where.globalRoleId = {[db.Sequelize.Op.ne]: 1 }
-  }else if(role === GLOBAL_ROLES.COMPANY_ADMIN){
-    where.globalRoleId = {[db.Sequelize.Op.notIn]: [1, 2] }
+  if (role === GLOBAL_ROLES.SUPER_ADMIN) {
+    where.globalRoleId = { [db.Sequelize.Op.ne]: 1 };
+  } else if (role === GLOBAL_ROLES.COMPANY_ADMIN) {
+    where.globalRoleId = { [db.Sequelize.Op.notIn]: [1, 2] };
   }
   let attributes = [];
   let include = [];
-  if(isDropdown){
+  if (isDropdown) {
     attributes = ['id', 'firstName', 'lastName'];
-  }else{
+  } else {
     include.push({
       model: db.GlobalRole,
-      as: 'globalRole'
+      as: 'globalRole',
     });
     include.push({
       model: db.Role,
-      as: 'roles'
+      as: 'roles',
     });
     const includePM = {
       model: db.ProjectMember,
@@ -51,29 +51,29 @@ userService.getUsers = async ({ auth, companyId, projectId, isDropdown = false }
       include: [
         {
           model: db.Project,
-          as: 'project'
+          as: 'project',
         },
         {
           model: db.Role,
-          as: 'role'
+          as: 'role',
         },
         {
           model: db.JobTitle,
-          as: 'jobTitle'
-        }
-      ]
+          as: 'jobTitle',
+        },
+      ],
     };
-    if(projectId){
+    if (projectId) {
       includePM.where = {
         ...(projectId && { projectId }),
-      }
+      };
     }
     include.push(includePM);
   }
   return await UserModel.findAll({
     ...(where && { where }),
     ...(attributes.length > 0 && { attributes }),
-    ...(include.length > 0 && { include })
+    ...(include.length > 0 && { include }),
   });
 };
 
@@ -81,27 +81,27 @@ userService.getUnAssignedUsers = async ({ auth }) => {
   let projectIds = await db.Project.findAll({
     attributes: ['id'],
     where: {
-      companyId: auth.user.company.id
-    }
+      companyId: auth.user.company.id,
+    },
   });
-  projectIds = projectIds.map(p => p.id);
+  projectIds = projectIds.map((p) => p.id);
   let projectMemberIds = await db.ProjectMember.findAll({
-      attributes: ['userId'],
-      where: {
-        projectId: projectIds
-      },
-    });
-  projectMemberIds = projectMemberIds.map(pm => pm.userId);
+    attributes: ['userId'],
+    where: {
+      projectId: projectIds,
+    },
+  });
+  projectMemberIds = projectMemberIds.map((pm) => pm.userId);
 
   return await UserModel.findAll({
     attributes: ['id', 'firstName', 'lastName', 'email'],
     where: {
       id: {
-        [Op.notIn]: projectMemberIds
+        [Op.notIn]: projectMemberIds,
       },
       globalRoleId: 3,
-      ...(auth.user.company?.id && { companyId: auth.user.company?.id}),
-    }
+      ...(auth.user.company?.id && { companyId: auth.user.company?.id }),
+    },
   });
 };
 
@@ -124,12 +124,12 @@ userService.createUser = async (auth, reqBody) => {
 };
 
 userService.getUserRoles = async () => {
-    const roles = await RoleModel.findAll({
-        where: {
-            name: getUserRoles()
-        }
-    });
-    return roles;
+  const roles = await RoleModel.findAll({
+    where: {
+      name: getUserRoles(),
+    },
+  });
+  return roles;
 };
 
 userService.getUserById = async (id) => {
@@ -137,14 +137,16 @@ userService.getUserById = async (id) => {
     include: [
       {
         model: db.GlobalRole,
-        as: 'globalRole'
-      }
-    ]
+        as: 'globalRole',
+      },
+    ],
   });
 };
 
 userService.updateUser = async (id, reqBody) => {
-  reqBody.password = await passwordHelper.generatePasswordHash(reqBody.password);
+  if (reqBody.password) {
+    reqBody.password = await passwordHelper.generatePasswordHash(reqBody.password);
+  }
   await UserModel.update(reqBody, {
     where: { id },
   });
@@ -158,45 +160,45 @@ userService.deleteUser = async (id) => {
 };
 
 userService.getUserByIdWithRole = async (userId) => {
-    const user = await UserModel.findOne({
-        attributes: ['id', 'firstName', 'lastName', 'email'],
-        where: {
-            id: userId,
-        },
+  const user = await UserModel.findOne({
+    attributes: ['id', 'firstName', 'lastName', 'email'],
+    where: {
+      id: userId,
+    },
+    include: [
+      {
+        model: db.GlobalRole,
+        as: 'globalRole',
+        attributes: ['id', 'name'],
+      },
+      {
+        model: db.Company,
+        as: 'company',
+        attributes: ['id', 'name'],
+      },
+      {
+        model: db.ProjectMember,
+        as: 'projectMembership',
         include: [
-            {
-              model: db.GlobalRole,
-              as: 'globalRole',
-              attributes: ['id', 'name'],
-            },
-            {
-              model: db.Company,
-              as: 'company',
-              attributes: ['id', 'name'],
-            },
-            {
-              model: db.ProjectMember,
-              as: 'projectMembership',
-              include: [
-                {
-                  model: db.Project,
-                  as: 'project'
-                },
-                {
-                  model: db.Role,
-                  as: 'role'
-                },
-                {
-                  model: db.JobTitle,
-                  as: 'jobTitle'
-                }
-              ]
-            },
-        ]
-    });
-    return user.get({
-        plain: true
-    });
+          {
+            model: db.Project,
+            as: 'project',
+          },
+          {
+            model: db.Role,
+            as: 'role',
+          },
+          {
+            model: db.JobTitle,
+            as: 'jobTitle',
+          },
+        ],
+      },
+    ],
+  });
+  return user.get({
+    plain: true,
+  });
 };
 
 module.exports = userService;

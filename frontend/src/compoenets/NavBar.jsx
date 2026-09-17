@@ -9,62 +9,80 @@ import { setGlobalProjectId } from "../util";
 import { SocketContext } from "../socket/SocketContext";
 
 export default function NavBar() {
-  const {
-    globalProjectId, setGlobalProjectId: setGlobalProjectIdContext
-  } = useContext(GlobalProjectContext);
-    const setIsLoggedIn = useAuthStore((state) => state.setIsLoggedIn);
-    const setAccessToken = useAuthStore((state) => state.setAccessToken);
-    const { socket } = useContext(SocketContext);
-    // const [globalProjectId, setGlobalProjectId] = useState(Cookies.get('globalProjectId') ?? '');
-    const user = useAuthStore((state) => state.user);
-    const { can } = usePermission();
-    const navigate = useNavigate();
-    async function handleLogout() {
-      try {
-        await destroyToken();
-        setIsLoggedIn(false);
-        setAccessToken(null);
-        navigate("/login");
-      } catch (error) {
-        console.log('Error in logout: ',error);
-      }
+  const { globalProjectId, setGlobalProjectId: setGlobalProjectIdContext } =
+    useContext(GlobalProjectContext);
+  const setIsLoggedIn = useAuthStore((state) => state.setIsLoggedIn);
+  const setAccessToken = useAuthStore((state) => state.setAccessToken);
+  const { socket } = useContext(SocketContext);
+  // const [globalProjectId, setGlobalProjectId] = useState(Cookies.get('globalProjectId') ?? '');
+  const user = useAuthStore((state) => state.user);
+  const { can } = usePermission();
+  const navigate = useNavigate();
+  async function handleLogout() {
+    try {
+      await destroyToken();
+      setIsLoggedIn(false);
+      setAccessToken(null);
+      navigate("/login");
+    } catch (error) {
+      console.log("Error in logout: ", error);
     }
-    function handleGlobalProjectChange(e) {
-      setGlobalProjectIdContext(e.target.value);
-      socket.emit('join-project', {
-        projectId: e.target.value
-      });
-      setGlobalProjectId(e.target.value);
-      window.location.reload();
-    }
+  }
+  function handleGlobalProjectChange(e) {
+    setGlobalProjectIdContext(e.target.value);
+    socket.emit("join-project", {
+      projectId: e.target.value,
+    });
+    setGlobalProjectId(e.target.value);
+    window.location.reload();
+  }
 
   return (
     <aside className="sidebar">
-        <div className="logo"><NavLink to="/">Home</NavLink> { `${user.firstName} ${user.lastName} (${user?.globalRole?.name ?? ''})` } </div>
+      <div className="logo">
+        <NavLink to="/">Home</NavLink>{" "}
+        {`${user.firstName} ${user.lastName} (${user?.globalRole?.name ?? ""})`}{" "}
+      </div>
 
-        <nav className="menu">
-          {![GLOBAL_ROLES.SUPER_ADMIN, GLOBAL_ROLES.COMPANY_ADMIN].includes(user?.globalRole?.name) &&
+      <nav className="menu">
+        {![GLOBAL_ROLES.SUPER_ADMIN, GLOBAL_ROLES.COMPANY_ADMIN].includes(
+          user?.globalRole?.name,
+        ) && (
           <div>
             <label htmlFor="projects">Set Project</label>
-            <select className="project-select" name="projects" id="projects" value={globalProjectId} onChange={handleGlobalProjectChange}>
-              {user?.projectMembership?.map(pm => 
-                <option key={pm.projectId} value={pm.project.id}>{pm.project.name}({pm.role.name})</option>
-              )}
+            <select
+              className="project-select"
+              name="projects"
+              id="projects"
+              value={globalProjectId}
+              onChange={handleGlobalProjectChange}
+            >
+              {user?.projectMembership?.map((pm) => (
+                <option key={pm.projectId} value={pm.project.id}>
+                  {pm.project.name}({pm.role.name})
+                </option>
+              ))}
             </select>
           </div>
-          }
-          <NavLink to="/dashboard">Dashboard({ user.company?.name })</NavLink>
+        )}
+        <NavLink to="/dashboard">Dashboard({user.company?.name})</NavLink>
 
-          { can(ENTITIES.PROJECT, ACTION_TYPES.READ_ALL) && <NavLink to="/projects">Projects</NavLink> }
+        {can(ENTITIES.PROJECT, ACTION_TYPES.READ_ALL) && (
+          <NavLink to="/projects">Projects</NavLink>
+        )}
 
-          { can(ENTITIES.USER, ACTION_TYPES.READ_ALL) && <NavLink to="/users">Users</NavLink> }
+        {can(ENTITIES.USER, ACTION_TYPES.READ_ALL) && (
+          <NavLink to="/users">Users</NavLink>
+        )}
 
-          <NavLink to="/tasks">Tasks</NavLink>
-          
-          {/* <NavLink to="/">Reports</NavLink> */}
-          {/* <NavLink to="/">Settings</NavLink> */}
-            <button onClick={handleLogout}>Logout</button>
-        </nav>
-      </aside>
-  )  
-};
+        <NavLink to="/tasks">Tasks</NavLink>
+
+        <NavLink to="/profile">Profile</NavLink>
+
+        {/* <NavLink to="/">Reports</NavLink> */}
+        {/* <NavLink to="/">Settings</NavLink> */}
+        <button onClick={handleLogout}>Logout</button>
+      </nav>
+    </aside>
+  );
+}
