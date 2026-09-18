@@ -1,6 +1,6 @@
 const obj = {
-  TOKEN_EXPIRY: '5m',
-  REFRESH_TOKEN_EXPIRY: '1h',
+  TOKEN_EXPIRY: 60 * 5, // 5 minutes
+  REFRESH_TOKEN_EXPIRY: 60 * 60, // 1 hour
   GLOBAL_ROLES: {
     SUPER_ADMIN: 'Super Admin',
     COMPANY_ADMIN: 'Company Admin',
@@ -23,25 +23,27 @@ const obj = {
     BUSINESS_ANALYST:'Business Analyst',
   },
   ENTITIES: {
-    USER: 'User',
-    COMPANY: 'Company',
-    PROJECT: 'Project',
-    TASK: 'Task',
-    ROLE: 'Role',
-    STATUS: 'Status',
-    PRIORITY: 'Priority',
-    TASK_TYPE: 'Task Type',
-    TASK_COMMENT: 'Task Comment',
+    USER: 'USER',
+    COMPANY: 'COMPANY',
+    PROJECT: 'PROJECT',
+    TASK: 'TASK',
+    ROLE: 'ROLE',
+    STATUS: 'STATUS',
+    PRIORITY: 'PRIORITY',
+    TASK_TYPE: 'TASK_TYPE',
+    TASK_COMMENT: 'TASK_COMMENT',
   },
   ACTION_TYPES: {
-    CREATE: 'Create',
-    READ: 'Read',
-    UPDATE: 'Update',
-    DELETE: 'Delete',
+    CREATE: 'CREATE',
+    READ: 'READ',
+    READ_ALL: 'READ_ALL',
+    UPDATE: 'UPDATE',
+    DELETE: 'DELETE',
   },
   STATUSES: {
     
-  }
+  },
+  X_DEVICE: 'BROWSER'
 };
 
 module.exports = obj;

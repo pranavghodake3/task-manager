@@ -1,10 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import { getUserInfo } from "../util/auth";
 import api from "../services/api";
 import { AuthContext} from "./AuthContext";
 
 export const AuthContextProvider = ({ children }) => {
-    const [user, setUser] = useState(() => getUserInfo() || {});
+    const [user, setUser] = useState({});
     const [accessToken, setAccessToken] = useState('');
     const [accessTokenExpiry, setAccessTokenExpiry] = useState('');
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -17,6 +16,7 @@ export const AuthContextProvider = ({ children }) => {
         async function authRefresh() {
             try {
                 const response = await api.get('auth/refresh-access-token');
+
                 setAccessToken(response.data.data.accessToken);
                 setIsLoggedIn(true);
             } catch (_error) {

@@ -5,31 +5,56 @@ const userController = {};
 
 userController.getUsers = async (req) => {
   const { auth } = req;
-    const { companyId } = req.query;
-    let { isDropdown } = req.query;
-    isDropdown = makeBoolean(isDropdown);
-    const role = req.auth.user.globalRole.name;
-    const users = await userService.getUsers({
-      auth,
-      role,
-      companyId,
-      isDropdown,
-    });
-    return { data: users };
+  const { companyId } = req.query;
+  const globalProjectId = req.cookies.globalProjectId;
+  let { isDropdown } = req.query;
+  isDropdown = makeBoolean(isDropdown);
+  const role = req.auth.user.globalRole.name;
+  const users = await userService.getUsers({
+    auth,
+    role,
+    companyId,
+    projectId: globalProjectId,
+    isDropdown,
+  });
+  return { data: users };
+};
+
+userController.getUnAssignedUsers = async (req) => {
+  const { auth } = req;
+  const { companyId } = req.query;
+  const globalProjectId = req.cookies.globalProjectId;
+  let { isDropdown } = req.query;
+  isDropdown = makeBoolean(isDropdown);
+  const role = req.auth.user.globalRole.name;
+  const users = await userService.getUnAssignedUsers({
+    auth,
+    role,
+    companyId,
+    projectId: globalProjectId,
+    isDropdown,
+  });
+  return { data: users };
 };
 
 userController.getUserRoles = async () => {
-    const roles = await userService.getUserRoles();
+  const roles = await userService.getUserRoles();
 
-    return {
-        data: roles
-    };
+  return {
+    data: roles,
+  };
 };
 
 userController.createUser = async (req) => {
   const { auth } = req;
   const user = await userService.createUser(auth, req.body);
-  return { data: user };
+  return { data: user, statusCode: 201 };
+};
+
+userController.updateProfile = async (req) => {
+  const { auth } = req;
+  const user = await userService.updateUser(auth.user.id, req.body);
+  return { data: user, statusCode: 200 };
 };
 
 userController.getUser = async (req) => {

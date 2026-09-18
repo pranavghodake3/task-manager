@@ -3,22 +3,55 @@ import { useContext, useEffect, useState } from "react";
 import "../assets/css/dashboard.css";
 import NavBar from "../compoenets/NavBar";
 import api from "../services/api";
-import { AuthContext } from "../context/AuthContext";
 import { NavLink, useNavigate } from "react-router-dom";
 import Header from "../compoenets/Header";
-
+import { useAuthStore } from "../store/authStore";
+import usePermission from "../hooks/usePermission";
+import { ACTION_TYPES, ENTITIES } from "../constants";
+import { SocketContext } from "../socket/SocketContext";
 
 export default function TaskList() {
-  const AuthContextData = useContext(AuthContext);
+  const accessToken = useAuthStore((state) => state.accessToken);
   const [tasks, setTasks] = useState([]);
   const navigate = useNavigate();
+  const { can } = usePermission();
+  const { socket } = useContext(SocketContext);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleTaskCreated = (task) => {
+      setTasks((oldTasks) => [task, ...oldTasks]);
+    };
+    socket.on('task_created', handleTaskCreated);
+
+    const handleTaskDeleted = (deletedTask) => {
+      setTasks((currentTasks) => currentTasks.filter((t) => parseInt(t.id) != parseInt(deletedTask.taskId)));
+    };
+    socket.on('task_deleted', handleTaskDeleted);
+
+    const handleTaskUpdated = (updatedTask) => {
+      setTasks((oldTasks) =>
+        oldTasks.map((task) =>
+          String(task.id) === String(updatedTask.id) ? updatedTask : task
+        )
+      );
+    };
+    socket.on('task_updated', handleTaskUpdated);
+
+    return () => {
+      socket.off('task_created', handleTaskCreated);
+      socket.off('task_deleted', handleTaskDeleted);
+      socket.off('task_updated', handleTaskUpdated);
+    };
+  }, [socket]);
 
   useEffect(() => {
     async function loadTasks() {
       try {
           const response = await api.get(`/tasks`, {
           headers: {
-            Authorization: `Bearer ${AuthContextData.accessToken}`
+            Authorization: `Bearer ${accessToken}`
           }
         });
         setTasks(response.data.data);
@@ -29,7 +62,7 @@ export default function TaskList() {
       
     }
     loadTasks();
-  }, [AuthContextData.accessToken]);
+  }, [accessToken]);
   async function handleDeleteTask(e) {
     const taskIndex = parseInt(e.currentTarget.dataset.taskIndex, 10);
     const taskId = e.currentTarget.dataset.taskId;
@@ -37,7 +70,7 @@ export default function TaskList() {
     if (conf) {
       await api.delete(`/tasks/${taskId}`, {
         headers: {
-          Authorization: `Bearer ${AuthContextData.accessToken}`
+          Authorization: `Bearer ${accessToken}`
         }
       });
       setTasks((currentTasks) => currentTasks.filter((_, idx) => idx !== taskIndex));
@@ -53,7 +86,7 @@ export default function TaskList() {
       <main className="main-content">
         {/* Header */}
         <Header title='Tasks' description='Manage and view all your tasks' button={
-            <button className="create-btn" onClick={()=> navigate('/tasks/create')}>+ New Task</button>
+          can(ENTITIES.TASK, ACTION_TYPES.CREATE) && <button className="create-btn" onClick={()=> navigate('/tasks/create')}>+ New Task</button>
         } />
 
         {/* Tasks Table */}
@@ -103,20 +136,30 @@ export default function TaskList() {
                       </div>
                     </td>
                     <td className="actions">
-                      <NavLink to={`/tasks/${task.id}`} className="action-link">
-                        View
-                      </NavLink>
-                      <NavLink to={`/tasks/${task.id}/edit`} className='action-link action-btn'>Edit</NavLink>
-                      {/* <button className="action-link action-btn">Edit</button> */}
-                      <button
-                        type="button"
-                        className="action-link delete-link"
-                        onClick={handleDeleteTask}
-                        data-task-index={index}
-                        data-task-id={task.id}
-                      >
-                        Delete
-                      </button>
+                      {
+                        can(ENTITIES.TASK, ACTION_TYPES.READ) &&
+                        <NavLink to={`/tasks/${task.id}`} className="action-link">
+                          View
+                        </NavLink>
+                      }
+
+                      {
+                        can(ENTITIES.TASK, ACTION_TYPES.UPDATE) &&
+                        <NavLink to={`/tasks/${task.id}/edit`} className='action-link action-btn'>Edit</NavLink>
+                      }
+
+                      {
+                        can(ENTITIES.TASK, ACTION_TYPES.DELETE) &&
+                        <button
+                          type="button"
+                          className="action-link delete-link"
+                          onClick={handleDeleteTask}
+                          data-task-index={index}
+                          data-task-id={task.id}
+                        >
+                          Delete
+                        </button>
+                      }
                     </td>
                   </tr>
                 ))}

@@ -9,6 +9,9 @@ const { getUserByIdWithRole } = require('../services/userService');
 const CustomError = require('../utils/CustomError');
 const jwtUtil = require('../utils/jwtUtil');
 const permissionUtil = require('../utils/permission');
+const { X_DEVICE } = require('../constants');
+const { setProjectLevelPermissions } = require('../services/authService');
+const { isSuperOrCompanyAdmin } = require('../utils/commonHelper');
 
 const authMiddleware = {};
 
@@ -45,7 +48,9 @@ authMiddleware.register = async (req, res, next) => {
       repeat_password: Joi.ref('password'),
     });
 
-    await schema.validateAsync(req.body || {});
+    await schema.validateAsync(req.body || {}, {
+      abortEarly: false
+    });
     const count = await UserModel.count({
       where: {
         email: req.body.email,
@@ -69,9 +74,11 @@ authMiddleware.registerCompany = async (req, res, next) => {
       lastName: Joi.string().pattern(new RegExp('^[a-zA-Z]')).max(255).required(),
       email: Joi.string().min(3).max(255).email().required(),
       password: Joi.string().min(6).max(255).required(),
-      repeat_password: Joi.ref('password'),
+      confirm_password: Joi.ref('password'),
     });
-    await schema.validateAsync(req.body || {});
+    await schema.validateAsync(req.body || {}, {
+      abortEarly: false
+    });
 
     const companyCount = await CompanyModel.count({
       where: {
@@ -93,7 +100,11 @@ authMiddleware.registerCompany = async (req, res, next) => {
 
     next();
   } catch (error) {
-    return errorResponse(res, error, 400);
+    if(error.details){
+      return errorResponse(res, new CustomError('Validation Error', 400, error.details));
+    }else{
+      return errorResponse(res, error, 400);
+    }
   }
 };
 
@@ -161,18 +172,28 @@ authMiddleware.registerCompanyProjectUser = async (req, res, next) => {
 
 authMiddleware.isAuthentic = async (req, res, next) => {
   try {
+    const xDeviceInfo = req.headers['x-device'];
+    if(xDeviceInfo === X_DEVICE && !req.cookies.refreshToken){
+      throw new CustomError('Missing Refresh Token in Cookie', 401);
+    }
     let bearerToken = req.headers.authorization?.split('Bearer ')[1];
 
     if (!bearerToken) {
       throw new CustomError('Missing Bearer Token or it is Undefined', 401);
     }
     const data = jwtUtil.verifyToken(bearerToken);
-    const user = await getUserByIdWithRole(data.userId);
-    req.auth = {
-      user,
-    };
-    console.log("req.auth: ",req.auth);
     if (data) {
+      const user = await getUserByIdWithRole(data.userId);
+      const projectMembership = setProjectLevelPermissions(permissionUtil[user.globalRole.name] || {}, user.projectMembership);
+      const userProjects = projectMembership.reduce((acc, pm) => {
+        acc[pm.projectId] = pm;
+        return acc;
+      }, {});
+      user.userProjects = userProjects;
+      req.auth = {
+        user,
+      };
+      console.log("req.auth: ",req.auth);
       next();
     } else {
       throw new CustomError('Invalid Bearer Token or it has expired', 401);
@@ -217,10 +238,9 @@ authMiddleware.isRefreshTokenAuthentic = async (req, res, next) => {
 
 authMiddleware.isRefreshTokenCookieAuthentic = async (req, res, next) => {
   try {
-    console.log('Cookies: ', req.cookies.refreshToken);
     let bearerToken = req.cookies.refreshToken;
     if (!bearerToken) {
-      throw new CustomError('Missing Refresh Token', 401);
+      throw new CustomError('Missing Refresh Token in Cookie', 401);
     }
     const validToken = jwtUtil.verifyRefreshToken(bearerToken);
     const refreshToken = await RefreshTokenModel.findOne({
@@ -251,9 +271,16 @@ authMiddleware.isRefreshTokenCookieAuthentic = async (req, res, next) => {
 
 authMiddleware.hasAccess = (entity, action) => {
   return (req, res, next) => {
+    if(req.query.isDropdown){
+      return next();
+    }
+    const globalProjectId = req.cookies.globalProjectId;
     try {
       const user = req.auth.user;
-      const hasPermission = permissionUtil[user.globalRole.name]?.[entity]?.includes(action);
+      const permissions = isSuperOrCompanyAdmin(user) ?permissionUtil[user.globalRole.name] :  user.userProjects[globalProjectId].permissions;
+
+      const hasPermission = permissions[entity]?.includes(action);
+      console.log(`hasAccess ${entity}, ${action}, user.globalRole.name: ${user.globalRole.name}, hasPermission:${hasPermission}`);
       if (!hasPermission) {
         throw new CustomError('Insufficient permissions', 403);
       }

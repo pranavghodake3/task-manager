@@ -1,44 +1,44 @@
 import { useContext, useState } from "react";
-
 import "../assets/css/auth.css";
 import api from "../services/api";
 import { useNavigate, NavLink } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext";
+import { setLoginStore } from "../services/authService";
+import { SocketContext } from "../socket/SocketContext";
 
 export default function Login() {
-  const AuthContextData = useContext(AuthContext);
   const navigate = useNavigate();
   const [apiError, setApiError] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [isLoginSuccess, setIsLoginSuccess] = useState(true);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoginSuccess, setIsLoginSuccess] = useState(true);
+  const SocketContextData = useContext(SocketContext);
 
-    function setLoginData(data, AuthContextData) {
-      AuthContextData.setUser(data.user);
-      AuthContextData.setAccessToken(data.accessToken);
-      const expireMinutes = parseInt(data.accessTokenExpiresIn, 10);
-      const expiryMs = Date.now() + expireMinutes * 60 * 1000;
-      AuthContextData.setAccessTokenExpiry(expiryMs.toString());
-      AuthContextData.setIsLoggedIn(true);
-      localStorage.setItem('user', JSON.stringify(data.user));
-    }
+  async function handleSubmit(e) {
+    e.preventDefault();
+    try {
+      const response = await api.post("/auth/login", { email, password });
+      setLoginStore(response.data.data);
+      setIsLoginSuccess(response.data.status);
+      // let SocketProvider handle the socket connection when auth state changes
+      // optionally trigger an immediate connect
+      const globalProjectId = response.data.data.user?.projectMembership[0]?.projectId ?? 0;
+      console.log('AFTER LOGIN globalProjectId: ',globalProjectId);
+      if (SocketContextData?.connect) {
+        SocketContextData.connect(globalProjectId);
+        
+        // SocketContextData.socket.emit('join-project', { projectId: globalProjectId });
+      }
+      console.log('Login SocketContextData: ', SocketContextData);
 
-    async function handleSubmit(e){
-        e.preventDefault();
-        try {
-          const response = await api.post("/auth/login", {email, password});
-          setIsLoginSuccess(response.data.status);
-          setLoginData(response.data.data, AuthContextData);
-          
-          if(response.data.status){
-            navigate('/dashboard');
-          }
-        } catch (error) {
-          console.log("Login Error: ",error)
-          setApiError(error.response.data.error.message);
-          setIsLoginSuccess(error.response.data.status);
-        }
+      if (response.data.status) {
+        navigate('/dashboard');
+      }
+    } catch (error) {
+      console.log("Login Error: ", error);
+      setApiError(error.response?.data?.error?.message ?? "Login failed");
+      setIsLoginSuccess(error.response?.data?.status ?? false);
     }
+  }
 
   return (
     <div className="auth-page">

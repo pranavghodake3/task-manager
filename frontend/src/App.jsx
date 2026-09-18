@@ -10,7 +10,9 @@
 // import Login from './pages/Login'
 // import Signup from './pages/Signup'
 // import Home from './pages/Home'
+import AuthInitializer from './compoenets/AuthInitializer'
 import AppRoute from './routes/AppRoute'
+import SocketProvider from './socket/SocketProvider'
 
 // const router = createBrowserRouter([
 //   { path: '/', Component: Home },
@@ -23,7 +25,11 @@ function App() {
 
   return (
     // <RouterProvider router={router} />/
-    <AppRoute />
+    <SocketProvider>
+      <AuthInitializer>
+        <AppRoute />
+      </AuthInitializer>
+    </SocketProvider>
   )
 }
 

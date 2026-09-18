@@ -36,6 +36,11 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'globalRoleId',
         as: 'globalRole'
       });
+
+      User.hasMany(models.ProjectMember, {
+        foreignKey: 'userId',
+        as: 'projectMembership'
+      });
     }
   }
   User.init({

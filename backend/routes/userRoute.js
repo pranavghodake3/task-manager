@@ -5,16 +5,50 @@ const { handleAsyncFunction } = require('../utils/commonHelper');
 const { hasAccess } = require('../middlewares/authMiddleware');
 const { ENTITIES, ACTION_TYPES } = require('../constants');
 
-router.get('/', hasAccess(ENTITIES.PROJECT_USER, ACTION_TYPES.READ), handleAsyncFunction(userController.getUsers));
+router.get(
+  '/',
+  hasAccess(ENTITIES.USER, ACTION_TYPES.READ_ALL),
+  handleAsyncFunction(userController.getUsers),
+);
 
-router.post('/', hasAccess(ENTITIES.PROJECT_USER, ACTION_TYPES.CREATE), handleAsyncFunction(userController.createUser));
+router.get(
+  '/get-unassigned-users',
+  hasAccess(ENTITIES.USER, ACTION_TYPES.READ),
+  handleAsyncFunction(userController.getUnAssignedUsers),
+);
 
-router.get('/roles', handleAsyncFunction(userController.getUserRoles));
+router.post(
+  '/',
+  hasAccess(ENTITIES.USER, ACTION_TYPES.CREATE),
+  handleAsyncFunction(userController.createUser),
+);
 
-router.get('/:id', handleAsyncFunction(userController.getUser));
+router.get('/profile', handleAsyncFunction(userController.getProfile));
 
-router.put('/:id', handleAsyncFunction(userController.updateUser));
+router.post('/profile', handleAsyncFunction(userController.updateProfile));
 
-router.delete('/:id', handleAsyncFunction(userController.deleteUser));
+router.get(
+  '/roles',
+  // hasAccess(ENTITIES.USER, ACTION_TYPES.CREATE),
+  handleAsyncFunction(userController.getUserRoles),
+);
+
+router.get(
+  '/:id',
+  hasAccess(ENTITIES.USER, ACTION_TYPES.READ),
+  handleAsyncFunction(userController.getUser),
+);
+
+router.put(
+  '/:id',
+  hasAccess(ENTITIES.USER, ACTION_TYPES.UPDATE),
+  handleAsyncFunction(userController.updateUser),
+);
+
+router.delete(
+  '/:id',
+  hasAccess(ENTITIES.USER, ACTION_TYPES.DELETE),
+  handleAsyncFunction(userController.deleteUser),
+);
 
 module.exports = router;

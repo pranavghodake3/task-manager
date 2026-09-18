@@ -5,11 +5,9 @@ const projectController = {};
 
 projectController.getProjects = async (req) => {
   const { auth } = req;
-  const companyId = req.query.companyId ?? auth.user.company.id;
+  const companyId = req.query.companyId ?? auth.user.company?.id;
   let { isDropdown } = req.query;
   isDropdown = makeBoolean(isDropdown);
-  console.log('companyId', companyId);
-  console.log('isDropdown', isDropdown);
   const projects = await projectService.getProjects({
     auth,
     companyId,
@@ -23,6 +21,18 @@ projectController.getProjectById = async (req) => {
   const project = await projectService.getProjectById(id);
   return { data: project };
 };
+
+projectController.addMemberToProject = async (req) => {
+  const { id } = req.params;
+  const projectMemberShip = await projectService.addMemberToProject(id, req.body);
+  return { data: projectMemberShip };
+}
+
+projectController.removeMemberFromProject = async (req) => {
+  const { id, userId } = req.params;
+  await projectService.removeMemberFromProject(id, userId);
+  return { statusCode: 204 };
+}
 
 projectController.createProject = async (req) => {
   const { auth } = req;

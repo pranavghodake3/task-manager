@@ -22,3 +22,25 @@ export const JOB_TITLE = {
     TECH_LEAD: 'Tech Lead',
     BUSINESS_ANALYST:'Business Analyst',
 };
+
+export const ENTITIES = {
+    USER: 'USER',
+    COMPANY: 'COMPANY',
+    PROJECT: 'PROJECT',
+    TASK: 'TASK',
+    ROLE: 'ROLE',
+    STATUS: 'STATUS',
+    PRIORITY: 'PRIORITY',
+    TASK_TYPE: 'TASK_TYPE',
+    TASK_COMMENT: 'TASK_COMMENT',
+};
+
+export const  ACTION_TYPES = {
+    CREATE: 'CREATE',
+    READ: 'READ',
+    READ_ALL: 'READ_ALL',
+    UPDATE: 'UPDATE',
+    DELETE: 'DELETE',
+};
+
+export const X_DEVICE = 'BROWSER';

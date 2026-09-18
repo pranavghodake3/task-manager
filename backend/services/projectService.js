@@ -1,16 +1,17 @@
-const { ROLES, JOB_TITLE, GLOBAL_ROLES } = require('../constants');
+const { GLOBAL_ROLES } = require('../constants');
 const db = require('../models');
 const ProjectModel = db.Project;
-const roleHelper = require('../helpers/roleHelper');
-const makeBoolean = require('../utils/booleanHelper');
-const passwordHelper = require('../utils/passwordHelper');
+const CustomError = require('../utils/CustomError');
 
 const projectService = {};
 
-projectService.getProjects = async ({ companyId, isDropdown = false }) => {
+projectService.getProjects = async ({ auth, companyId, isDropdown = false }) => {
   const where = {
     ...(companyId && { companyId })
   };
+  if(![GLOBAL_ROLES.SUPER_ADMIN, GLOBAL_ROLES.COMPANY_ADMIN].includes(auth.user.globalRole.name)){
+    where.id = await projectService.getMyProjectIds(auth);
+  }
   let attributes = [];
   let include = [];
   if(isDropdown){
@@ -31,6 +32,17 @@ projectService.getProjects = async ({ companyId, isDropdown = false }) => {
     ...(include.length > 0 && { include }),
   });
 };
+
+projectService.getMyProjectIds = async (auth) => {
+  const projects = await db.ProjectMember.findAll({
+    attributes: ['projectId'],
+    where: {
+      userId: auth.user.id,
+    },
+    raw: true,
+  });
+  return projects.map(projectMember => projectMember.projectId);
+}
 
 projectService.getProjectById = async (id) => {
   return await ProjectModel.findByPk(id, {
@@ -72,42 +84,41 @@ projectService.createProject = async (auth, reqBody) => {
     reqBody.key = reqBody.name.toUpperCase().replace(/\s+/g, '-');
 
     const project = await ProjectModel.create(reqBody, { transaction: t });
-    const jobTitle = await roleHelper.getJobTitleByName(JOB_TITLE.PRODUCT_OWNER);
-    const projectAdminRole = await roleHelper.getRoleByName(ROLES.PROJECT_ADMIN);
-
-    let projectAdminId;
-
-    if(makeBoolean(reqBody.createNew)){
-      const projectUserRole = await db.GlobalRole.findOne({
-        attributes: ['id'],
-        where: {
-          name: GLOBAL_ROLES.PROJECT_USER,
-        },
-      });
-      reqBody.password = await passwordHelper.generatePasswordHash(reqBody.password);
-      reqBody.globalRoleId = projectUserRole.id;
-      reqBody.companyId = auth.user.company.id;
-      reqBody.isActive = true;
-      const user = await db.User.create(reqBody, { transaction: t });
-      projectAdminId = user.id;
-      
-    }else{
-      projectAdminId = parseInt(reqBody.projectAdminId);
-    }
-    const projectMembership = await db.ProjectMember.create({
-      userId: projectAdminId,
-      projectId: project.id,
-      roleId: projectAdminRole.id,
-      jobTitleId: jobTitle.id
-    }, { transaction: t });
 
     await t.commit();
-    return { project, projectMembership };
+    return project;
   } catch (error) {
     await t.rollback();
     throw error;
   }
 };
+
+projectService.addMemberToProject = async (projectId, reqBody) => {
+  const t = await db.sequelize.transaction();
+  try {
+    const existingProjectMembership = await db.ProjectMember.findOne({
+      where: {
+        userId: reqBody.userId,
+        projectId: projectId,
+      }
+    });
+    if (existingProjectMembership) {
+      throw new CustomError('User is already a Member of this Project', 400);
+    }
+    const projectMembership = await db.ProjectMember.create({
+      userId: reqBody.userId,
+      projectId: projectId,
+      roleId: reqBody.roleId,
+      jobTitleId: reqBody.jobTitleId,
+    }, { transaction: t });
+    await t.commit();
+    return projectMembership;
+  } catch (error) {
+    t.rollback();
+    console.log('Error while adding user to project: ',error);
+    throw new CustomError(error.message, error.statusCode);
+  }
+}
 
 projectService.updateProject = async (id, reqBody) => {
   const t = await db.sequelize.transaction();
@@ -115,25 +126,6 @@ projectService.updateProject = async (id, reqBody) => {
     await ProjectModel.update(reqBody, {
       where: { id },
     }, { transaction: t });
-    if(reqBody.existingProjectMemberUserId){
-      await db.ProjectMember.update({
-        userId: reqBody.projectAdminId
-      }, {
-        where: {
-          userId: reqBody.existingProjectMemberUserId,
-          projectId: id,
-        }
-      }, { transaction: t });
-    }else{
-      const jobTitle = await roleHelper.getJobTitleByName(JOB_TITLE.PRODUCT_OWNER);
-      const projectAdminRole = await roleHelper.getRoleByName(ROLES.PROJECT_ADMIN);
-      await db.ProjectMember.create({
-        userId: reqBody.projectAdminId,
-        projectId: id,
-        roleId: projectAdminRole.id,
-        jobTitleId: jobTitle.id
-      }, { transaction: t });
-    }
 
     await t.commit();
 
@@ -149,5 +141,31 @@ projectService.deleteProject = async (id) => {
     where: { id },
   });
 };
+
+projectService.removeMemberFromProject = async (projectId, userId) => {
+  const t = await db.sequelize.transaction();
+  try {
+    const existingProjectMembership = await db.ProjectMember.findOne({
+      where: {
+        userId,
+        projectId,
+      }
+    });
+    if (!existingProjectMembership) {
+      throw new CustomError('User is not a Member of this Project', 400);
+    }
+    await db.ProjectMember.destroy({
+      where: {
+        userId,
+        projectId,
+      }
+    }, { transaction: t });
+    await t.commit();
+  } catch (error) {
+    t.rollback();
+    console.log('Error while removing a user from project: ',error);
+    throw new CustomError(error.message, error.statusCode);
+  }
+}
 
 module.exports = projectService;

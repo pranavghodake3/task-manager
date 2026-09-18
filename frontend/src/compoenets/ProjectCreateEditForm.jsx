@@ -1,79 +1,43 @@
-import { useContext, useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
-import { AuthContext } from "../context/AuthContext";
-import { ROLES } from "../constants";
+import { useAuthStore } from "../store/authStore";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { createOrEditProjectSchema } from "../formSchemas/createOrEditProject";
 
 export default function ProjectCreateEditForm({ mode, project }) {
-    const AuthContextData = useContext(AuthContext);
-    const [createNew, selectCreateNew] = useState("0");
-    const [users, setUsers] = useState([]);
-    const [name, setProjectName] = useState(() => project?.name ?? '');
-    const [description, setProjectDescription] = useState(() => project?.description ?? '');
-    const existingUsers = project?.projectMembers?.filter(pm => pm.role?.name === ROLES.PROJECT_ADMIN);
-    console.log("existingUsers: ",existingUsers)
-    const [userId, selectUserId] = useState(() => existingUsers?.[0]?.userId ?? '');
-
-    const [firstName, selectFirstName] = useState(() => project?.firstName ?? '');
-    const [lastName, selectLastName] = useState(() => project?.lastName ?? '');
-    const [email, selectEmail] = useState(() => project?.email ?? '');
-    const [password, selectPassword] = useState('');
-    const [confirmPassword, selectConfirmPassword] = useState('');
+    const accessToken = useAuthStore((state) => state.accessToken);
     const [formErrorMessage, setFormErrorMessage] = useState('');
     const navigate = useNavigate();
+    const {
+        register,
+        handleSubmit,
+        formState: { errors, isSubmitting },
+    } = useForm({
+        resolver: zodResolver(createOrEditProjectSchema),
+        mode: 'onChange',
+        defaultValues: {
+            name: project?.name ?? '',
+            description: project?.description ?? '',
+        },
+    });
 
-    useEffect(() => {
-        async function loadDropDownsData() {
-            try {
-                const [userResponse] = await Promise.all([
-                    api.get('/users?isDropdown=true', { headers: {
-                        Authorization: `Bearer ${AuthContextData.accessToken}`
-                    }}),
-
-                ]);
-                setUsers(userResponse.data.data);
-            } catch (error) {
-                console.log(error);
-            }
-        }
-        loadDropDownsData();
-    }, [AuthContextData.accessToken])
-
-    function handleCreateNew(e) {
-        selectCreateNew(e.target.value);
-    }
-
-    async function handleSubmit(e) {
-        e.preventDefault();
+    async function onSubmit(data) {
         try {
             if (mode === 'create') {
-                const response = await api.post('/projects', {
-                    name,
-                    description,
-                    createNew,
-                    projectAdminId: userId,
-                    firstName,
-                    lastName,
-                    email,
-                    password
-                }, {
+                const response = await api.post('/projects', data, {
                     headers: {
-                        Authorization: `Bearer ${AuthContextData.accessToken}`
+                        Authorization: `Bearer ${accessToken}`
                     }
                 });
                 if (response.data.status) {
                     navigate('/projects');
                 }
             }else{
-                const response = await api.put('/projects/'+project.id, {
-                    name,
-                    description,
-                    createNew,
-                    projectAdminId: userId,
-                    existingProjectMemberUserId: existingUsers?.[0]?.userId
-                }, {
+                const response = await api.put('/projects/'+project.id, data, {
                     headers: {
-                        Authorization: `Bearer ${AuthContextData.accessToken}`
+                        Authorization: `Bearer ${accessToken}`
                     }
                 });
                 if (response.data.status) {
@@ -87,83 +51,24 @@ export default function ProjectCreateEditForm({ mode, project }) {
         }
     }
     return (
-        <form className="auth-form project-form" onSubmit={handleSubmit}>
+        <form className="auth-form project-form" onSubmit={handleSubmit(onSubmit)}>
               <div className="form-group">
                 <label>Name</label>
-                <input type="text" placeholder="Enter project name" value={name} onChange={(e) => setProjectName(e.target.value)} />
+                <input type="text" placeholder="Enter project name" {...register('name')} />
+                {errors.name && <p className="error-text">{errors.name.message}</p>}
               </div>
 
               <div className="form-group">
                 <label>Description</label>
-                <textarea name="description" id="description" value={description} onChange={(e) => setProjectDescription(e.target.value)} placeholder="Enter Description"></textarea>
+                <textarea {...register('description')} placeholder="Enter Description"></textarea>
+                {errors.description && <p className="error-text">{errors.description.message}</p>}
               </div>
 
-              <div className="form-group">
-                <label>Assign Project Admin: </label>
-              </div>
+                <p className="error-text">{formErrorMessage}</p>
 
-              { mode === 'create' &&
-                <div className="form-group">
-                    <label>Create New ?</label>
-                    <div className="radio-group">
-                    <label>
-                        <input type="radio" name="company" checked={createNew === "0"}  value="0" onChange={handleCreateNew} />
-                        No
-                    </label>
-                    <label>
-                        <input type="radio" name="company" checked={createNew === "1"}  value="1" onChange={handleCreateNew} />
-                        Yes
-                    </label>
-                    </div>
-                </div>
-              }
-
-              <div className={`form-group ${ createNew === '1' && mode === 'create' ? 'hide' : 'show' }`}>
-                <label htmlFor="userId">Select User</label>
-                <select name="userId" id="userId" value={userId ?? existingUsers?.[0]?.userId} onChange={(e) => selectUserId(e.target.value)}>
-                    <option value="">Select User</option>
-                    {users.map((user) => (
-                        <option key={user.id} value={user.id}>{user.firstName} {user.lastName}</option>
-                    ))}
-                </select>
-              </div>
-
-              { mode === 'create' &&
-                <div className={`form-group ${ createNew === '0' ? 'hide' : 'show' }`}>
-                    <div className="form-group">
-                        <label>First Name</label>
-                        <input type="text" placeholder="Enter first name" value={firstName} onChange={(e) => selectFirstName(e.target.value)} />
-                    </div>
-
-                    <div className="form-group">
-                        <label>Last Name</label>
-                        <input type="text" placeholder="Enter last name" value={lastName} onChange={(e) => selectLastName(e.target.value)} />
-                    </div>
-
-                    <div className="form-group">
-                        <label>Email</label>
-                        <input type="email" placeholder="Enter email" value={email} onChange={(e) => selectEmail(e.target.value)} />
-                    </div>
-
-                    <div className="form-group">
-                        <label>Password</label>
-                        <input type="password" placeholder="Create password" value={password} onChange={(e) => selectPassword(e.target.value)} />
-                    </div>
-
-                    <div className="form-group">
-                        <label>Confirm Password</label>
-                        <input type="password" placeholder="Confirm password" value={confirmPassword} onChange={(e) => selectConfirmPassword(e.target.value)} />
-                    </div>
-                </div>
-              }
-
-              <div className={formErrorMessage ? 'error' : 'success'}>
-                <label>{formErrorMessage}</label>
-            </div>
-
-              <button type="submit" className="auth-btn">
-                {mode === 'create' ? 'Submit' : 'Update'}
-              </button>
+              <button type="submit" className="auth-btn" disabled={isSubmitting}>
+                {mode === 'create' ? (isSubmitting ? 'Submitting...' : 'Submit') : (isSubmitting ? 'Updating...' : 'Update')}
+                </button>
               <button type="button" className="auth-btn" onClick={() => navigate('/projects')}>
                 Cancel
               </button>

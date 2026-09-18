@@ -1,11 +1,9 @@
 import { Link, NavLink } from "react-router-dom";
 import "../assets/css/home.css";
-import { useContext } from "react";
-import { AuthContext } from "../context/AuthContext";
+import { useAuthStore } from "../store/authStore";
 
 function Home() {
-  const AuthContextData = useContext(AuthContext);
-  const isLogged = AuthContextData.isLoggedIn;
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   return (
     <div className="home-page">
 
@@ -13,7 +11,7 @@ function Home() {
         <h2>TaskManager Pro</h2>
 
         <div>
-          {isLogged ? (
+          {isLoggedIn ? (
             <NavLink to="/dashboard" className="btn login-btn">
               Dashboard
             </NavLink>
