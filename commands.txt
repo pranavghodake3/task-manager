@@ -36,3 +36,21 @@ npx sequelize-cli seed:generate --name globalRoles
 npx sequelize-cli model:generate --name TaskType --attributes name:string,slug:string
 
 npx sequelize-cli seed:generate --name taskTypes
+
+kubectl get pods
+kubectl get deployment
+kubectl get svc
+kubectl get job
+kubectl apply -f=secret.yaml -f=postgresql-pvc.yaml -f=postgresql.yaml -f=migrate-job.yaml -f=backend.yaml
+
+# Restart a Deployment
+kubectl rollout restart deployment/backend-deployment
+
+# Restart a StatefulSet
+kubectl rollout restart statefulset/<statefulset-name>
+
+# Restart a DaemonSet
+kubectl rollout restart daemonset/<daemonset-name>
+
+# Restart all deployments in a specific namespace
+kubectl rollout restart deployment -n <namespace-name>
