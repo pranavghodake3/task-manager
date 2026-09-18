@@ -21,146 +21,188 @@ import TaskView from "../pages/TaskView";
 import TaskCreate from "../pages/TaskCreate";
 import ProjectAddMember from "../pages/ProjectAddMember";
 import GlobalProjectContextProvider from "../context/GlobalProjectContextProvider";
+import Profile from "../pages/Profile";
+import UpdateProfile from "../pages/UpdateProfile";
 
 export default function AppRoute() {
-    return (
-        <BrowserRouter>
-            <GlobalProjectContextProvider>
-            {/* <AuthContextProvider> */}
-                <Routes>
-                    <Route path="/" element={<Home />} />
+  return (
+    <BrowserRouter>
+      <GlobalProjectContextProvider>
+        {/* <AuthContextProvider> */}
+        <Routes>
+          <Route path="/" element={<Home />} />
 
-                    <Route path="/dashboard" element={
-                        <ProtectedRoute>
-                            <Dashboard />
-                        </ProtectedRoute>
-                    } />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
 
-                    <Route path="/projects" element={
-                        <ProtectedRoute
-                        entity={ENTITIES.PROJECT}
-                        action={ACTION_TYPES.READ_ALL}
-                        >
-                            <ProjectList />
-                        </ProtectedRoute>
-                    } />
+          <Route
+            path="/projects"
+            element={
+              <ProtectedRoute
+                entity={ENTITIES.PROJECT}
+                action={ACTION_TYPES.READ_ALL}
+              >
+                <ProjectList />
+              </ProtectedRoute>
+            }
+          />
 
-                    <Route path="/projects/create" element={
-                        <ProtectedRoute
-                        entity={ENTITIES.PROJECT}
-                        action={ACTION_TYPES.CREATE}
-                        >
-                           <ProjectCreate />
-                        </ProtectedRoute>
-                    } />
+          <Route
+            path="/projects/create"
+            element={
+              <ProtectedRoute
+                entity={ENTITIES.PROJECT}
+                action={ACTION_TYPES.CREATE}
+              >
+                <ProjectCreate />
+              </ProtectedRoute>
+            }
+          />
 
-                    <Route path="/projects/:id" element={
-                        <ProtectedRoute
-                        entity={ENTITIES.PROJECT}
-                        action={ACTION_TYPES.READ}
-                        >
-                           <ProjectView />
-                        </ProtectedRoute>
-                    } />
+          <Route
+            path="/projects/:id"
+            element={
+              <ProtectedRoute
+                entity={ENTITIES.PROJECT}
+                action={ACTION_TYPES.READ}
+              >
+                <ProjectView />
+              </ProtectedRoute>
+            }
+          />
 
-                    <Route path="/projects/:id/edit" element={
-                        <ProtectedRoute
-                        entity={ENTITIES.PROJECT}
-                        action={ACTION_TYPES.UPDATE}
-                        >
-                           <ProjectEdit />
-                        </ProtectedRoute>
-                    } />
+          <Route
+            path="/projects/:id/edit"
+            element={
+              <ProtectedRoute
+                entity={ENTITIES.PROJECT}
+                action={ACTION_TYPES.UPDATE}
+              >
+                <ProjectEdit />
+              </ProtectedRoute>
+            }
+          />
 
-                    <Route path="/projects/:id/add-member" element={
-                        <ProtectedRoute
-                        entity={ENTITIES.PROJECT}
-                        action={ACTION_TYPES.UPDATE}
-                        >
-                           <ProjectAddMember />
-                        </ProtectedRoute>
-                    } />
+          <Route
+            path="/projects/:id/add-member"
+            element={
+              <ProtectedRoute
+                entity={ENTITIES.PROJECT}
+                action={ACTION_TYPES.UPDATE}
+              >
+                <ProjectAddMember />
+              </ProtectedRoute>
+            }
+          />
 
-                    <Route path="/users" element={
-                        <ProtectedRoute
-                        entity={ENTITIES.USER}
-                        action={ACTION_TYPES.READ_ALL}
-                        >
-                            <UserList />
-                        </ProtectedRoute>
-                    } />
+          <Route
+            path="/users"
+            element={
+              <ProtectedRoute
+                entity={ENTITIES.USER}
+                action={ACTION_TYPES.READ_ALL}
+              >
+                <UserList />
+              </ProtectedRoute>
+            }
+          />
 
-                    <Route path="/users/:id/edit" element={
-                        <ProtectedRoute
-                        entity={ENTITIES.USER}
-                        action={ACTION_TYPES.UPDATE}
-                        >
-                            <UserEdit />
-                        </ProtectedRoute>
-                    } />
+          <Route
+            path="/users/:id/edit"
+            element={
+              <ProtectedRoute
+                entity={ENTITIES.USER}
+                action={ACTION_TYPES.UPDATE}
+              >
+                <UserEdit />
+              </ProtectedRoute>
+            }
+          />
 
-                    <Route path="/users/:id" element={
-                        <ProtectedRoute
-                        entity={ENTITIES.USER}
-                        action={ACTION_TYPES.READ}
-                        >
-                            <UserView />
-                        </ProtectedRoute>
-                    } />
+          <Route
+            path="/users/:id"
+            element={
+              <ProtectedRoute entity={ENTITIES.USER} action={ACTION_TYPES.READ}>
+                <UserView />
+              </ProtectedRoute>
+            }
+          />
 
-                    <Route path="/users/create" element={
-                        <ProtectedRoute
-                        entity={ENTITIES.USER}
-                        action={ACTION_TYPES.CREATE}
-                        >
-                            <UserAdd />
-                        </ProtectedRoute>
-                    } />
+          <Route
+            path="/users/create"
+            element={
+              <ProtectedRoute
+                entity={ENTITIES.USER}
+                action={ACTION_TYPES.CREATE}
+              >
+                <UserAdd />
+              </ProtectedRoute>
+            }
+          />
 
-                    <Route path="/tasks" element={
-                        <ProtectedRoute
-                        entity={ENTITIES.TASK}
-                        action={ACTION_TYPES.READ_ALL}
-                        >
-                            <TaskList />
-                        </ProtectedRoute>
-                    } />
+          <Route
+            path="/tasks"
+            element={
+              <ProtectedRoute
+                entity={ENTITIES.TASK}
+                action={ACTION_TYPES.READ_ALL}
+              >
+                <TaskList />
+              </ProtectedRoute>
+            }
+          />
 
-                    <Route path="/tasks/create" element={
-                        <ProtectedRoute
-                        entity={ENTITIES.TASK}
-                        action={ACTION_TYPES.CREATE}
-                        >
-                           <TaskCreate />
-                        </ProtectedRoute>
-                    } />
+          <Route
+            path="/tasks/create"
+            element={
+              <ProtectedRoute
+                entity={ENTITIES.TASK}
+                action={ACTION_TYPES.CREATE}
+              >
+                <TaskCreate />
+              </ProtectedRoute>
+            }
+          />
 
-                    <Route path="/tasks/:id" element={
-                        <ProtectedRoute
-                        entity={ENTITIES.TASK}
-                        action={ACTION_TYPES.READ}
-                        >
-                           <TaskView />
-                        </ProtectedRoute>
-                    } />
+          <Route
+            path="/tasks/:id"
+            element={
+              <ProtectedRoute entity={ENTITIES.TASK} action={ACTION_TYPES.READ}>
+                <TaskView />
+              </ProtectedRoute>
+            }
+          />
 
-                    <Route path="/tasks/:id/edit" element={
-                        <ProtectedRoute
-                        entity={ENTITIES.TASK}
-                        action={ACTION_TYPES.UPDATE}
-                        >
-                           <TaskEdit />
-                        </ProtectedRoute>
-                    } />
+          <Route
+            path="/tasks/:id/edit"
+            element={
+              <ProtectedRoute
+                entity={ENTITIES.TASK}
+                action={ACTION_TYPES.UPDATE}
+              >
+                <TaskEdit />
+              </ProtectedRoute>
+            }
+          />
 
-                    <Route path="/login" element={<Login />} />
+          <Route path="/profile" element={<Profile />} />
 
-                    <Route path="/signup" element={<Signup />} />
+          <Route path="/profile/update" element={<UpdateProfile />} />
 
-                    <Route path="/unathorized" element={<Unathorized />} />
-                </Routes>
-            {/* </AuthContextProvider> */}
-            </GlobalProjectContextProvider>
-        </BrowserRouter>
-    );
-};
+          <Route path="/login" element={<Login />} />
+
+          <Route path="/signup" element={<Signup />} />
+
+          <Route path="/unathorized" element={<Unathorized />} />
+        </Routes>
+        {/* </AuthContextProvider> */}
+      </GlobalProjectContextProvider>
+    </BrowserRouter>
+  );
+}

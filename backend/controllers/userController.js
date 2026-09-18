@@ -38,17 +38,23 @@ userController.getUnAssignedUsers = async (req) => {
 };
 
 userController.getUserRoles = async () => {
-    const roles = await userService.getUserRoles();
+  const roles = await userService.getUserRoles();
 
-    return {
-        data: roles
-    };
+  return {
+    data: roles,
+  };
 };
 
 userController.createUser = async (req) => {
   const { auth } = req;
   const user = await userService.createUser(auth, req.body);
   return { data: user, statusCode: 201 };
+};
+
+userController.updateProfile = async (req) => {
+  const { auth } = req;
+  const user = await userService.updateUser(auth.user.id, req.body);
+  return { data: user, statusCode: 200 };
 };
 
 userController.getUser = async (req) => {

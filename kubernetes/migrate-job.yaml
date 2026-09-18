@@ -1,0 +1,47 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: migrate-job
+  labels:
+    app: backend-migrate
+spec:
+  backoffLimit: 3
+  template:
+    metadata:
+      labels:
+        app: backend-migrate
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: migrate
+          # use the same image you use for backend; adjust tag if needed
+          image: pranavghodake3/kub-task-manager-backend:latest
+          imagePullPolicy: Always
+          env:
+            - name: DB_HOST
+              value: "postgresql"
+            - name: DB_PORT
+              value: "5432"
+            - name: POSTGRES_USER
+              value: "postgres"
+            - name: POSTGRES_DB
+              value: "task_manager"
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD
+          # Wait for DB then run migrations and seeds
+          command: ["sh", "-c"]
+          args:
+            - |
+              echo "Waiting for database $DB_HOST:$DB_PORT...";
+              i=0;
+              until nc -z "$DB_HOST" "$DB_PORT"; do
+                i=$((i+1));
+                if [ $i -gt 60 ]; then echo "Timed out waiting for DB"; exit 1; fi;
+                sleep 2;
+              done;
+              echo "DB reachable, running migrations and seeds...";
+              npm run migrate && npm run db:seed:all;
+      # ensure the Job can pull the secret if running in a non-default namespace change as needed
