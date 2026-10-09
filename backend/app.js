@@ -17,28 +17,30 @@ const { initiateConnection } = require('./sockets/socket.js');
 const httpServer = http.createServer(app);
 const io = initiateConnection(httpServer);
 
-io.on('connection', client => {
-  console.log("Client connected: ", client.id);
-  console.log("Client connected handshake: ", client.handshake);
+io.on('connection', (client) => {
+  console.log('Client connected: ', client.id);
+  console.log('Client connected handshake: ', client.handshake);
 
-  client.on('join-project', ({projectId}) => {
+  client.on('join-project', ({ projectId }) => {
     const projectRoom = `project:${projectId}`;
     client.join(projectRoom);
     console.log(`Client ${client.id} joined projectRoom: ${projectRoom}`);
-  })
+  });
   // const data = verifyToken(client.handshake.auth.token);
   // console.log("APP.JS data: ",data);
   // client.join(data?.userId?.toString());
   client.on('disconnect', () => {
-    console.log("Client disconnected");
+    console.log('Client disconnected');
   });
 });
 
 app.use(cookieParser());
-app.use(cors({
-  origin: 'http://localhost:5173',
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: ['http://localhost:5173'],
+    credentials: true,
+  }),
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

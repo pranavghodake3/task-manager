@@ -45,6 +45,8 @@ kubectl apply -f=secret.yaml -f=postgresql-pvc.yaml -f=postgresql.yaml -f=migrat
 
 # Restart a Deployment
 kubectl rollout restart deployment/backend-deployment
+kubectl rollout restart deployment/frontend-deployment
+kubectl scale deployment --all --replicas=0
 
 # Restart a StatefulSet
 kubectl rollout restart statefulset/<statefulset-name>
