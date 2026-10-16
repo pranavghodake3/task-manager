@@ -4,7 +4,8 @@ import { useAuthStore } from "../store/authStore";
 import { X_DEVICE } from "../constants";
 
 const api = axios.create({
-  baseURL: "http://localhost:5000/api",
+  // baseURL: "http://localhost:5000/api",
+  baseURL: "/api",
   withCredentials: true,
 });
 
@@ -12,7 +13,7 @@ api.interceptors.request.use((config) => {
   const accessToken = useAuthStore.getState().accessToken;
   if (accessToken) {
     config.headers = config.headers || {};
-    config.headers['x-device'] = X_DEVICE;
+    config.headers["x-device"] = X_DEVICE;
     config.headers.Authorization = `Bearer ${accessToken}`;
   }
   return config;
@@ -44,7 +45,7 @@ api.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 export default api;
